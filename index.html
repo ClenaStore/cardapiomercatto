@@ -236,12 +236,43 @@ function abrirFormCliente(){
   IMask(document.getElementById('whats'), {mask: '(00) 00000-0000'});
 }
 
+// Busca endereço via CEP e define bairro automaticamente
 async function buscarEndereco(){
-  const cep=document.getElementById('cep').value.replace(/\D/g,'');
-  if(cep.length!=8)return;
-  const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-  const j=await r.json();
-  if(!j.erro)document.getElementById('endereco').value=`${j.logradouro}, ${j.bairro} - ${j.localidade}`;
+  const cepInput = document.getElementById('cep');
+  const cep = cepInput.value.replace(/\D/g,'');
+  if(cep.length != 8) return;
+
+  try {
+    const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const j = await r.json();
+
+    if(j.erro){
+      alert('CEP não encontrado. Preencha o endereço manualmente.');
+      return;
+    }
+
+    // Preenche o endereço completo
+    document.getElementById('endereco').value = `${j.logradouro}, ${j.bairro} - ${j.localidade}`;
+
+    // Tenta encontrar o bairro correspondente
+    const bairroSelect = document.getElementById('bairro');
+    let encontrou = false;
+    for (let opt of bairroSelect.options){
+      if(opt.value && j.bairro && j.bairro.toLowerCase().includes(opt.value.toLowerCase())){
+        bairroSelect.value = opt.value;
+        encontrou = true;
+        break;
+      }
+    }
+
+    // Se não encontrar, deixa o usuário escolher manualmente
+    if(!encontrou){
+      bairroSelect.value = "";
+    }
+
+  } catch (e) {
+    alert('Erro ao consultar CEP. Tente novamente.');
+  }
 }
 
 function mostrarResumo(){
