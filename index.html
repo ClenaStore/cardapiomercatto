@@ -230,6 +230,17 @@ if (navigator.userAgent.match(/iphone|ipad|ipod/i)) {
 <body>
 
 <header>🍽️ Mercatto Delivery</header>
+<div id="statusLoja" style="
+  text-align:center;
+  font-weight:600;
+  margin:10px auto;
+  color:#fff;
+  border-radius:8px;
+  padding:8px 16px;
+  width:fit-content;
+  background:#dc2626;">
+  Verificando horário...
+</div>
 
 <!-- 📸 BANNER PRINCIPAL -->
 <div class="banner">
@@ -320,7 +331,10 @@ function filtrarCategoria(cat){
         <h3>${p.nome}</h3>
         <p>${p.desc}</p>
         <span>R$${p.preco.toFixed(2)}</span>
-        <button class="add" onclick="addCarrinho(${p.id})">Adicionar</button>
+        <button class="add" onclick="addCarrinho(${p.id})" ${!lojaAberta() ? 'disabled' : ''}>
+  ${lojaAberta() ? 'Adicionar' : 'Fechado'}
+</button>
+
       </div>`;
     menuDiv.appendChild(c);
   });
@@ -558,6 +572,53 @@ async function enviarPedido(nome,whats,cep,endereco,numero,bairro,forma,precisa,
     console.error(e);
   }
 }
+
+  /* 🕒 HORÁRIOS DE FUNCIONAMENTO */
+const horarios = {
+  0: [18, 22], // Domingo
+  1: [17, 23], // Segunda
+  2: [17, 23], // Terça
+  3: [17, 23], // Quarta
+  4: [17, 23], // Quinta
+  5: [17, 23], // Sexta
+  6: [17, 23]  // Sábado
+};
+
+function lojaAberta() {
+  const agora = new Date();
+  const dia = agora.getDay();
+  const hora = agora.getHours() + agora.getMinutes()/60;
+  const [inicio, fim] = horarios[dia];
+  return hora >= inicio && hora <= fim;
+}
+
+function atualizarStatusLoja() {
+  const aberto = lojaAberta();
+  const div = document.getElementById('statusLoja');
+  if (aberto) {
+    div.textContent = '🟢 Aberto agora';
+    div.style.background = '#16a34a';
+  } else {
+    const d = new Date();
+    const [inicio] = horarios[d.getDay()];
+    div.textContent = `🔴 Fechado — abre às ${inicio}h`;
+    div.style.background = '#dc2626';
+  }
+  // atualiza o texto dos botões
+  document.querySelectorAll('.add').forEach(btn => {
+    if (aberto) {
+      btn.disabled = false;
+      btn.textContent = 'Adicionar';
+    } else {
+      btn.disabled = true;
+      btn.textContent = 'Fechado';
+    }
+  });
+}
+
+setInterval(atualizarStatusLoja, 60000); // atualiza a cada minuto
+document.addEventListener('DOMContentLoaded', atualizarStatusLoja);
+
 </script>
 
 </body>
