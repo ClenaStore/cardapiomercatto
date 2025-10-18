@@ -3,44 +3,81 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>🍔 Mercatto Delivery</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<title>🍽️ Mercatto Delivery</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/imask"></script>
 <style>
 :root{
-  --bg:#f6f8fa;--card:#fff;--accent:#06b6d4;--ink:#111;--muted:#555;
-  --radius:16px;--shadow:0 4px 10px rgba(0,0,0,0.08);
+  --bg:#f4f1ec;
+  --card:#fffaf5;
+  --accent:#b8860b;
+  --ink:#3a2e1f;
+  --muted:#6e6252;
+  --radius:12px;
+  --shadow:0 3px 8px rgba(0,0,0,0.08);
 }
-body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+}
 header{
-  background:var(--accent);color:#fff;text-align:center;padding:20px;border-radius:0 0 var(--radius) var(--radius);
+  background:var(--accent);
+  color:#fff;
+  text-align:center;
+  padding:20px 10px;
+  font-family:'Playfair Display',serif;
+  letter-spacing:0.5px;
+  font-size:22px;
 }
 .banner{
-  margin:20px auto;width:90%;border-radius:var(--radius);overflow:hidden;
+  width:92%;
+  margin:20px auto;
+  border-radius:var(--radius);
+  overflow:hidden;
   box-shadow:var(--shadow);
+  border:3px solid #e0d7c5;
 }
 .banner img{width:100%;display:block;}
 
 .container{padding:10px 20px;}
-h2{margin-top:20px;color:var(--accent);}
+h2{
+  margin-top:10px;
+  color:var(--accent);
+  font-family:'Playfair Display',serif;
+  border-bottom:1px solid #d7ccbb;
+  padding-bottom:4px;
+}
 
 .grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+  gap:16px;
 }
 .card{
-  background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
-  overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  transition:transform .2s;
+  border:1px solid #e2d8c5;
 }
+.card:hover{transform:scale(1.02);}
 .card img{width:100%;height:120px;object-fit:cover;}
 .card-body{padding:10px;}
-.card-body h3{margin:0;font-size:16px;}
-.card-body p{font-size:13px;color:var(--muted);}
+.card-body h3{
+  margin:0;font-size:16px;font-family:'Playfair Display',serif;
+}
+.card-body p{font-size:13px;color:var(--muted);margin:4px 0;}
 .card-body span{font-weight:600;color:var(--accent);}
 button.add{
-  background:var(--accent);color:#fff;border:none;padding:8px;border-radius:var(--radius);
+  background:var(--accent);
+  color:#fff;border:none;padding:8px;border-radius:var(--radius);
   width:100%;margin-top:8px;font-weight:600;cursor:pointer;
+  font-family:'Inter',sans-serif;letter-spacing:.3px;
 }
-button.add:hover{opacity:.9;}
+button.add:hover{opacity:.85;}
 
 #cart-btn{
   position:fixed;bottom:20px;right:20px;background:var(--accent);color:#fff;
@@ -48,41 +85,50 @@ button.add:hover{opacity:.9;}
   font-size:24px;cursor:pointer;
 }
 #cart-count{
-  position:absolute;top:5px;right:5px;background:#ef4444;color:#fff;
+  position:absolute;top:5px;right:5px;background:#a12f2f;color:#fff;
   font-size:12px;border-radius:50%;padding:2px 6px;
 }
 #cart-modal{
-  position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;
+  position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;
   justify-content:center;align-items:center;z-index:10;
 }
 .cart-content{
-  background:#fff;width:90%;max-width:420px;border-radius:var(--radius);
+  background:#fffaf5;width:90%;max-width:430px;border-radius:var(--radius);
   padding:20px;max-height:90vh;overflow:auto;
+  box-shadow:var(--shadow);
+  border:2px solid #e0d7c5;
 }
-.cart-content h3{text-align:center;color:var(--accent);}
-.item-line{display:flex;justify-content:space-between;align-items:center;margin:6px 0;}
-.item-line input{width:60%;padding:4px;font-size:13px;}
-.summary{margin-top:12px;border-top:1px solid #ddd;padding-top:10px;}
+.cart-content h3{
+  text-align:center;
+  color:var(--accent);
+  font-family:'Playfair Display',serif;
+  margin-bottom:12px;
+}
+.item-line{
+  display:flex;justify-content:space-between;align-items:center;
+  margin:6px 0;padding-bottom:6px;border-bottom:1px solid #e6dcc8;
+}
+.summary{margin-top:15px;border-top:2px solid #d7ccbb;padding-top:10px;}
 .finalizar{
-  background:var(--accent);color:#fff;border:none;padding:10px;width:100%;
+  background:var(--accent);
+  color:#fff;border:none;padding:10px;width:100%;
   border-radius:var(--radius);font-weight:600;margin-top:10px;
+  letter-spacing:.3px;
 }
 .finalizar:hover{opacity:.9;}
 input,select{
-  width:100%;padding:8px;margin:4px 0 10px;border:1px solid #ccc;border-radius:8px;
-  font-size:14px;
+  width:100%;padding:8px;margin:4px 0 10px;border:1px solid #d7ccbb;
+  border-radius:8px;font-size:14px;background:#fffefb;
 }
 label{font-size:13px;font-weight:600;color:var(--muted);}
 </style>
 </head>
 <body>
 
-<header>
-  <h1>🍔 Mercatto Delivery</h1>
-</header>
+<header>🍽️ Mercatto Delivery</header>
 
 <div class="banner">
-  <img src="https://images.unsplash.com/photo-1601924582971-c77f2b9b1aa1?w=1200" alt="Banner">
+  <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200" alt="Banner principal">
 </div>
 
 <div class="container">
@@ -101,13 +147,13 @@ label{font-size:13px;font-weight:600;color:var(--muted);}
 </div>
 
 <script>
-// CONFIGURAÇÃO DO ENDPOINT GOOGLE APPS SCRIPT
-const ENDPOINT = "https://script.google.com/macros/s/AKfycbx5DEV71oL0i8vCfMZ62XawG30Qj_lhzz4nDha7LFklmWZTGxIRcl9fh-_p-PR8cxsi/exec"; // substitua depois
-  
+// ENDPOINT DO GOOGLE APPS SCRIPT
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbx5DEV71oL0i8vCfMZ62XawG30Qj_lhzz4nDha7LFklmWZTGxIRcl9fh-_p-PR8cxsi/exec";
+
 const produtos=[
-  {id:1,nome:'X-Burger',desc:'Pão, carne, queijo, alface e tomate.',preco:15,img:'https://images.unsplash.com/photo-1606755962773-0f3d2d4b0c5b?w=400',sugestoes:[2,3]},
-  {id:2,nome:'Refrigerante Lata',desc:'Lata 350ml',preco:5,img:'https://images.unsplash.com/photo-1606813902915-76ef7d1a6c4d?w=400',sugestoes:[]},
-  {id:3,nome:'Batata Frita',desc:'Porção individual crocante.',preco:10,img:'https://images.unsplash.com/photo-1601924582971-c77f2b9b1aa1?w=400',sugestoes:[]}
+  {id:1,nome:'X-Burger',desc:'Pão brioche, carne artesanal e queijo.',preco:18,img:'https://images.unsplash.com/photo-1550547660-d9450f859349?w=400',sugestoes:[2,3]},
+  {id:2,nome:'Refrigerante Lata',desc:'Lata 350ml',preco:6,img:'https://images.unsplash.com/photo-1613470209869-1b4b4a1c1db2?w=400',sugestoes:[]},
+  {id:3,nome:'Batata Frita',desc:'Porção individual crocante.',preco:12,img:'https://images.unsplash.com/photo-1606756790138-640a2f1f02c0?w=400',sugestoes:[]}
 ];
 let carrinho=[];
 
@@ -122,8 +168,7 @@ produtos.forEach(p=>{
       <p>${p.desc}</p>
       <span>R$${p.preco.toFixed(2)}</span>
       <button class="add" onclick="addCarrinho(${p.id})">Adicionar</button>
-    </div>
-  `;
+    </div>`;
   menuDiv.appendChild(c);
 });
 
@@ -146,31 +191,28 @@ function renderCarrinho(){
     div.innerHTML+=`
       <div class="item-line">
         <span>${item.nome}</span>
-        <button onclick="removeItem(${i})">❌</button>
+        <button onclick="removeItem(${i})">✖</button>
       </div>
       <small>Obs: ${item.obs||'-'}</small>
     `;
-    // Sugestões
     item.sugestoes.forEach(s=>{
       const sug=produtos.find(p=>p.id===s);
       if(sug && !carrinho.some(ci=>ci.id===s)){
-        div.innerHTML+=`<div style="background:#f0f9ff;padding:6px;border-radius:8px;margin:4px 0">
+        div.innerHTML+=`<div style="background:#fff8e3;padding:6px;border-radius:8px;margin:4px 0;border:1px solid #e3d5b5;">
           Sugestão: <strong>${sug.nome}</strong> - R$${sug.preco.toFixed(2)}
-          <button onclick="addCarrinho(${sug.id})">Incluir</button>
+          <button class="add" style="padding:3px 6px;font-size:12px;" onclick="addCarrinho(${sug.id})">Incluir</button>
         </div>`;
       }
     });
   });
-  div.innerHTML+=`<button class="finalizar" onclick="abrirFormCliente()">Finalizar Pedido</button>`;
+  if(carrinho.length)div.innerHTML+=`<button class="finalizar" onclick="abrirFormCliente()">Continuar</button>`;
 }
 
 function removeItem(i){carrinho.splice(i,1);renderCarrinho();}
 document.getElementById('cart-btn').onclick=()=>document.getElementById('cart-modal').style.display='flex';
 document.getElementById('cart-modal').onclick=e=>{if(e.target.id==='cart-modal')e.target.style.display='none';};
 
-// Formulário de cliente
 function abrirFormCliente(){
-  const subtotal=carrinho.reduce((s,i)=>s+i.preco,0);
   const form=document.getElementById('formCliente');
   form.style.display='block';
   form.innerHTML=`
@@ -189,12 +231,11 @@ function abrirFormCliente(){
       <option value="Jardins" data-taxa="8">Jardins - R$8,00</option>
       <option value="Santa Luzia" data-taxa="10">Santa Luzia - R$10,00</option>
     </select>
-    <button class="finalizar" onclick="mostrarResumo()">Ver Resumo do Pedido</button>
+    <button class="finalizar" onclick="mostrarResumo()">Ver Resumo</button>
   `;
   IMask(document.getElementById('whats'), {mask: '(00) 00000-0000'});
 }
 
-// Busca endereço via CEP
 async function buscarEndereco(){
   const cep=document.getElementById('cep').value.replace(/\D/g,'');
   if(cep.length!=8)return;
@@ -226,7 +267,7 @@ function mostrarResumo(){
     <p><strong>Endereço:</strong> ${endereco}, ${numero} - ${bairro}</p>
     <p><strong>WhatsApp:</strong> ${whatsapp}</p>
     <p><strong>Subtotal:</strong> R$${subtotal.toFixed(2)}</p>
-    <p><strong>Taxa:</strong> R$${taxa.toFixed(2)}</p>
+    <p><strong>Taxa de entrega:</strong> R$${taxa.toFixed(2)}</p>
     <h3>Total: R$${total.toFixed(2)}</h3>
     <button class="finalizar" onclick="enviarPedido('${nome}','${nasc}','${whatsapp}','${cep}','${endereco}','${numero}','${ref}','${bairro}',${taxa},${subtotal},${total})">Enviar Pedido</button>
   `;
