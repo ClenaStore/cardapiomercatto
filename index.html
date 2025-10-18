@@ -6,7 +6,6 @@
 <title>🍽️ Mercatto Delivery</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/imask"></script>
-
 <style>
 /* 🎨 PALETA DE CORES */
 :root{
@@ -21,7 +20,10 @@ html,body{
   font-family:'Inter',sans-serif;
   background:var(--bg);color:var(--ink);
   overflow-x:hidden; /* 🚫 impede rolagem lateral */
+  scroll-behavior:smooth;
 }
+body.modal-aberto{overflow:hidden;} /* 🚫 trava o fundo quando modal aberto */
+
 header{
   background:var(--accent);color:#fff;text-align:center;
   padding:20px 10px;font-family:'Playfair Display',serif;font-size:22px;
@@ -101,8 +103,15 @@ button.add:hover{opacity:.85;}
 /* 💬 MODAL DO CARRINHO */
 #cart-modal{
   position:fixed;inset:0;background:rgba(0,0,0,0.55);
-  display:none;justify-content:center;align-items:center;z-index:10;
+  display:none;justify-content:center;align-items:center;z-index:999;
+  backdrop-filter:blur(3px);
 }
+
+/* Evita scroll do fundo quando o modal está aberto */
+#cart-modal.ativo ~ * {pointer-events:none;}
+#cart-modal.ativo{display:flex;}
+#cart-modal.ativo body{overflow:hidden;}
+
 .cart-content{
   background:#fffaf5;width:90%;max-width:430px;
   border-radius:var(--radius);padding:20px;
