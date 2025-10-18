@@ -273,10 +273,7 @@ if (navigator.userAgent.match(/iphone|ipad|ipod/i)) {
 </div>
 
 <script>
-/* 🔗 ENDPOINT DO GOOGLE APPS SCRIPT */
 const ENDPOINT="https://script.google.com/macros/s/AKfycbyLxzKH1MflYrVBEzEd4JaYYbAkNi5R13YWzDO9ywt2tqsx113TLYybORrKYGURowak/exec";
-
-/* 🍔 PRODUTOS DISPONÍVEIS */
 const produtos=[
   {id:1,nome:'X-Burger',desc:'Pão brioche, carne artesanal e queijo.',preco:18,img:'https://images.unsplash.com/photo-1550547660-d9450f859349?w=400',categoria:'Lanches'},
   {id:2,nome:'X-Bacon',desc:'Hambúrguer, queijo e bacon.',preco:22,img:'https://images.unsplash.com/photo-1601050690597-6c0c9f57f3c7?w=400',categoria:'Lanches'},
@@ -289,7 +286,6 @@ const produtos=[
 let carrinho=[];
 let categoriaAtiva='';
 
-/* 🧭 CRIA OS BOTÕES DE CATEGORIA */
 const categoriasDiv=document.getElementById('categorias');
 const menuDiv=document.getElementById('menu');
 const titulo=document.getElementById('tituloCategoria');
@@ -304,7 +300,6 @@ categoriasUnicas.forEach((cat,i)=>{
 });
 filtrarCategoria(categoriaAtiva);
 
-/* 🧾 FILTRA E EXIBE PRODUTOS DA CATEGORIA */
 function filtrarCategoria(cat){
   categoriaAtiva=cat;
   titulo.innerText=cat;
@@ -328,72 +323,54 @@ function filtrarCategoria(cat){
 
 function addCarrinho(id){
   const prod = produtos.find(p=>p.id===id);
-  if(carrinho.find(i=>i.id===id)){
-    alert('Item já está no carrinho');
-    return;
-  }
-
-  // Cria o modal visual
-  const modal = document.createElement('div');
-  modal.style.cssText = `
-    position:fixed;inset:0;background:rgba(0,0,0,0.4);
-    display:flex;align-items:center;justify-content:center;z-index:10000;
-  `;
-  modal.innerHTML = `
-    <div style="
-      background:#fffaf5;padding:25px;border-radius:10px;
-      box-shadow:0 3px 8px rgba(0,0,0,0.25);max-width:300px;width:90%;
-      text-align:center;font-family:Inter,sans-serif;">
-      <h3 style="color:#b8860b;font-family:'Playfair Display',serif;margin-bottom:8px;">🧾 Seu Pedido</h3>
-      <p>${prod.nome}</p>
-      <label>Obs:</label><br>
-      <input id="obsTemp" placeholder="(opcional)" style="width:100%;padding:6px;margin-top:5px;border-radius:6px;border:1px solid #d7ccbb;">
-      <button id="btnConfirma" style="
-        margin-top:15px;background:#b8860b;color:#fff;border:none;
-        padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;">
-        Continuar
-      </button>
-    </div>
-  `;
+  const modal=document.createElement('div');
+  modal.style.cssText=`position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:10000;`;
+  modal.innerHTML=`
+    <div style="background:#fffaf5;padding:25px;border-radius:10px;max-width:300px;width:90%;text-align:center;">
+      <h3 style="color:#b8860b;font-family:'Playfair Display',serif;">🧾 Adicionar ${prod.nome}</h3>
+      <label>Quantidade:</label><input id="qtdTemp" type="number" min="1" value="1" style="width:80px;margin:6px;">
+      <label>Observação:</label><input id="obsTemp" placeholder="(opcional)" style="width:100%;padding:6px;margin-top:5px;">
+      <button id="btnConfirma" style="margin-top:15px;background:#b8860b;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;">Adicionar</button>
+    </div>`;
   document.body.appendChild(modal);
 
-  document.getElementById('btnConfirma').onclick = () => {
-    const obs = document.getElementById('obsTemp').value || '';
-    carrinho.push({...prod, obs});
+  document.getElementById('btnConfirma').onclick=()=>{
+    const qtd=parseInt(document.getElementById('qtdTemp').value)||1;
+    const obs=document.getElementById('obsTemp').value||'';
+    const existente=carrinho.find(i=>i.id===id && i.obs===obs);
+    if(existente){
+      existente.qtd+=qtd;
+    }else{
+      carrinho.push({...prod,obs,qtd});
+    }
     renderCarrinho();
     modal.remove();
   };
-
-  // Fecha ao clicar fora
-  modal.addEventListener('click', e => {
-    if(e.target === modal) modal.remove();
-  });
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
 }
-function renderCarrinho() {
-  const countEl = document.getElementById('cart-count');
-  const div = document.getElementById('cart-items');
-  const btnContinuar = document.getElementById('btnContinuarCarrinho');
-  div.innerHTML = '';
-  carrinho.forEach((item, i) => {
-    div.innerHTML += `
+
+function renderCarrinho(){
+  const countEl=document.getElementById('cart-count');
+  const div=document.getElementById('cart-items');
+  const btnContinuar=document.getElementById('btnContinuarCarrinho');
+  div.innerHTML='';
+  carrinho.forEach((item,i)=>{
+    div.innerHTML+=`
       <div class="item-line">
-        <span>${item.nome}</span>
+        <span>${item.nome} x${item.qtd}</span>
+        <span>R$${(item.preco*item.qtd).toFixed(2)}</span>
         <button onclick="removeItem(${i})">✖</button>
       </div>
-      <small>Obs: ${item.obs || '-'}</small>`;
+      <small>Obs: ${item.obs||'-'}</small>`;
   });
-  countEl.innerText = carrinho.length;
-  btnContinuar.style.display = carrinho.length ? 'block' : 'none';
+  countEl.innerText=carrinho.reduce((s,i)=>s+i.qtd,0);
+  btnContinuar.style.display=carrinho.length?'block':'none';
 }
 
-/* ❌ REMOVE ITEM */
 function removeItem(i){carrinho.splice(i,1);renderCarrinho();}
-
-/* 🛒 ABRE O MODAL DO CARRINHO */
 document.getElementById('cart-btn').onclick=()=>document.getElementById('cart-modal').style.display='flex';
 document.getElementById('cart-modal').onclick=e=>{if(e.target.id==='cart-modal')e.target.style.display='none';};
 
-/* 📋 FORMULÁRIO DO CLIENTE */
 function abrirFormCliente(){
   const saved=JSON.parse(localStorage.getItem('cliente')||'{}');
   const form=document.getElementById('formCliente');
@@ -405,7 +382,7 @@ function abrirFormCliente(){
     <label>CEP</label><input id="cep" inputmode="numeric" maxlength="9" onblur="buscarEndereco()" value="${saved.cep||''}">
     <div id="bairroDetectado" style="font-size:13px;color:var(--muted);margin-top:-6px;"></div>
     <label>Endereço</label><input id="endereco" value="${saved.endereco||''}">
-    <label>Número</label><input id="numero" type="number" inputmode="numeric" value="${saved.numero||''}">
+    <label>Número</label><input id="numero" type="number" value="${saved.numero||''}">
     <label>Bairro</label>
     <select id="bairro" onchange="atualizarTotais()">
       <option value="">Selecione</option>
@@ -424,72 +401,18 @@ function abrirFormCliente(){
     <div id="infoTotais"></div>
     <button class="finalizar" onclick="mostrarResumo()">Ver Resumo</button>
   `;
-  // 📱 Máscara e validação do WhatsApp com DDD + 9 números
-const whatsInput = document.getElementById('whats');
-IMask(whatsInput, {
-  mask: '(00) 00000-0000',
-  lazy: false, // mostra a máscara completa
-});
-
-// validação no blur (quando o campo perde foco)
-whatsInput.addEventListener('blur', ()=>{
-  const num = whatsInput.value.replace(/\D/g,'');
-  if(num.length !== 11){
-    alert('⚠️ O número de WhatsApp deve conter DDD + 9 números.');
-    whatsInput.focus();
-  }
-});
-
 }
 
-/* 🏠 CONSULTA CEP VIA VIACEP */
-async function buscarEndereco(){
-  const cep=document.getElementById('cep').value.replace(/\D/g,'');
-  if(cep.length!=8) return;
-  try{
-    const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-    const j=await r.json();
-    if(j.erro) return;
-    document.getElementById('endereco').value=`${j.logradouro}, ${j.bairro} - ${j.localidade}`;
-    const bairroSel=document.getElementById('bairro');
-    let detectado="";
-    for(let o of bairroSel.options){
-      if(o.value && j.bairro && j.bairro.toLowerCase().includes(o.value.toLowerCase())){
-        bairroSel.value=o.value;detectado=o.value;break;
-      }
-    }
-    atualizarTotais();
-    const taxa=parseFloat(bairroSel.selectedOptions[0]?.dataset.taxa||0);
-    document.getElementById('bairroDetectado').innerHTML=detectado?`📍 Bairro detectado: <strong>${detectado}</strong> — Taxa: R$${taxa.toFixed(2)}`:'';
-  }catch(e){console.error(e);}
-}
-
-/* 💵 TROCO */
-function verificarTroco(){
-  const forma=document.getElementById('pagamento').value;
-  const c=document.getElementById('campoTroco');
-  if(forma==='Dinheiro'){
-    c.innerHTML=`
-      <label>Precisa de troco?</label>
-      <select id="precisaTroco" onchange="this.value==='Sim'?document.getElementById('valorTroco').style.display='block':document.getElementById('valorTroco').style.display='none'">
-        <option>Não</option><option>Sim</option>
-      </select>
-      <input id="valorTroco" inputmode="numeric" placeholder="Troco para quanto?" style="display:none">`;
-  }else c.innerHTML='';
-}
-
-/* 💰 CALCULA TOTAL */
 function atualizarTotais(){
   const b=document.getElementById('bairro');
   const taxa=parseFloat(b.selectedOptions[0]?.dataset.taxa||0);
-  const subtotal=carrinho.reduce((s,i)=>s+i.preco,0);
+  const subtotal=carrinho.reduce((s,i)=>s+i.preco*i.qtd,0);
   const total=subtotal+taxa;
   document.getElementById('infoTotais').innerHTML=`
     <p><strong>Taxa:</strong> R$${taxa.toFixed(2)}</p>
     <p><strong>💰 Total:</strong> R$${total.toFixed(2)}</p>`;
 }
 
-/* 🧾 MOSTRA RESUMO DO PEDIDO */
 function mostrarResumo(){
   const nome=document.getElementById('nome').value.trim();
   const whats=document.getElementById('whats').value.trim();
@@ -502,22 +425,23 @@ function mostrarResumo(){
   const precisa=document.getElementById('precisaTroco')?.value||'Não';
   const troco=document.getElementById('valorTroco')?.value||'';
   const taxa=parseFloat(bairroSel.selectedOptions[0]?.dataset.taxa||0);
-  const subtotal=carrinho.reduce((s,i)=>s+i.preco,0);
+  const subtotal=carrinho.reduce((s,i)=>s+i.preco*i.qtd,0);
   const total=subtotal+taxa;
 
-  if(!nome||!whats||!bairro||!forma){
-    alert('Preencha todos os campos obrigatórios.');
-    return;
-  }
+  if(!nome||!whats||!bairro||!forma){alert('Preencha todos os campos obrigatórios.');return;}
+
+  let itensHTML='<ul>';
+  carrinho.forEach(i=>{itensHTML+=`<li>${i.nome} x${i.qtd} — R$${(i.preco*i.qtd).toFixed(2)}<br><small>Obs: ${i.obs||'-'}</small></li>`;});
+  itensHTML+='</ul>';
 
   document.getElementById('formCliente').innerHTML=`
     <h3>📦 Resumo do Pedido</h3>
+    ${itensHTML}
     <p><strong>Cliente:</strong> ${nome}</p>
     <p><strong>Endereço:</strong> ${endereco}, ${numero} - ${bairro}</p>
-    <p><strong>Forma de Pagamento:</strong> ${forma}${forma==='Dinheiro' ? ' ('+(precisa==='Sim'?'Troco p/ '+troco:'Sem troco')+')' : ''}</p>
+    <p><strong>Forma de Pagamento:</strong> ${forma}</p>
     <h3 style="color:var(--accent)">Total: R$${total.toFixed(2)}</h3>
-    <button class="finalizar" onclick="enviarPedido('${nome}','${whats}','${cep}','${endereco}','${numero}','${bairro}','${forma}','${precisa}','${troco}',${taxa},${subtotal},${total})">Enviar Pedido</button>
-  `;
+    <button class="finalizar" onclick="enviarPedido('${nome}','${whats}','${cep}','${endereco}','${numero}','${bairro}','${forma}','${precisa}','${troco}',${taxa},${subtotal},${total})">Enviar Pedido</button>`;
 }
 
 /* 🚀 ENVIA PEDIDO PARA O GOOGLE SHEETS E ABRE O WHATSAPP */
