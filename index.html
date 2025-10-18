@@ -107,6 +107,10 @@ button.add:hover{opacity:.85;}
   background:#a12f2f;color:#fff;font-size:12px;
   border-radius:50%;padding:2px 6px;
 }
+#cart-content {
+  overflow-y: auto;
+  max-height: 85vh;
+}
 
   #formCliente {
   margin-top: 10px;
@@ -245,16 +249,22 @@ if (navigator.userAgent.match(/iphone|ipad|ipod/i)) {
 <button id="cart-btn">🛒<span id="cart-count">0</span></button>
 
 <div id="cart-modal">
-  <div class="cart-content">
+  <div class="cart-content" id="cart-content">
     <h3>🧾 Seu Pedido</h3>
     <div class="cart-body" id="cart-body">
       <div id="cart-items"></div>
     </div>
 
-    <!-- O formulário agora fica fora do cart-body -->
-    <div class="summary" id="formCliente" style="display:none;"></div>
+    <!-- ✅ Formulário fora da área com scroll -->
+    <div id="formCliente" class="summary" style="display:none;"></div>
+
+    <!-- ✅ Botão fixo dentro do modal -->
+    <div style="margin-top:10px;">
+      <button class="finalizar" id="btnContinuarCarrinho" style="display:none;" onclick="abrirFormCliente()">Continuar</button>
+    </div>
   </div>
 </div>
+
 
 <!-- ⏳ OVERLAY DE ENVIO -->
 <div id="overlay">
@@ -359,27 +369,22 @@ function addCarrinho(id){
     if(e.target === modal) modal.remove();
   });
 }
-  /* 🧾 RENDERIZA CARRINHO */
 function renderCarrinho() {
-  document.getElementById('cart-count').innerText = carrinho.length;
+  const countEl = document.getElementById('cart-count');
   const div = document.getElementById('cart-items');
+  const btnContinuar = document.getElementById('btnContinuarCarrinho');
   div.innerHTML = '';
-
   carrinho.forEach((item, i) => {
     div.innerHTML += `
       <div class="item-line">
         <span>${item.nome}</span>
         <button onclick="removeItem(${i})">✖</button>
       </div>
-      <small>Obs: ${item.obs || '-'}</small>
-    `;
+      <small>Obs: ${item.obs || '-'}</small>`;
   });
-
-  if (carrinho.length)
-    div.innerHTML += `<button class="finalizar" onclick="abrirFormCliente()">Continuar</button>`;
+  countEl.innerText = carrinho.length;
+  btnContinuar.style.display = carrinho.length ? 'block' : 'none';
 }
-
-
 
 /* ❌ REMOVE ITEM */
 function removeItem(i){carrinho.splice(i,1);renderCarrinho();}
