@@ -121,6 +121,8 @@ input,select{
   border-radius:8px;font-size:14px;background:#fffefb;
 }
 label{font-size:13px;font-weight:600;color:var(--muted);}
+#infoTotais{font-size:14px;margin-top:-4px;color:var(--muted);}
+#infoTotais p strong{color:var(--accent);}
 </style>
 </head>
 <body>
@@ -185,9 +187,7 @@ function renderCarrinho(){
   document.getElementById('cart-count').innerText=carrinho.length;
   const div=document.getElementById('cart-items');
   div.innerHTML='';
-  let subtotal=0;
   carrinho.forEach((item,i)=>{
-    subtotal+=item.preco;
     div.innerHTML+=`
       <div class="item-line">
         <span>${item.nome}</span>
@@ -195,15 +195,6 @@ function renderCarrinho(){
       </div>
       <small>Obs: ${item.obs||'-'}</small>
     `;
-    item.sugestoes.forEach(s=>{
-      const sug=produtos.find(p=>p.id===s);
-      if(sug && !carrinho.some(ci=>ci.id===s)){
-        div.innerHTML+=`<div style="background:#fff8e3;padding:6px;border-radius:8px;margin:4px 0;border:1px solid #e3d5b5;">
-          Sugestão: <strong>${sug.nome}</strong> - R$${sug.preco.toFixed(2)}
-          <button class="add" style="padding:3px 6px;font-size:12px;" onclick="addCarrinho(${sug.id})">Incluir</button>
-        </div>`;
-      }
-    });
   });
   if(carrinho.length)div.innerHTML+=`<button class="finalizar" onclick="abrirFormCliente()">Continuar</button>`;
 }
@@ -225,18 +216,19 @@ function abrirFormCliente(){
     <label>Número</label><input id="numero">
     <label>Ponto de referência</label><input id="ref">
     <label>Bairro</label>
-    <select id="bairro">
+    <select id="bairro" onchange="atualizarTotais()">
       <option value="">Selecione</option>
       <option value="Centro" data-taxa="5">Centro - R$5,00</option>
       <option value="Jardins" data-taxa="8">Jardins - R$8,00</option>
       <option value="Santa Luzia" data-taxa="10">Santa Luzia - R$10,00</option>
     </select>
+    <div id="infoTotais"></div>
     <button class="finalizar" onclick="mostrarResumo()">Ver Resumo</button>
   `;
   IMask(document.getElementById('whats'), {mask: '(00) 00000-0000'});
 }
 
-// Busca endereço via CEP e define bairro automaticamente
+// Busca endereço via CEP, define bairro e atualiza taxa/total automaticamente
 async function buscarEndereco(){
   const cepInput = document.getElementById('cep');
   const cep = cepInput.value.replace(/\D/g,'');
@@ -251,10 +243,10 @@ async function buscarEndereco(){
       return;
     }
 
-    // Preenche o endereço completo
+    // Preenche endereço completo
     document.getElementById('endereco').value = `${j.logradouro}, ${j.bairro} - ${j.localidade}`;
 
-    // Tenta encontrar o bairro correspondente
+    // Seleciona automaticamente o bairro se existir na lista
     const bairroSelect = document.getElementById('bairro');
     let encontrou = false;
     for (let opt of bairroSelect.options){
@@ -264,14 +256,26 @@ async function buscarEndereco(){
         break;
       }
     }
-
-    // Se não encontrar, deixa o usuário escolher manualmente
-    if(!encontrou){
-      bairroSelect.value = "";
-    }
+    if(!encontrou) bairroSelect.value = "";
+    atualizarTotais();
 
   } catch (e) {
     alert('Erro ao consultar CEP. Tente novamente.');
+  }
+}
+
+// Atualiza exibição de taxa e total em tempo real
+function atualizarTotais(){
+  const bairroSel = document.getElementById('bairro');
+  const taxa = parseFloat(bairroSel.selectedOptions[0]?.dataset.taxa || 0);
+  const subtotal = carrinho.reduce((s,i)=>s+i.preco,0);
+  const total = subtotal + taxa;
+  const info = document.getElementById('infoTotais');
+  if(info){
+    info.innerHTML = `
+      <p><strong>Taxa de entrega:</strong> R$${taxa.toFixed(2)}</p>
+      <p><strong>💰 Total parcial:</strong> R$${total.toFixed(2)}</p>
+    `;
   }
 }
 
@@ -299,7 +303,7 @@ function mostrarResumo(){
     <p><strong>WhatsApp:</strong> ${whatsapp}</p>
     <p><strong>Subtotal:</strong> R$${subtotal.toFixed(2)}</p>
     <p><strong>Taxa de entrega:</strong> R$${taxa.toFixed(2)}</p>
-    <h3>Total: R$${total.toFixed(2)}</h3>
+    <h3 style="color:var(--accent)">💰 Total: R$${total.toFixed(2)}</h3>
     <button class="finalizar" onclick="enviarPedido('${nome}','${nasc}','${whatsapp}','${cep}','${endereco}','${numero}','${ref}','${bairro}',${taxa},${subtotal},${total})">Enviar Pedido</button>
   `;
 }
