@@ -433,23 +433,7 @@ async function enviarPedido(nome,whats,cep,endereco,numero,bairro,forma,precisa,
     document.getElementById('overlay').style.display='none';
 
     if(t.includes("ok")){
-      // ✅ Pedido registrado com sucesso
-      const msg=`🍽️ *Novo Pedido Mercatto Delivery*%0A
-👤 *Cliente:* ${nome}%0A
-📞 *WhatsApp:* ${whats}%0A
-🏠 *Endereço:* ${endereco}, ${numero} - ${bairro}%0A
-💳 *Pagamento:* ${forma}${forma==='Dinheiro'?(precisa==='Sim'?' (Troco p/ '+troco+')':' (Sem troco)'):''}%0A
---------------------------%0A
-${carrinho.map(i=>`• ${i.nome}${i.obs?' ('+i.obs+')':''}`).join('%0A')}%0A
---------------------------%0A
-💰 *Subtotal:* R$${subtotal.toFixed(2)}%0A
-🚚 *Taxa:* R$${taxa.toFixed(2)}%0A
-🧾 *Total:* R$${total.toFixed(2)}%0A
---------------------------%0A
-✅ Pedido enviado via site.`;
 
-      const tel="5571987654321"; // 📞 exemplo com DDD 71 e 9 dígitos
-      window.open(`https://wa.me/${tel}?text=${msg}`,"_blank");
 
       // Limpa carrinho e fecha modal
       carrinho=[];
