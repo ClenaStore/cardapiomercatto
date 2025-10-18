@@ -9,52 +9,158 @@
 <style>
 :root{
   --bg:#f4f1ec;--card:#fffaf5;--accent:#b8860b;--ink:#3a2e1f;--muted:#6e6252;
-  --radius:12px;--shadow:0 3px 8px rgba(0,0,0,0.08);
+  --radius:14px;--shadow:0 3px 8px rgba(0,0,0,0.08);
 }
-body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  overflow-x:hidden;
+}
 header{
-  background:var(--accent);color:#fff;text-align:center;padding:20px 10px;
-  font-family:'Playfair Display',serif;font-size:22px;
+  background:var(--accent);
+  color:#fff;
+  text-align:center;
+  padding:18px 10px;
+  font-family:'Playfair Display',serif;
+  font-size:22px;
+  box-shadow:0 2px 5px rgba(0,0,0,0.15);
 }
-.banner{width:92%;margin:20px auto;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);border:3px solid #e0d7c5;}
-.banner img{width:100%;display:block;}
-.container{padding:10px 20px;}
-h2{margin-top:10px;color:var(--accent);font-family:'Playfair Display',serif;border-bottom:1px solid #d7ccbb;padding-bottom:4px;}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px;}
+main{
+  max-width:480px;
+  margin:auto;
+  padding:0 12px 100px;
+}
+.banner{
+  width:100%;
+  margin:18px auto;
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  border:3px solid #e0d7c5;
+}
+.banner img{
+  width:100%;
+  height:160px;
+  object-fit:cover;
+  display:block;
+}
+.section{
+  margin:24px 0;
+}
+.section h2{
+  color:var(--accent);
+  font-family:'Playfair Display',serif;
+  margin-bottom:12px;
+  font-size:20px;
+  border-bottom:1px solid #d7ccbb;
+  padding-bottom:4px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:14px;
+}
 .card{
-  background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
-  overflow:hidden;transition:transform .2s;border:1px solid #e2d8c5;
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  transition:transform .2s;
+  border:1px solid #e2d8c5;
 }
 .card:hover{transform:scale(1.02);}
 .card img{width:100%;height:120px;object-fit:cover;}
-.card-body{padding:10px;}
-.card-body h3{margin:0;font-size:16px;font-family:'Playfair Display',serif;}
+.card-body{padding:10px 12px;}
+.card-body h3{margin:0;font-size:15px;font-family:'Playfair Display',serif;}
 .card-body p{font-size:13px;color:var(--muted);margin:4px 0;}
 .card-body span{font-weight:600;color:var(--accent);}
 button.add{
-  background:var(--accent);color:#fff;border:none;padding:8px;border-radius:var(--radius);
-  width:100%;margin-top:8px;font-weight:600;cursor:pointer;letter-spacing:.3px;
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  padding:8px;
+  border-radius:var(--radius);
+  width:100%;
+  margin-top:8px;
+  font-weight:600;
+  cursor:pointer;
+  letter-spacing:.3px;
 }
-button.add:hover{opacity:.85;}
+button.add:hover{opacity:.9;}
 #cart-btn{
-  position:fixed;bottom:20px;right:20px;background:var(--accent);color:#fff;
-  border:none;border-radius:50%;width:60px;height:60px;box-shadow:var(--shadow);
-  font-size:24px;cursor:pointer;
+  position:fixed;
+  bottom:20px;right:20px;
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  border-radius:50%;
+  width:60px;height:60px;
+  box-shadow:var(--shadow);
+  font-size:24px;
+  cursor:pointer;
+  z-index:50;
 }
-#cart-count{position:absolute;top:5px;right:5px;background:#a12f2f;color:#fff;font-size:12px;border-radius:50%;padding:2px 6px;}
-#cart-modal{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;justify-content:center;align-items:center;z-index:10;}
+#cart-count{
+  position:absolute;
+  top:5px;right:5px;
+  background:#a12f2f;
+  color:#fff;
+  font-size:12px;
+  border-radius:50%;
+  padding:2px 6px;
+}
+#cart-modal{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.55);
+  display:none;justify-content:center;align-items:center;
+  z-index:100;
+}
 .cart-content{
-  background:#fffaf5;width:90%;max-width:430px;border-radius:var(--radius);padding:20px;
-  max-height:90vh;overflow:auto;box-shadow:var(--shadow);border:2px solid #e0d7c5;
+  background:#fffaf5;
+  width:90%;max-width:440px;
+  border-radius:var(--radius);
+  padding:20px;
+  max-height:90vh;overflow:auto;
+  box-shadow:var(--shadow);
+  border:2px solid #e0d7c5;
 }
-.cart-content h3{text-align:center;color:var(--accent);font-family:'Playfair Display',serif;margin-bottom:12px;}
-.item-line{display:flex;justify-content:space-between;align-items:center;margin:6px 0;padding-bottom:6px;border-bottom:1px solid #e6dcc8;}
+.cart-content h3{
+  text-align:center;
+  color:var(--accent);
+  font-family:'Playfair Display',serif;
+  margin-bottom:12px;
+}
+.item-line{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:6px 0;
+  padding-bottom:6px;
+  border-bottom:1px solid #e6dcc8;
+}
 .summary{margin-top:15px;border-top:2px solid #d7ccbb;padding-top:10px;}
 .finalizar{
-  background:var(--accent);color:#fff;border:none;padding:10px;width:100%;
-  border-radius:var(--radius);font-weight:600;margin-top:10px;letter-spacing:.3px;
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  padding:10px;
+  width:100%;
+  border-radius:var(--radius);
+  font-weight:600;
+  margin-top:10px;
+  letter-spacing:.3px;
 }
-input,select{width:100%;padding:10px;margin:6px 0 12px;border:1px solid #d7ccbb;border-radius:8px;font-size:15px;background:#fffefb;}
+input,select{
+  width:100%;
+  padding:10px;
+  margin:6px 0 12px;
+  border:1px solid #d7ccbb;
+  border-radius:8px;
+  font-size:15px;
+  background:#fffefb;
+}
 label{font-size:13px;font-weight:600;color:var(--muted);}
 #infoTotais{font-size:14px;margin-top:-4px;color:var(--muted);}
 #infoTotais p strong{color:var(--accent);}
@@ -73,17 +179,32 @@ label{font-size:13px;font-weight:600;color:var(--muted);}
 
 <header>🍽️ Mercatto Delivery</header>
 
-<div class="banner">
-  <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200" alt="Banner principal">
-</div>
+<main>
+  <div class="banner">
+    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200" alt="Banner principal">
+  </div>
 
-<div class="container">
-  <h2>Cardápio</h2>
-  <div class="grid" id="menu"></div>
-</div>
+  <!-- 🍔 Lanches -->
+  <section class="section">
+    <h2>🍔 Lanches</h2>
+    <div class="grid" id="lanches"></div>
+  </section>
 
+  <!-- 🥤 Bebidas -->
+  <section class="section">
+    <h2>🥤 Bebidas</h2>
+    <div class="grid" id="bebidas"></div>
+  </section>
+
+  <!-- 🍟 Acompanhamentos -->
+  <section class="section">
+    <h2>🍟 Acompanhamentos</h2>
+    <div class="grid" id="acompanhamentos"></div>
+  </section>
+</main>
+
+<!-- 🛒 Carrinho -->
 <button id="cart-btn">🛒<span id="cart-count">0</span></button>
-
 <div id="cart-modal">
   <div class="cart-content">
     <h3>🧾 Seu Pedido</h3>
@@ -92,6 +213,7 @@ label{font-size:13px;font-weight:600;color:var(--muted);}
   </div>
 </div>
 
+<!-- ⏳ Overlay -->
 <div id="overlay">
   <img src="https://i.imgur.com/8Km9tLL.png" alt="logo">
   <p>Enviando seu pedido...<br>Por favor, aguarde 🕒</p>
@@ -99,36 +221,48 @@ label{font-size:13px;font-weight:600;color:var(--muted);}
 
 <script>
 const ENDPOINT="https://script.google.com/macros/s/AKfycbyLxzKH1MflYrVBEzEd4JaYYbAkNi5R13YWzDO9ywt2tqsx113TLYybORrKYGURowak/exec";
-const produtos=[
-  {id:1,nome:'X-Burger',desc:'Pão brioche, carne artesanal e queijo.',preco:18,img:'https://images.unsplash.com/photo-1550547660-d9450f859349?w=400'},
-  {id:2,nome:'Refrigerante Lata',desc:'Lata 350ml',preco:6,img:'https://images.unsplash.com/photo-1613470209869-1b4b4a1c1db2?w=400'},
-  {id:3,nome:'Batata Frita',desc:'Porção individual crocante.',preco:12,img:'https://images.unsplash.com/photo-1606756790138-640a2f1f02c0?w=400'}
-];
-let carrinho=[];
-const menuDiv=document.getElementById('menu');
 
-produtos.forEach(p=>{
-  const c=document.createElement('div');
-  c.className='card';
-  c.innerHTML=`
-    <img src="${p.img}" alt="${p.nome}">
-    <div class="card-body">
-      <h3>${p.nome}</h3>
-      <p>${p.desc}</p>
-      <span>R$${p.preco.toFixed(2)}</span>
-      <button class="add" onclick="addCarrinho(${p.id})">Adicionar</button>
-    </div>`;
-  menuDiv.appendChild(c);
+// Produtos por categoria
+const produtos={
+  lanches:[
+    {id:1,nome:'X-Burger',desc:'Pão brioche, carne artesanal e queijo.',preco:18,img:'https://images.unsplash.com/photo-1550547660-d9450f859349?w=400'},
+    {id:2,nome:'X-Bacon',desc:'Com bacon crocante e queijo duplo.',preco:22,img:'https://images.unsplash.com/photo-1606755962773-0b7b3ffb86a6?w=400'},
+  ],
+  bebidas:[
+    {id:3,nome:'Refrigerante Lata',desc:'Lata 350ml',preco:6,img:'https://images.unsplash.com/photo-1613470209869-1b4b4a1c1db2?w=400'},
+    {id:4,nome:'Suco Natural',desc:'Copo 500ml - Sabores variados.',preco:8,img:'https://images.unsplash.com/photo-1605379399843-5870e1e24b5d?w=400'}
+  ],
+  acompanhamentos:[
+    {id:5,nome:'Batata Frita',desc:'Porção individual crocante.',preco:12,img:'https://images.unsplash.com/photo-1606756790138-640a2f1f02c0?w=400'},
+    {id:6,nome:'Onion Rings',desc:'Anéis de cebola empanados.',preco:14,img:'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400'}
+  ]
+};
+
+let carrinho=[];
+Object.keys(produtos).forEach(sec=>{
+  const container=document.getElementById(sec);
+  produtos[sec].forEach(p=>{
+    const c=document.createElement('div');
+    c.className='card';
+    c.innerHTML=`
+      <img src="${p.img}" alt="${p.nome}">
+      <div class="card-body">
+        <h3>${p.nome}</h3>
+        <p>${p.desc}</p>
+        <span>R$${p.preco.toFixed(2)}</span>
+        <button class="add" onclick="addCarrinho(${p.id})">Adicionar</button>
+      </div>`;
+    container.appendChild(c);
+  });
 });
 
 function addCarrinho(id){
-  const prod=produtos.find(p=>p.id===id);
+  const item=[...produtos.lanches,...produtos.bebidas,...produtos.acompanhamentos].find(p=>p.id===id);
   if(carrinho.find(i=>i.id===id)){alert('Item já está no carrinho');return;}
   let obs=prompt('Alguma observação para este item? (opcional)')||'';
-  carrinho.push({...prod,obs});
+  carrinho.push({...item,obs});
   renderCarrinho();
 }
-
 function renderCarrinho(){
   document.getElementById('cart-count').innerText=carrinho.length;
   const div=document.getElementById('cart-items');div.innerHTML='';
@@ -140,174 +274,4 @@ function renderCarrinho(){
       </div>
       <small>Obs: ${item.obs||'-'}</small>`;
   });
-  if(carrinho.length)div.innerHTML+=`<button class="finalizar" onclick="abrirFormCliente()">Continuar</button>`;
-}
-
-function removeItem(i){carrinho.splice(i,1);renderCarrinho();}
-document.getElementById('cart-btn').onclick=()=>document.getElementById('cart-modal').style.display='flex';
-document.getElementById('cart-modal').onclick=e=>{if(e.target.id==='cart-modal')e.target.style.display='none';};
-
-function abrirFormCliente(){
-  const saved=JSON.parse(localStorage.getItem('cliente')||'{}');
-  const form=document.getElementById('formCliente');
-  form.style.display='block';
-  form.innerHTML=`
-    <h3>📋 Dados do Cliente</h3>
-    <label>Nome completo</label><input id="nome" value="${saved.nome||''}">
-    <label>Data de nascimento</label>
-    <div class="nasc-row">
-      <input id="dia" type="number" inputmode="numeric" min="1" max="31" placeholder="Dia">
-      <select id="mes">
-        <option value="">Mês</option>
-        ${['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'].map((m,i)=>`<option value="${i+1}">${m}</option>`).join('')}
-      </select>
-      <input id="ano" type="number" inputmode="numeric" min="1900" max="2100" placeholder="Ano">
-    </div>
-    <label>WhatsApp</label><input id="whats" type="tel" inputmode="numeric" value="${saved.whats||''}">
-    <label>CEP</label><input id="cep" inputmode="numeric" maxlength="9" onblur="buscarEndereco()" value="${saved.cep||''}">
-    <div id="bairroDetectado" style="font-size:13px;color:var(--muted);margin-top:-6px;"></div>
-    <label>Endereço</label><input id="endereco" value="${saved.endereco||''}">
-    <label>Número</label><input id="numero" type="number" inputmode="numeric" value="${saved.numero||''}">
-    <label>Ponto de referência</label><input id="ref" value="${saved.ref||''}">
-    <label>Bairro</label>
-    <select id="bairro" onchange="atualizarTotais()">
-      <option value="">Selecione</option>
-      <option value="Centro" data-taxa="5">Centro - R$5,00</option>
-      <option value="Vila Brasil" data-taxa="8">Vila Brasil - R$8,00</option>
-      <option value="Santa Luzia" data-taxa="10">Santa Luzia - R$10,00</option>
-    </select>
-    <label>Forma de pagamento</label>
-    <select id="pagamento" onchange="verificarTroco()">
-      <option value="">Selecione</option>
-      <option value="Pix">Pix</option>
-      <option value="Cartão">Cartão</option>
-      <option value="Dinheiro">Dinheiro</option>
-    </select>
-    <div id="campoTroco"></div>
-    <div id="infoTotais"></div>
-    <button class="finalizar" onclick="mostrarResumo()">Ver Resumo</button>
-  `;
-  IMask(document.getElementById('whats'), {mask: '(00) 00000-0000'});
-
-  // Se já tinha bairro salvo
-  if(saved.bairro){
-    const bairroSelect=document.getElementById('bairro');
-    for(let opt of bairroSelect.options){
-      if(opt.value && saved.bairro.toLowerCase().includes(opt.value.toLowerCase())){
-        bairroSelect.value=opt.value;break;
-      }
-    }
-    atualizarTotais();
-    const txt=document.getElementById('bairroDetectado');
-    const taxa=parseFloat(document.getElementById('bairro').selectedOptions[0]?.dataset.taxa||0);
-    txt.innerHTML=`📍 Bairro detectado: <strong>${saved.bairro}</strong> — Taxa: R$${taxa.toFixed(2)}`;
-  }
-}
-
-// 🔹 Busca endereço via CEP
-async function buscarEndereco(){
-  const cep=document.getElementById('cep').value.replace(/\D/g,'');
-  if(cep.length!=8) return;
-  try{
-    const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-    const j=await r.json();
-    if(j.erro) return;
-    document.getElementById('endereco').value=`${j.logradouro}, ${j.bairro} - ${j.localidade}`;
-    const bairroSel=document.getElementById('bairro');
-    let detectado="";
-    for(let o of bairroSel.options){
-      if(o.value && j.bairro && j.bairro.toLowerCase().includes(o.value.toLowerCase())){
-        bairroSel.value=o.value;
-        detectado=o.value;
-        break;
-      }
-    }
-    atualizarTotais();
-    const taxa=parseFloat(bairroSel.selectedOptions[0]?.dataset.taxa||0);
-    document.getElementById('bairroDetectado').innerHTML=
-      detectado ? `📍 Bairro detectado: <strong>${detectado}</strong> — Taxa: R$${taxa.toFixed(2)}` : '';
-
-    // Salva no localStorage
-    const saved=JSON.parse(localStorage.getItem('cliente')||'{}');
-    saved.cep=cep;
-    saved.endereco=document.getElementById('endereco').value;
-    saved.bairro=detectado;
-    localStorage.setItem('cliente',JSON.stringify(saved));
-  }catch(e){console.error(e);}
-}
-
-function verificarTroco(){
-  const forma=document.getElementById('pagamento').value;
-  const c=document.getElementById('campoTroco');
-  if(forma==='Dinheiro'){
-    c.innerHTML=`
-      <label>Precisa de troco?</label>
-      <select id="precisaTroco" onchange="this.value==='Sim'?document.getElementById('valorTroco').style.display='block':document.getElementById('valorTroco').style.display='none'">
-        <option>Não</option><option>Sim</option>
-      </select>
-      <input id="valorTroco" inputmode="numeric" placeholder="Troco para quanto?" style="display:none">`;
-  }else c.innerHTML='';
-}
-
-function atualizarTotais(){
-  const b=document.getElementById('bairro');
-  const taxa=parseFloat(b.selectedOptions[0]?.dataset.taxa||0);
-  const subtotal=carrinho.reduce((s,i)=>s+i.preco,0);
-  const total=subtotal+taxa;
-  document.getElementById('infoTotais').innerHTML=`
-    <p><strong>Taxa:</strong> R$${taxa.toFixed(2)}</p>
-    <p><strong>💰 Total:</strong> R$${total.toFixed(2)}</p>`;
-}
-
-function mostrarResumo(){
-  const nome=document.getElementById('nome').value.trim();
-  const dia=document.getElementById('dia').value;
-  const mes=document.getElementById('mes').value;
-  const ano=document.getElementById('ano').value;
-  const nasc=`${String(dia).padStart(2,'0')}/${String(mes).padStart(2,'0')}/${ano}`;
-  if(!dia||!mes||!ano||dia<1||dia>31||ano<1900){alert("Data de nascimento inválida.");return;}
-  const whats=document.getElementById('whats').value.trim();
-  const cep=document.getElementById('cep').value.trim();
-  const endereco=document.getElementById('endereco').value.trim();
-  const numero=document.getElementById('numero').value.trim();
-  const ref=document.getElementById('ref').value.trim();
-  const bairroSel=document.getElementById('bairro');
-  const bairro=bairroSel.value;
-  const forma=document.getElementById('pagamento').value;
-  const precisa=document.getElementById('precisaTroco')?.value||'Não';
-  const troco=document.getElementById('valorTroco')?.value||'';
-  const taxa=parseFloat(bairroSel.selectedOptions[0]?.dataset.taxa||0);
-  const subtotal=carrinho.reduce((s,i)=>s+i.preco,0);
-  const total=subtotal+taxa;
-  if(!nome||!whats||!bairro||!forma){alert('Preencha todos os campos obrigatórios.');return;}
-  localStorage.setItem('cliente',JSON.stringify({nome,whats,cep,endereco,numero,ref,bairro}));
-  document.getElementById('formCliente').innerHTML=`
-    <h3>📦 Resumo</h3>
-    <p><strong>Cliente:</strong> ${nome}</p>
-    <p><strong>Nascimento:</strong> ${nasc}</p>
-    <p><strong>Endereço:</strong> ${endereco}, ${numero} - ${bairro}</p>
-    <p><strong>Pagamento:</strong> ${forma}${forma==='Dinheiro'?' ('+(precisa==='Sim'?'Troco p/ '+troco:'Sem troco')+')':''}</p>
-    <h3 style="color:var(--accent)">Total: R$${total.toFixed(2)}</h3>
-    <button class="finalizar" onclick="enviarPedido('${nome}','${nasc}','${whats}','${cep}','${endereco}','${numero}','${ref}','${bairro}','${forma}','${precisa}','${troco}',${taxa},${subtotal},${total})">Enviar Pedido</button>`;
-}
-
-async function enviarPedido(nome,nasc,whats,cep,endereco,numero,ref,bairro,forma,precisa,troco,taxa,subtotal,total){
-  document.getElementById('overlay').style.display='flex';
-  const payload={acao:"adicionar",nome,nasc,whats,cep,endereco,numero,ref,bairro,forma,precisa,troco,
-    itens:carrinho.map(i=>i.nome).join(', '),
-    observacoes:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),
-    subtotal,taxa,total};
-  try{
-    const r=await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
-    const t=await r.text();
-    document.getElementById('overlay').style.display='none';
-    if(t.includes("ok")){
-      alert("✅ Pedido enviado com sucesso!");
-      carrinho=[];document.getElementById('cart-modal').style.display='none';renderCarrinho();
-    }else alert("❌ Erro ao registrar pedido.");
-  }catch{document.getElementById('overlay').style.display='none';alert("Erro de conexão.");}
-}
-</script>
-
-</body>
-</html>
+  if(carrinho.length)div.innerHTML+=`<button class="finalizar" onclick="abrir
