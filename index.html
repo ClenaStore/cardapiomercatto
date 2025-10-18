@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#b8860b">
 <link rel="icon" sizes="192x192" href="https://github.com/ClenaStore/cardapiomercatto/blob/main/icons/logo.png?raw=true">
 <link rel="apple-touch-icon" href="https://github.com/ClenaStore/cardapiomercatto/blob/main/icons/logo.png?raw=true">
@@ -14,7 +14,6 @@
 <title>🍽️ Mercatto Delivery</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/imask"></script>
-
 <style>
 /* 🎨 PALETA DE CORES */
 :root{
@@ -28,10 +27,10 @@ html,body{
   width:100%;height:100%;
   font-family:'Inter',sans-serif;
   background:var(--bg);color:var(--ink);
-  overflow-x:hidden;
+  overflow-x:hidden; /* 🚫 impede rolagem lateral */
   scroll-behavior:smooth;
 }
-body.modal-aberto{overflow:hidden;}
+body.modal-aberto{overflow:hidden;} /* 🚫 trava o fundo quando modal aberto */
 
 header{
   background:var(--accent);color:#fff;text-align:center;
@@ -115,6 +114,8 @@ button.add:hover{opacity:.85;}
   display:none;justify-content:center;align-items:center;z-index:999;
   backdrop-filter:blur(3px);
 }
+
+/* Evita scroll do fundo quando o modal está aberto */
 #cart-modal.ativo ~ * {pointer-events:none;}
 #cart-modal.ativo{display:flex;}
 #cart-modal.ativo body{overflow:hidden;}
@@ -167,28 +168,55 @@ label{font-size:13px;font-weight:600;color:var(--muted);}
 }
 #overlay img{width:100px;margin-bottom:20px;animation:pulse 1.2s infinite;}
 @keyframes pulse{0%,100%{opacity:.8}50%{opacity:1}}
-
-/* 🎞️ GALERIA DE IMAGENS */
-.galeria {
-  display: flex;
-  overflow-x: auto;
-  gap: 6px;
-  padding: 4px;
-  scroll-snap-type: x mandatory;
-}
-.galeria img {
-  flex-shrink: 0;
-  width: 100%;
-  max-width: 180px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: var(--radius);
-  scroll-snap-align: start;
-}
 </style>
+
 </head>
+<!-- 📲 BOTÃO DE INSTALAÇÃO PWA -->
+<button id="btnInstall" style="
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  background:#b8860b;color:#fff;border:none;
+  border-radius:30px;padding:12px 22px;
+  font-weight:600;box-shadow:0 3px 6px rgba(0,0,0,0.25);
+  display:none;">📲 Baixar App</button>
+
+<script>
+// ✅ REGISTRA SERVICE WORKER
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js')
+    .then(reg => console.log('Service Worker registrado:', reg.scope))
+    .catch(err => console.error('Erro no SW:', err));
+}
+
+// 📲 BOTÃO "BAIXAR APP"
+let deferredPrompt;
+const btnInstall = document.getElementById('btnInstall');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  btnInstall.style.display = 'block';
+});
+
+btnInstall.addEventListener('click', async () => {
+  btnInstall.style.display = 'none';
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  console.log('Instalação:', outcome);
+  deferredPrompt = null;
+});
+
+// 🍎 iOS - mostra instrução manual
+if (navigator.userAgent.match(/iphone|ipad|ipod/i)) {
+  setTimeout(() => {
+    if (!window.matchMedia('(display-mode: standalone)').matches) {
+      alert('📲 Para instalar, toque em "Compartilhar" (ícone ↗) e escolha "Adicionar à Tela de Início".');
+    }
+  }, 3000);
+}
+</script>
 
 <body>
+
 <header>🍽️ Mercatto Delivery</header>
 
 <!-- 📸 BANNER PRINCIPAL -->
@@ -225,61 +253,13 @@ label{font-size:13px;font-weight:600;color:var(--muted);}
   <p>Enviando seu pedido...<br>Por favor, aguarde 🕒</p>
 </div>
 
-<!-- 📲 BOTÃO DE INSTALAÇÃO PWA -->
-<button id="btnInstall" style="
-  position:fixed;bottom:20px;left:20px;z-index:9999;
-  background:#b8860b;color:#fff;border:none;
-  border-radius:30px;padding:12px 22px;
-  font-weight:600;box-shadow:0 3px 6px rgba(0,0,0,0.25);
-  display:none;">📲 Baixar App</button>
-
 <script>
-/* ✅ REGISTRO SERVICE WORKER + INSTALAÇÃO PWA */
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js')
-    .then(reg => console.log('Service Worker registrado:', reg.scope))
-    .catch(err => console.error('Erro no SW:', err));
-}
-let deferredPrompt;
-const btnInstall = document.getElementById('btnInstall');
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  btnInstall.style.display = 'block';
-});
-btnInstall.addEventListener('click', async () => {
-  btnInstall.style.display = 'none';
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  console.log('Instalação:', outcome);
-  deferredPrompt = null;
-});
-if (navigator.userAgent.match(/iphone|ipad|ipod/i)) {
-  setTimeout(() => {
-    if (!window.matchMedia('(display-mode: standalone)').matches) {
-      alert('📲 Para instalar, toque em "Compartilhar" (ícone ↗) e escolha "Adicionar à Tela de Início".');
-    }
-  }, 3000);
-}
-
 /* 🔗 ENDPOINT DO GOOGLE APPS SCRIPT */
 const ENDPOINT="https://script.google.com/macros/s/AKfycbyLxzKH1MflYrVBEzEd4JaYYbAkNi5R13YWzDO9ywt2tqsx113TLYybORrKYGURowak/exec";
 
-/* 🍔 PRODUTOS DISPONÍVEIS (com suporte a fotos e vídeos) */
-const produtos = [
-  {
-    id: 1,
-    nome: 'X-Burger',
-    desc: 'Pão brioche, carne artesanal e queijo.',
-    preco: 18,
-    categoria: 'Lanches',
-    img: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=400',
-    /*imagens: [
-      'https://images.unsplash.com/photo-1550547660-d9450f859349?w=400',
-      'https://images.unsplash.com/photo-1561758033-7a51a0e4b39a?w=400'
-    ],*/
-    /*video: 'https://www.w3schools.com/html/mov_bbb.mp4'*/
-  },
+/* 🍔 PRODUTOS DISPONÍVEIS */
+const produtos=[
+  {id:1,nome:'X-Burger',desc:'Pão brioche, carne artesanal e queijo.',preco:18,img:'https://images.unsplash.com/photo-1550547660-d9450f859349?w=400',categoria:'Lanches'},
   {id:2,nome:'X-Bacon',desc:'Hambúrguer, queijo e bacon.',preco:22,img:'https://images.unsplash.com/photo-1601050690597-6c0c9f57f3c7?w=400',categoria:'Lanches'},
   {id:3,nome:'Batata Frita',desc:'Porção individual crocante.',preco:12,img:'https://images.unsplash.com/photo-1606756790138-640a2f1f02c0?w=400',categoria:'Acompanhamentos'},
   {id:4,nome:'Anéis de Cebola',desc:'Crocantes e saborosos.',preco:10,img:'https://images.unsplash.com/photo-1601924928361-0f56d1a1f4d2?w=400',categoria:'Acompanhamentos'},
@@ -287,11 +267,15 @@ const produtos = [
   {id:6,nome:'Suco Natural',desc:'Suco de frutas naturais 300ml.',preco:8,img:'https://images.unsplash.com/photo-1577805947697-89e18249d767?w=400',categoria:'Bebidas'}
 ];
 
-let carrinho=[],categoriaAtiva='';
+let carrinho=[];
+let categoriaAtiva='';
+
+/* 🧭 CRIA OS BOTÕES DE CATEGORIA */
 const categoriasDiv=document.getElementById('categorias');
 const menuDiv=document.getElementById('menu');
 const titulo=document.getElementById('tituloCategoria');
 const categoriasUnicas=[...new Set(produtos.map(p=>p.categoria))];
+
 categoriasUnicas.forEach((cat,i)=>{
   const btn=document.createElement('button');
   btn.textContent=cat;
@@ -301,42 +285,18 @@ categoriasUnicas.forEach((cat,i)=>{
 });
 filtrarCategoria(categoriaAtiva);
 
-/* 🧾 FILTRA E EXIBE PRODUTOS */
+/* 🧾 FILTRA E EXIBE PRODUTOS DA CATEGORIA */
 function filtrarCategoria(cat){
   categoriaAtiva=cat;
   titulo.innerText=cat;
   document.querySelectorAll('.categorias button').forEach(b=>b.classList.remove('active'));
   [...categoriasDiv.children].find(b=>b.textContent===cat)?.classList.add('active');
   menuDiv.innerHTML='';
-
   produtos.filter(p=>p.categoria===cat).forEach(p=>{
     const c=document.createElement('div');
     c.className='card';
-
-    // 🔹 Mídia principal (foto, galeria ou vídeo)
-    let midiaHTML = `<img src="${p.img}" alt="${p.nome}">`;
-
-    /* ✅ GALERIA DE IMAGENS
-    if (p.imagens && p.imagens.length > 0) {
-      midiaHTML = `
-        <div class="galeria">
-          ${p.imagens.map(url => `<img src="${url}" alt="${p.nome}">`).join('')}
-        </div>
-      `;
-    } */
-
-    /* ✅ VÍDEO DO PRODUTO
-    if (p.video) {
-      midiaHTML = `
-        <video controls poster="${p.img}" style="width:100%;border-radius:12px;">
-          <source src="${p.video}" type="video/mp4">
-          Seu navegador não suporta vídeos.
-        </video>
-      `;
-    } */
-
-    c.innerHTML = `
-      ${midiaHTML}
+    c.innerHTML=`
+      <img src="${p.img}" alt="${p.nome}">
       <div class="card-body">
         <h3>${p.nome}</h3>
         <p>${p.desc}</p>
@@ -347,7 +307,7 @@ function filtrarCategoria(cat){
   });
 }
 
-/* ➕ CARRINHO + ENVIO (mantido igual ao seu código anterior) */
+/* ➕ ADICIONA ITEM AO CARRINHO */
 function addCarrinho(id){
   const prod=produtos.find(p=>p.id===id);
   if(carrinho.find(i=>i.id===id)){alert('Item já está no carrinho');return;}
@@ -355,6 +315,8 @@ function addCarrinho(id){
   carrinho.push({...prod,obs});
   renderCarrinho();
 }
+
+/* 🧾 RENDERIZA CARRINHO */
 function renderCarrinho(){
   document.getElementById('cart-count').innerText=carrinho.length;
   const div=document.getElementById('cart-items');div.innerHTML='';
@@ -368,43 +330,174 @@ function renderCarrinho(){
   });
   if(carrinho.length)div.innerHTML+=`<button class="finalizar" onclick="abrirFormCliente()">Continuar</button>`;
 }
+
+/* ❌ REMOVE ITEM */
 function removeItem(i){carrinho.splice(i,1);renderCarrinho();}
+
+/* 🛒 ABRE O MODAL DO CARRINHO */
 document.getElementById('cart-btn').onclick=()=>document.getElementById('cart-modal').style.display='flex';
 document.getElementById('cart-modal').onclick=e=>{if(e.target.id==='cart-modal')e.target.style.display='none';};
 
-/* 🧾 FORMULÁRIO E ENVIO (idêntico ao seu) */
+/* 📋 FORMULÁRIO DO CLIENTE */
+function abrirFormCliente(){
+  const saved=JSON.parse(localStorage.getItem('cliente')||'{}');
+  const form=document.getElementById('formCliente');
+  form.style.display='block';
+  form.innerHTML=`
+    <h3>📋 Dados do Cliente</h3>
+    <label>Nome completo</label><input id="nome" value="${saved.nome||''}">
+    <label>WhatsApp</label><input id="whats" type="tel" inputmode="numeric" value="${saved.whats||''}">
+    <label>CEP</label><input id="cep" inputmode="numeric" maxlength="9" onblur="buscarEndereco()" value="${saved.cep||''}">
+    <div id="bairroDetectado" style="font-size:13px;color:var(--muted);margin-top:-6px;"></div>
+    <label>Endereço</label><input id="endereco" value="${saved.endereco||''}">
+    <label>Número</label><input id="numero" type="number" inputmode="numeric" value="${saved.numero||''}">
+    <label>Bairro</label>
+    <select id="bairro" onchange="atualizarTotais()">
+      <option value="">Selecione</option>
+      <option value="Centro" data-taxa="5">Centro - R$5,00</option>
+      <option value="Vila Brasil" data-taxa="8">Vila Brasil - R$8,00</option>
+      <option value="Santa Luzia" data-taxa="10">Santa Luzia - R$10,00</option>
+    </select>
+    <label>Forma de pagamento</label>
+    <select id="pagamento" onchange="verificarTroco()">
+      <option value="">Selecione</option>
+      <option value="Pix">Pix</option>
+      <option value="Cartão">Cartão</option>
+      <option value="Dinheiro">Dinheiro</option>
+    </select>
+    <div id="campoTroco"></div>
+    <div id="infoTotais"></div>
+    <button class="finalizar" onclick="mostrarResumo()">Ver Resumo</button>
+  `;
+  // 📱 Máscara e validação do WhatsApp com DDD + 9 números
+const whatsInput = document.getElementById('whats');
+IMask(whatsInput, {
+  mask: '(00) 00000-0000',
+  lazy: false, // mostra a máscara completa
+});
+
+// validação no blur (quando o campo perde foco)
+whatsInput.addEventListener('blur', ()=>{
+  const num = whatsInput.value.replace(/\D/g,'');
+  if(num.length !== 11){
+    alert('⚠️ O número de WhatsApp deve conter DDD + 9 números.');
+    whatsInput.focus();
+  }
+});
+
+}
+
+/* 🏠 CONSULTA CEP VIA VIACEP */
+async function buscarEndereco(){
+  const cep=document.getElementById('cep').value.replace(/\D/g,'');
+  if(cep.length!=8) return;
+  try{
+    const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const j=await r.json();
+    if(j.erro) return;
+    document.getElementById('endereco').value=`${j.logradouro}, ${j.bairro} - ${j.localidade}`;
+    const bairroSel=document.getElementById('bairro');
+    let detectado="";
+    for(let o of bairroSel.options){
+      if(o.value && j.bairro && j.bairro.toLowerCase().includes(o.value.toLowerCase())){
+        bairroSel.value=o.value;detectado=o.value;break;
+      }
+    }
+    atualizarTotais();
+    const taxa=parseFloat(bairroSel.selectedOptions[0]?.dataset.taxa||0);
+    document.getElementById('bairroDetectado').innerHTML=detectado?`📍 Bairro detectado: <strong>${detectado}</strong> — Taxa: R$${taxa.toFixed(2)}`:'';
+  }catch(e){console.error(e);}
+}
+
+/* 💵 TROCO */
+function verificarTroco(){
+  const forma=document.getElementById('pagamento').value;
+  const c=document.getElementById('campoTroco');
+  if(forma==='Dinheiro'){
+    c.innerHTML=`
+      <label>Precisa de troco?</label>
+      <select id="precisaTroco" onchange="this.value==='Sim'?document.getElementById('valorTroco').style.display='block':document.getElementById('valorTroco').style.display='none'">
+        <option>Não</option><option>Sim</option>
+      </select>
+      <input id="valorTroco" inputmode="numeric" placeholder="Troco para quanto?" style="display:none">`;
+  }else c.innerHTML='';
+}
+
+/* 💰 CALCULA TOTAL */
+function atualizarTotais(){
+  const b=document.getElementById('bairro');
+  const taxa=parseFloat(b.selectedOptions[0]?.dataset.taxa||0);
+  const subtotal=carrinho.reduce((s,i)=>s+i.preco,0);
+  const total=subtotal+taxa;
+  document.getElementById('infoTotais').innerHTML=`
+    <p><strong>Taxa:</strong> R$${taxa.toFixed(2)}</p>
+    <p><strong>💰 Total:</strong> R$${total.toFixed(2)}</p>`;
+}
+
+/* 🧾 MOSTRA RESUMO DO PEDIDO */
+function mostrarResumo(){
+  const nome=document.getElementById('nome').value.trim();
+  const whats=document.getElementById('whats').value.trim();
+  const cep=document.getElementById('cep').value.trim();
+  const endereco=document.getElementById('endereco').value.trim();
+  const numero=document.getElementById('numero').value.trim();
+  const bairroSel=document.getElementById('bairro');
+  const bairro=bairroSel.value;
+  const forma=document.getElementById('pagamento').value;
+  const precisa=document.getElementById('precisaTroco')?.value||'Não';
+  const troco=document.getElementById('valorTroco')?.value||'';
+  const taxa=parseFloat(bairroSel.selectedOptions[0]?.dataset.taxa||0);
+  const subtotal=carrinho.reduce((s,i)=>s+i.preco,0);
+  const total=subtotal+taxa;
+
+  if(!nome||!whats||!bairro||!forma){
+    alert('Preencha todos os campos obrigatórios.');
+    return;
+  }
+
+  document.getElementById('formCliente').innerHTML=`
+    <h3>📦 Resumo do Pedido</h3>
+    <p><strong>Cliente:</strong> ${nome}</p>
+    <p><strong>Endereço:</strong> ${endereco}, ${numero} - ${bairro}</p>
+    <p><strong>Forma de Pagamento:</strong> ${forma}${forma==='Dinheiro' ? ' ('+(precisa==='Sim'?'Troco p/ '+troco:'Sem troco')+')' : ''}</p>
+    <h3 style="color:var(--accent)">Total: R$${total.toFixed(2)}</h3>
+    <button class="finalizar" onclick="enviarPedido('${nome}','${whats}','${cep}','${endereco}','${numero}','${bairro}','${forma}','${precisa}','${troco}',${taxa},${subtotal},${total})">Enviar Pedido</button>
+  `;
+}
+
+/* 🚀 ENVIA PEDIDO PARA O GOOGLE SHEETS E ABRE O WHATSAPP */
 async function enviarPedido(nome,whats,cep,endereco,numero,bairro,forma,precisa,troco,taxa,subtotal,total){
   document.getElementById('overlay').style.display='flex';
-  const payload = {
-    acao: "adicionar",
+
+  const payload={
+    acao:"adicionar",
     nome,whats,cep,endereco,numero,bairro,forma,precisa,troco,
-    itens: carrinho.map(i=>i.nome).join(', '),
-    observacoes: carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),
+    itens:carrinho.map(i=>i.nome).join(', '),
+    observacoes:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),
     subtotal,taxa,total
   };
 
-  try {
-    const r = await fetch(ENDPOINT, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    });
-    const t = await r.text();
+  try{
+    const r=await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
+    const t=await r.text();
 
     document.getElementById('overlay').style.display='none';
 
-    if (t.includes("ok")) {
-      // 🧹 Limpa carrinho e fecha modal
-      carrinho = [];
-      document.getElementById('cart-modal').style.display = 'none';
+    if(t.includes("ok")){
+
+
+      // Limpa carrinho e fecha modal
+      carrinho=[];
+      document.getElementById('cart-modal').style.display='none';
       renderCarrinho();
 
-      // ✅ Mensagem de sucesso
-      alert("✅ Pedido enviado com sucesso! Aguarde a confirmação.");
-    } else {
+      // Mensagem de confirmação visual
+      alert("✅ Pedido enviado com sucesso! Aguarde a confirmação pelo WhatsApp.");
+    }else{
       alert("❌ Erro ao registrar o pedido na planilha.");
     }
 
-  } catch (e) {
+  }catch(e){
     document.getElementById('overlay').style.display='none';
     alert("⚠️ Erro de conexão. Tente novamente em alguns segundos.");
     console.error(e);
