@@ -286,8 +286,7 @@ function mostrarResumo(){
     <h3>📦 Resumo</h3>
     <p><strong>Cliente:</strong> ${nome}</p>
     <p><strong>Endereço:</strong> ${endereco}, ${numero} - ${bairro}</p>
-    <p><strong>Pagamento:</strong> ${forma}${forma==='Dinheiro
-'?' ('+(precisa==='Sim'?'Troco p/ '+troco:'Sem troco')+')':''}</p>
+    <p><strong>Pagamento:</strong> ${forma}${forma==='Dinheiro'?' ('+(precisa==='Sim'?'Troco p/ '+troco:'Sem troco')+')':''}</p>
     <h3 style="color:var(--accent)">Total: R$${total.toFixed(2)}</h3>
     <button class="finalizar" onclick="enviarPedido('${nome}','${whats}','${cep}','${endereco}','${numero}','${bairro}','${forma}','${precisa}','${troco}',${taxa},${subtotal},${total})">Enviar Pedido</button>`;
 }
@@ -322,7 +321,7 @@ ${carrinho.map(i=>`• ${i.nome}${i.obs?' ('+i.obs+')':''}`).join('%0A')}%0A
 🧾 *Total:* R$${total.toFixed(2)}%0A
 --------------------------%0A
 ✅ Pedido enviado via site.`;
-      const tel="5571999999999"; // substitua pelo número do estabelecimento
+      const tel="5571999999999"; // substitua pelo número do restaurante
       window.open(`https://wa.me/${tel}?text=${msg}`,"_blank");
 
       carrinho=[];
