@@ -230,22 +230,25 @@ if (navigator.userAgent.match(/iphone|ipad|ipod/i)) {
 <body>
 
 <header>🍽️ Mercatto Delivery</header>
-<div id="statusLoja" style="
-  text-align:center;
-  font-weight:600;
-  margin:10px auto;
-  color:#fff;
-  border-radius:8px;
-  padding:8px 16px;
-  width:fit-content;
-  background:#dc2626;">
-  Verificando horário...
+
+<div class="banner" style="position:relative;">
+  <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200" alt="Banner principal">
+  <div id="statusLoja" style="
+    position:absolute;
+    top:10px;left:10px;
+    background:rgba(0,0,0,0.6);
+    color:#fff;
+    padding:6px 14px;
+    border-radius:8px;
+    font-weight:600;
+    font-size:14px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.3);
+    backdrop-filter:blur(3px);
+    ">
+    Verificando horário...
+  </div>
 </div>
 
-<!-- 📸 BANNER PRINCIPAL -->
-<div class="banner">
-  <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200" alt="Banner principal">
-</div>
 
 <!-- 🧭 BOTÕES DE CATEGORIA -->
 <div class="categorias" id="categorias"></div>
@@ -550,6 +553,12 @@ ${resumoItens}
 /* 🚀 ENVIA PEDIDO PARA O GOOGLE SHEETS E ABRE O WHATSAPP */
 async function enviarPedido(nome,whats,cep,endereco,numero,bairro,forma,precisa,troco,taxa,subtotal,total){
   document.getElementById('overlay').style.display='flex';
+  // Impede envio se o restaurante estiver fechado
+if (!lojaAberta()) {
+  alert("⚠️ O restaurante está fechado no momento. Tente novamente durante o horário de funcionamento.");
+  return;
+}
+
 
   const payload={
     acao:"adicionar",
@@ -606,8 +615,10 @@ function lojaAberta() {
 }
 
 function atualizarStatusLoja() {
-  const aberto = lojaAberta();
   const div = document.getElementById('statusLoja');
+  if (!div) return; // segurança caso o elemento ainda não exista
+  const aberto = lojaAberta();
+
   if (aberto) {
     div.textContent = '🟢 Aberto agora';
     div.style.background = '#16a34a';
