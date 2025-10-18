@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>🍽️ Mercatto Delivery</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/imask"></script>
@@ -28,7 +28,6 @@ header{
   text-align:center;
   padding:20px 10px;
   font-family:'Playfair Display',serif;
-  letter-spacing:0.5px;
   font-size:22px;
 }
 .banner{
@@ -40,7 +39,6 @@ header{
   border:3px solid #e0d7c5;
 }
 .banner img{width:100%;display:block;}
-
 .container{padding:10px 20px;}
 h2{
   margin-top:10px;
@@ -49,7 +47,6 @@ h2{
   border-bottom:1px solid #d7ccbb;
   padding-bottom:4px;
 }
-
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
@@ -75,10 +72,9 @@ button.add{
   background:var(--accent);
   color:#fff;border:none;padding:8px;border-radius:var(--radius);
   width:100%;margin-top:8px;font-weight:600;cursor:pointer;
-  font-family:'Inter',sans-serif;letter-spacing:.3px;
+  letter-spacing:.3px;
 }
 button.add:hover{opacity:.85;}
-
 #cart-btn{
   position:fixed;bottom:20px;right:20px;background:var(--accent);color:#fff;
   border:none;border-radius:50%;width:60px;height:60px;box-shadow:var(--shadow);
@@ -99,10 +95,8 @@ button.add:hover{opacity:.85;}
   border:2px solid #e0d7c5;
 }
 .cart-content h3{
-  text-align:center;
-  color:var(--accent);
-  font-family:'Playfair Display',serif;
-  margin-bottom:12px;
+  text-align:center;color:var(--accent);
+  font-family:'Playfair Display',serif;margin-bottom:12px;
 }
 .item-line{
   display:flex;justify-content:space-between;align-items:center;
@@ -115,10 +109,14 @@ button.add:hover{opacity:.85;}
   border-radius:var(--radius);font-weight:600;margin-top:10px;
   letter-spacing:.3px;
 }
-.finalizar:hover{opacity:.9;}
-input,select{
-  width:100%;padding:8px;margin:4px 0 10px;border:1px solid #d7ccbb;
-  border-radius:8px;font-size:14px;background:#fffefb;
+input,select,textarea{
+  width:100%;
+  padding:10px;
+  margin:6px 0 12px;
+  border:1px solid #d7ccbb;
+  border-radius:8px;
+  font-size:15px;
+  background:#fffefb;
 }
 label{font-size:13px;font-weight:600;color:var(--muted);}
 #infoTotais{font-size:14px;margin-top:-4px;color:var(--muted);}
@@ -149,7 +147,7 @@ label{font-size:13px;font-weight:600;color:var(--muted);}
 </div>
 
 <script>
-// ENDPOINT DO GOOGLE APPS SCRIPT
+// Endpoint Google Apps Script
 const ENDPOINT = "https://script.google.com/macros/s/AKfycbx5DEV71oL0i8vCfMZ62XawG30Qj_lhzz4nDha7LFklmWZTGxIRcl9fh-_p-PR8cxsi/exec";
 
 const produtos=[
@@ -159,6 +157,7 @@ const produtos=[
 ];
 let carrinho=[];
 
+// Monta cardápio
 const menuDiv=document.getElementById('menu');
 produtos.forEach(p=>{
   const c=document.createElement('div');
@@ -174,10 +173,10 @@ produtos.forEach(p=>{
   menuDiv.appendChild(c);
 });
 
+// Adiciona item
 function addCarrinho(id){
   const prod=produtos.find(p=>p.id===id);
-  const existe=carrinho.find(i=>i.id===id);
-  if(existe){alert('Item já está no carrinho');return;}
+  if(carrinho.find(i=>i.id===id)){alert('Item já está no carrinho');return;}
   let obs=prompt('Alguma observação para este item? (opcional)')||'';
   carrinho.push({...prod,obs});
   renderCarrinho();
@@ -196,24 +195,25 @@ function renderCarrinho(){
       <small>Obs: ${item.obs||'-'}</small>
     `;
   });
-  if(carrinho.length)div.innerHTML+=`<button class="finalizar" onclick="abrirFormCliente()">Continuar</button>`;
+  if(carrinho.length)
+    div.innerHTML+=`<button class="finalizar" onclick="abrirFormCliente()">Continuar</button>`;
 }
-
 function removeItem(i){carrinho.splice(i,1);renderCarrinho();}
 document.getElementById('cart-btn').onclick=()=>document.getElementById('cart-modal').style.display='flex';
 document.getElementById('cart-modal').onclick=e=>{if(e.target.id==='cart-modal')e.target.style.display='none';};
 
+// Formulário
 function abrirFormCliente(){
   const form=document.getElementById('formCliente');
   form.style.display='block';
   form.innerHTML=`
     <h3>📋 Dados do Cliente</h3>
-    <label>Nome completo</label><input id="nome">
-    <label>Data de nascimento</label><input type="date" id="nasc">
-    <label>WhatsApp</label><input id="whats">
-    <label>CEP</label><input id="cep" maxlength="9" onblur="buscarEndereco()">
-    <label>Endereço</label><input id="endereco">
-    <label>Número</label><input id="numero">
+    <label>Nome completo</label><input id="nome" autocomplete="name">
+    <label>Data de nascimento</label><input id="nasc" placeholder="Ex: 10 jan 1990" onblur="corrigirData()">
+    <label>WhatsApp</label><input id="whats" type="tel" inputmode="numeric" autocomplete="tel">
+    <label>CEP</label><input id="cep" inputmode="numeric" maxlength="9" onblur="buscarEndereco()">
+    <label>Endereço</label><input id="endereco" autocomplete="address-line1">
+    <label>Número</label><input id="numero" type="number" inputmode="numeric">
     <label>Ponto de referência</label><input id="ref">
     <label>Bairro</label>
     <select id="bairro" onchange="atualizarTotais()">
@@ -228,105 +228,102 @@ function abrirFormCliente(){
   IMask(document.getElementById('whats'), {mask: '(00) 00000-0000'});
 }
 
-// Busca endereço via CEP, define bairro e atualiza taxa/total automaticamente
+// Corrige data digitada (aceita número ou nome do mês)
+function corrigirData(){
+  const input=document.getElementById('nasc');
+  let v=input.value.trim().toLowerCase().replaceAll('-', ' ').replaceAll('/', ' ');
+  const meses={
+    janeiro:1,fevereiro:2,março:3,marco:3,abril:4,maio:5,junho:6,
+    julho:7,agosto:8,setembro:9,outubro:10,novembro:11,dezembro:12
+  };
+  const partes=v.split(' ').filter(Boolean);
+  let dia,mes,ano;
+  for(let p of partes){
+    if(!isNaN(p)&&p.length<=2&&!dia) dia=parseInt(p);
+    else if(!isNaN(p)&&p.length>=4&&!ano) ano=parseInt(p);
+    else if(meses[p]) mes=meses[p];
+    else if(parseInt(p)>=1&&parseInt(p)<=12&&!mes) mes=parseInt(p);
+  }
+  if(ano && ano<100) ano+=1900;
+  if(dia&&mes&&ano){
+    input.value=`${String(dia).padStart(2,'0')}/${String(mes).padStart(2,'0')}/${ano}`;
+  }
+}
+
+// Busca endereço via CEP
 async function buscarEndereco(){
-  const cepInput = document.getElementById('cep');
-  const cep = cepInput.value.replace(/\D/g,'');
-  if(cep.length != 8) return;
-
-  try {
-    const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-    const j = await r.json();
-
-    if(j.erro){
-      alert('CEP não encontrado. Preencha o endereço manualmente.');
-      return;
-    }
-
-    // Preenche endereço completo
-    document.getElementById('endereco').value = `${j.logradouro}, ${j.bairro} - ${j.localidade}`;
-
-    // Seleciona automaticamente o bairro se existir na lista
-    const bairroSelect = document.getElementById('bairro');
-    let encontrou = false;
-    for (let opt of bairroSelect.options){
-      if(opt.value && j.bairro && j.bairro.toLowerCase().includes(opt.value.toLowerCase())){
-        bairroSelect.value = opt.value;
-        encontrou = true;
-        break;
+  const cep=document.getElementById('cep').value.replace(/\D/g,'');
+  if(cep.length!=8) return;
+  try{
+    const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const j=await r.json();
+    if(j.erro){alert('CEP não encontrado.');return;}
+    document.getElementById('endereco').value=`${j.logradouro}, ${j.bairro} - ${j.localidade}`;
+    const bairroSel=document.getElementById('bairro');
+    let encontrou=false;
+    for(let o of bairroSel.options){
+      if(o.value && j.bairro && j.bairro.toLowerCase().includes(o.value.toLowerCase())){
+        bairroSel.value=o.value;encontrou=true;break;
       }
     }
-    if(!encontrou) bairroSelect.value = "";
+    if(!encontrou) bairroSel.value="";
     atualizarTotais();
-
-  } catch (e) {
-    alert('Erro ao consultar CEP. Tente novamente.');
-  }
+  }catch(e){alert('Erro ao buscar CEP');}
 }
 
-// Atualiza exibição de taxa e total em tempo real
+// Atualiza totais
 function atualizarTotais(){
-  const bairroSel = document.getElementById('bairro');
-  const taxa = parseFloat(bairroSel.selectedOptions[0]?.dataset.taxa || 0);
-  const subtotal = carrinho.reduce((s,i)=>s+i.preco,0);
-  const total = subtotal + taxa;
-  const info = document.getElementById('infoTotais');
-  if(info){
-    info.innerHTML = `
-      <p><strong>Taxa de entrega:</strong> R$${taxa.toFixed(2)}</p>
-      <p><strong>💰 Total parcial:</strong> R$${total.toFixed(2)}</p>
-    `;
-  }
+  const b=document.getElementById('bairro');
+  const taxa=parseFloat(b.selectedOptions[0]?.dataset.taxa||0);
+  const subtotal=carrinho.reduce((s,i)=>s+i.preco,0);
+  const total=subtotal+taxa;
+  document.getElementById('infoTotais').innerHTML=`
+    <p><strong>Taxa de entrega:</strong> R$${taxa.toFixed(2)}</p>
+    <p><strong>💰 Total parcial:</strong> R$${total.toFixed(2)}</p>`;
 }
 
+// Mostra resumo
 function mostrarResumo(){
   const nome=document.getElementById('nome').value.trim();
-  const nasc=document.getElementById('nasc').value;
-  const whatsapp=document.getElementById('whats').value.trim();
+  const nasc=document.getElementById('nasc').value.trim();
+  const whats=document.getElementById('whats').value.trim();
   const cep=document.getElementById('cep').value.trim();
-  const endereco=document.getElementById('endereco').value.trim();
-  const numero=document.getElementById('numero').value.trim();
+  const end=document.getElementById('endereco').value.trim();
+  const num=document.getElementById('numero').value.trim();
   const ref=document.getElementById('ref').value.trim();
   const bairroSel=document.getElementById('bairro');
   const bairro=bairroSel.value;
   const taxa=parseFloat(bairroSel.selectedOptions[0]?.dataset.taxa||0);
   const subtotal=carrinho.reduce((s,i)=>s+i.preco,0);
   const total=subtotal+taxa;
-
-  if(!nome||!whatsapp||!bairro){alert('Preencha os campos obrigatórios.');return;}
-
-  const form=document.getElementById('formCliente');
-  form.innerHTML=`
+  if(!nome||!whats||!bairro){alert('Preencha os campos obrigatórios.');return;}
+  document.getElementById('formCliente').innerHTML=`
     <h3>📦 Resumo do Pedido</h3>
     <p><strong>Cliente:</strong> ${nome}</p>
-    <p><strong>Endereço:</strong> ${endereco}, ${numero} - ${bairro}</p>
-    <p><strong>WhatsApp:</strong> ${whatsapp}</p>
+    <p><strong>Nascimento:</strong> ${nasc}</p>
+    <p><strong>Endereço:</strong> ${end}, ${num} - ${bairro}</p>
+    <p><strong>WhatsApp:</strong> ${whats}</p>
     <p><strong>Subtotal:</strong> R$${subtotal.toFixed(2)}</p>
-    <p><strong>Taxa de entrega:</strong> R$${taxa.toFixed(2)}</p>
+    <p><strong>Taxa:</strong> R$${taxa.toFixed(2)}</p>
     <h3 style="color:var(--accent)">💰 Total: R$${total.toFixed(2)}</h3>
-    <button class="finalizar" onclick="enviarPedido('${nome}','${nasc}','${whatsapp}','${cep}','${endereco}','${numero}','${ref}','${bairro}',${taxa},${subtotal},${total})">Enviar Pedido</button>
+    <button class="finalizar" onclick="enviarPedido('${nome}','${nasc}','${whats}','${cep}','${end}','${num}','${ref}','${bairro}',${taxa},${subtotal},${total})">Enviar Pedido</button>
   `;
 }
 
-async function enviarPedido(nome,nasc,whatsapp,cep,endereco,numero,ref,bairro,taxa,subtotal,total){
-  const payload={
-    acao:"adicionar",
-    nome,nasc,whatsapp,cep,endereco,numero,ref,bairro,
+// Envio
+async function enviarPedido(nome,nasc,whats,cep,endereco,numero,ref,bairro,taxa,subtotal,total){
+  const payload={acao:"adicionar",nome,nasc,whats,cep,endereco,numero,ref,bairro,
     itens:carrinho.map(i=>i.nome).join(', '),
     observacoes:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),
-    subtotal,taxa,total
-  };
+    subtotal,taxa,total};
   try{
     const r=await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
-    const txt=await r.text();
-    if(txt.includes("ok")){
+    const t=await r.text();
+    if(t.includes("ok")){
       alert("✅ Pedido enviado com sucesso!");
-      carrinho=[];document.getElementById('cart-modal').style.display='none';
-      renderCarrinho();
-    }else{
-      alert("❌ Erro ao registrar pedido. Tente novamente.");
-    }
-  }catch(e){alert("Erro de conexão com o servidor.");}
+      carrinho=[];document.getElementById('cart-modal').style.display='none';renderCarrinho();
+    }else alert("❌ Erro ao registrar pedido.");
+  }catch{alert("Erro de conexão com o servidor.");}
 }
 </script>
 </body>
