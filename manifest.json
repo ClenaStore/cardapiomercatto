@@ -1,0 +1,20 @@
+{
+  "name": "Mercatto Delivery",
+  "short_name": "Mercatto",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#f4f1ec",
+  "theme_color": "#b8860b",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
