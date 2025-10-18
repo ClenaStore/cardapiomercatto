@@ -307,29 +307,70 @@ function filtrarCategoria(cat){
   });
 }
 
-/* ➕ ADICIONA ITEM AO CARRINHO */
 function addCarrinho(id){
-  const prod=produtos.find(p=>p.id===id);
-  if(carrinho.find(i=>i.id===id)){alert('Item já está no carrinho');return;}
-  let obs=prompt('Alguma observação para este item? (opcional)')||'';
-  carrinho.push({...prod,obs});
-  renderCarrinho();
-}
+  const prod = produtos.find(p=>p.id===id);
+  if(carrinho.find(i=>i.id===id)){
+    alert('Item já está no carrinho');
+    return;
+  }
 
-/* 🧾 RENDERIZA CARRINHO */
-function renderCarrinho(){
-  document.getElementById('cart-count').innerText=carrinho.length;
-  const div=document.getElementById('cart-items');div.innerHTML='';
-  carrinho.forEach((item,i)=>{
-    div.innerHTML+=`
+  // Cria o modal visual
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position:fixed;inset:0;background:rgba(0,0,0,0.4);
+    display:flex;align-items:center;justify-content:center;z-index:10000;
+  `;
+  modal.innerHTML = `
+    <div style="
+      background:#fffaf5;padding:25px;border-radius:10px;
+      box-shadow:0 3px 8px rgba(0,0,0,0.25);max-width:300px;width:90%;
+      text-align:center;font-family:Inter,sans-serif;">
+      <h3 style="color:#b8860b;font-family:'Playfair Display',serif;margin-bottom:8px;">🧾 Seu Pedido</h3>
+      <p>${prod.nome}</p>
+      <label>Obs:</label><br>
+      <input id="obsTemp" placeholder="(opcional)" style="width:100%;padding:6px;margin-top:5px;border-radius:6px;border:1px solid #d7ccbb;">
+      <button id="btnConfirma" style="
+        margin-top:15px;background:#b8860b;color:#fff;border:none;
+        padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;">
+        Continuar
+      </button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  document.getElementById('btnConfirma').onclick = () => {
+    const obs = document.getElementById('obsTemp').value || '';
+    carrinho.push({...prod, obs});
+    renderCarrinho();
+    modal.remove();
+  };
+
+  // Fecha ao clicar fora
+  modal.addEventListener('click', e => {
+    if(e.target === modal) modal.remove();
+  });
+}
+  /* 🧾 RENDERIZA CARRINHO */
+function renderCarrinho() {
+  document.getElementById('cart-count').innerText = carrinho.length;
+  const div = document.getElementById('cart-items');
+  div.innerHTML = '';
+
+  carrinho.forEach((item, i) => {
+    div.innerHTML += `
       <div class="item-line">
         <span>${item.nome}</span>
         <button onclick="removeItem(${i})">✖</button>
       </div>
-      <small>Obs: ${item.obs||'-'}</small>`;
+      <small>Obs: ${item.obs || '-'}</small>
+    `;
   });
-  if(carrinho.length)div.innerHTML+=`<button class="finalizar" onclick="abrirFormCliente()">Continuar</button>`;
+
+  if (carrinho.length)
+    div.innerHTML += `<button class="finalizar" onclick="abrirFormCliente()">Continuar</button>`;
 }
+
+
 
 /* ❌ REMOVE ITEM */
 function removeItem(i){carrinho.splice(i,1);renderCarrinho();}
