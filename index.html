@@ -318,7 +318,22 @@ function abrirFormCliente(){
     <div id="infoTotais"></div>
     <button class="finalizar" onclick="mostrarResumo()">Ver Resumo</button>
   `;
-  IMask(document.getElementById('whats'), {mask: '(00) 00000-0000'});
+  // 📱 Máscara e validação do WhatsApp com DDD + 9 números
+const whatsInput = document.getElementById('whats');
+IMask(whatsInput, {
+  mask: '(00) 00000-0000',
+  lazy: false, // mostra a máscara completa
+});
+
+// validação no blur (quando o campo perde foco)
+whatsInput.addEventListener('blur', ()=>{
+  const num = whatsInput.value.replace(/\D/g,'');
+  if(num.length !== 11){
+    alert('⚠️ O número de WhatsApp deve conter DDD + 9 números.');
+    whatsInput.focus();
+  }
+});
+
 }
 
 /* 🏠 CONSULTA CEP VIA VIACEP */
@@ -433,7 +448,7 @@ ${carrinho.map(i=>`• ${i.nome}${i.obs?' ('+i.obs+')':''}`).join('%0A')}%0A
 --------------------------%0A
 ✅ Pedido enviado via site.`;
 
-      const tel="5571999999999"; // 🔧 altere para o número real do restaurante
+      const tel="5571987654321"; // 📞 exemplo com DDD 71 e 9 dígitos
       window.open(`https://wa.me/${tel}?text=${msg}`,"_blank");
 
       // Limpa carrinho e fecha modal
