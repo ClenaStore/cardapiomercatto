@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>🍔 Mercatto Delivery</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/imask"></script>
 <style>
 :root{
   --bg:#f6f8fa;--card:#fff;--accent:#06b6d4;--ink:#111;--muted:#555;
@@ -55,7 +56,7 @@ button.add:hover{opacity:.9;}
   justify-content:center;align-items:center;z-index:10;
 }
 .cart-content{
-  background:#fff;width:90%;max-width:400px;border-radius:var(--radius);
+  background:#fff;width:90%;max-width:420px;border-radius:var(--radius);
   padding:20px;max-height:90vh;overflow:auto;
 }
 .cart-content h3{text-align:center;color:var(--accent);}
@@ -67,6 +68,11 @@ button.add:hover{opacity:.9;}
   border-radius:var(--radius);font-weight:600;margin-top:10px;
 }
 .finalizar:hover{opacity:.9;}
+input,select{
+  width:100%;padding:8px;margin:4px 0 10px;border:1px solid #ccc;border-radius:8px;
+  font-size:14px;
+}
+label{font-size:13px;font-weight:600;color:var(--muted);}
 </style>
 </head>
 <body>
@@ -90,27 +96,14 @@ button.add:hover{opacity:.9;}
   <div class="cart-content">
     <h3>🧾 Seu Pedido</h3>
     <div id="cart-items"></div>
-
-    <div class="summary">
-      <label>Bairro:
-        <select id="bairro">
-          <option value="">Selecione</option>
-          <option value="Centro" data-taxa="5">Centro - R$5,00</option>
-          <option value="Jardins" data-taxa="8">Jardins - R$8,00</option>
-          <option value="Santa Luzia" data-taxa="10">Santa Luzia - R$10,00</option>
-        </select>
-      </label>
-      <p>Taxa de entrega: <span id="taxa">R$0,00</span></p>
-      <p><strong>Total: <span id="total">R$0,00</span></strong></p>
-      <button class="finalizar" id="btnFinalizar">Finalizar Pedido</button>
-    </div>
+    <div class="summary" id="formCliente" style="display:none;"></div>
   </div>
 </div>
 
 <script>
 // CONFIGURAÇÃO DO ENDPOINT GOOGLE APPS SCRIPT
 const ENDPOINT = "https://script.google.com/macros/s/AKfycbx5DEV71oL0i8vCfMZ62XawG30Qj_lhzz4nDha7LFklmWZTGxIRcl9fh-_p-PR8cxsi/exec"; // substitua depois
-
+  
 const produtos=[
   {id:1,nome:'X-Burger',desc:'Pão, carne, queijo, alface e tomate.',preco:15,img:'https://images.unsplash.com/photo-1606755962773-0f3d2d4b0c5b?w=400',sugestoes:[2,3]},
   {id:2,nome:'Refrigerante Lata',desc:'Lata 350ml',preco:5,img:'https://images.unsplash.com/photo-1606813902915-76ef7d1a6c4d?w=400',sugestoes:[]},
@@ -168,58 +161,96 @@ function renderCarrinho(){
       }
     });
   });
-  const bairroSel=document.getElementById('bairro');
-  const taxa=parseFloat(bairroSel.selectedOptions[0]?.dataset.taxa||0);
-  const total=subtotal+taxa;
-  document.getElementById('taxa').innerText=`R$${taxa.toFixed(2)}`;
-  document.getElementById('total').innerText=`R$${total.toFixed(2)}`;
+  div.innerHTML+=`<button class="finalizar" onclick="abrirFormCliente()">Finalizar Pedido</button>`;
 }
 
 function removeItem(i){carrinho.splice(i,1);renderCarrinho();}
 document.getElementById('cart-btn').onclick=()=>document.getElementById('cart-modal').style.display='flex';
 document.getElementById('cart-modal').onclick=e=>{if(e.target.id==='cart-modal')e.target.style.display='none';};
-document.getElementById('bairro').onchange=renderCarrinho;
 
-// FINALIZAÇÃO DO PEDIDO
-document.getElementById('btnFinalizar').onclick=async ()=>{
-  if(!carrinho.length)return alert('Carrinho vazio!');
-  const nome=prompt('Nome completo:');
-  const nasc=prompt('Data de nascimento (dd/mm/aaaa):');
-  const whatsapp=prompt('WhatsApp (somente números):');
-  const cep=prompt('CEP:');
-  const endereco=await buscarEndereco(cep);
-  const numero=prompt('Número da casa:');
-  const ref=prompt('Ponto de referência:');
+// Formulário de cliente
+function abrirFormCliente(){
+  const subtotal=carrinho.reduce((s,i)=>s+i.preco,0);
+  const form=document.getElementById('formCliente');
+  form.style.display='block';
+  form.innerHTML=`
+    <h3>📋 Dados do Cliente</h3>
+    <label>Nome completo</label><input id="nome">
+    <label>Data de nascimento</label><input type="date" id="nasc">
+    <label>WhatsApp</label><input id="whats">
+    <label>CEP</label><input id="cep" maxlength="9" onblur="buscarEndereco()">
+    <label>Endereço</label><input id="endereco">
+    <label>Número</label><input id="numero">
+    <label>Ponto de referência</label><input id="ref">
+    <label>Bairro</label>
+    <select id="bairro">
+      <option value="">Selecione</option>
+      <option value="Centro" data-taxa="5">Centro - R$5,00</option>
+      <option value="Jardins" data-taxa="8">Jardins - R$8,00</option>
+      <option value="Santa Luzia" data-taxa="10">Santa Luzia - R$10,00</option>
+    </select>
+    <button class="finalizar" onclick="mostrarResumo()">Ver Resumo do Pedido</button>
+  `;
+  IMask(document.getElementById('whats'), {mask: '(00) 00000-0000'});
+}
+
+// Busca endereço via CEP
+async function buscarEndereco(){
+  const cep=document.getElementById('cep').value.replace(/\D/g,'');
+  if(cep.length!=8)return;
+  const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+  const j=await r.json();
+  if(!j.erro)document.getElementById('endereco').value=`${j.logradouro}, ${j.bairro} - ${j.localidade}`;
+}
+
+function mostrarResumo(){
+  const nome=document.getElementById('nome').value.trim();
+  const nasc=document.getElementById('nasc').value;
+  const whatsapp=document.getElementById('whats').value.trim();
+  const cep=document.getElementById('cep').value.trim();
+  const endereco=document.getElementById('endereco').value.trim();
+  const numero=document.getElementById('numero').value.trim();
+  const ref=document.getElementById('ref').value.trim();
   const bairroSel=document.getElementById('bairro');
   const bairro=bairroSel.value;
   const taxa=parseFloat(bairroSel.selectedOptions[0]?.dataset.taxa||0);
   const subtotal=carrinho.reduce((s,i)=>s+i.preco,0);
   const total=subtotal+taxa;
 
+  if(!nome||!whatsapp||!bairro){alert('Preencha os campos obrigatórios.');return;}
+
+  const form=document.getElementById('formCliente');
+  form.innerHTML=`
+    <h3>📦 Resumo do Pedido</h3>
+    <p><strong>Cliente:</strong> ${nome}</p>
+    <p><strong>Endereço:</strong> ${endereco}, ${numero} - ${bairro}</p>
+    <p><strong>WhatsApp:</strong> ${whatsapp}</p>
+    <p><strong>Subtotal:</strong> R$${subtotal.toFixed(2)}</p>
+    <p><strong>Taxa:</strong> R$${taxa.toFixed(2)}</p>
+    <h3>Total: R$${total.toFixed(2)}</h3>
+    <button class="finalizar" onclick="enviarPedido('${nome}','${nasc}','${whatsapp}','${cep}','${endereco}','${numero}','${ref}','${bairro}',${taxa},${subtotal},${total})">Enviar Pedido</button>
+  `;
+}
+
+async function enviarPedido(nome,nasc,whatsapp,cep,endereco,numero,ref,bairro,taxa,subtotal,total){
   const payload={
+    acao:"adicionar",
     nome,nasc,whatsapp,cep,endereco,numero,ref,bairro,
     itens:carrinho.map(i=>i.nome).join(', '),
     observacoes:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),
     subtotal,taxa,total
   };
-
   try{
     const r=await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
-    const res=await r.text();
-    alert('Pedido enviado com sucesso! Obrigado!');
-    carrinho=[];renderCarrinho();
-  }catch(e){
-    alert('Erro ao enviar pedido.');
-  }
-};
-
-// Função para buscar endereço via ViaCEP
-async function buscarEndereco(cep){
-  try{
-    const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-    const j=await r.json();
-    return `${j.logradouro}, ${j.bairro} - ${j.localidade}/${j.uf}`;
-  }catch{return prompt('Não foi possível localizar o endereço. Informe manualmente:');}
+    const txt=await r.text();
+    if(txt.includes("ok")){
+      alert("✅ Pedido enviado com sucesso!");
+      carrinho=[];document.getElementById('cart-modal').style.display='none';
+      renderCarrinho();
+    }else{
+      alert("❌ Erro ao registrar pedido. Tente novamente.");
+    }
+  }catch(e){alert("Erro de conexão com o servidor.");}
 }
 </script>
 </body>
