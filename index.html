@@ -274,7 +274,62 @@ if (navigator.userAgent.match(/iphone|ipad|ipod/i)) {
 
 <script>
 const ENDPOINT="https://script.google.com/macros/s/AKfycbyLxzKH1MflYrVBEzEd4JaYYbAkNi5R13YWzDO9ywt2tqsx113TLYybORrKYGURowak/exec";
-const produtos = [
+// 🕒 CONFIGURAÇÃO DE HORÁRIO DE FUNCIONAMENTO
+const horarioFuncionamento = {
+  inicio: "11:00", // horário de abertura
+  fim: "22:30"     // horário de fechamento
+};
+
+// ✅ Função para verificar se o restaurante está aberto
+function estaAberto() {
+  const agora = new Date();
+  const [hIni, mIni] = horarioFuncionamento.inicio.split(":").map(Number);
+  const [hFim, mFim] = horarioFuncionamento.fim.split(":").map(Number);
+
+  const inicio = new Date();
+  inicio.setHours(hIni, mIni, 0);
+
+  const fim = new Date();
+  fim.setHours(hFim, mFim, 0);
+
+  return agora >= inicio && agora <= fim;
+}
+
+// 🔔 Exibe aviso se estiver fechado
+function verificarHorario() {
+  const avisoExistente = document.getElementById("avisoHorario");
+  if (!estaAberto()) {
+    if (!avisoExistente) {
+      const aviso = document.createElement("div");
+      aviso.id = "avisoHorario";
+      aviso.style.cssText = `
+        background:#a12f2f;color:#fff;padding:10px;text-align:center;
+        font-weight:600;position:fixed;top:0;left:0;width:100%;
+        z-index:9999;font-size:15px;box-shadow:0 2px 6px rgba(0,0,0,0.2);
+      `;
+      aviso.textContent = `⏰ Restaurante fechado — funcionamento das ${horarioFuncionamento.inicio} às ${horarioFuncionamento.fim}`;
+      document.body.appendChild(aviso);
+    }
+    document.querySelectorAll("button.add").forEach(btn=>{
+      btn.disabled = true;
+      btn.style.opacity = 0.5;
+      btn.style.cursor = "not-allowed";
+    });
+  } else {
+    avisoExistente?.remove();
+    document.querySelectorAll("button.add").forEach(btn=>{
+      btn.disabled = false;
+      btn.style.opacity = 1;
+      btn.style.cursor = "pointer";
+    });
+  }
+}
+
+// 🕐 Executa a verificação ao carregar e a cada minuto
+setInterval(verificarHorario, 60000);
+window.addEventListener("load", verificarHorario);
+
+  const produtos = [
   // 🧀 ENTRADAS / SALADAS
   {id: 1, nome: 'Tábua de Frios', desc: 'Seleção de queijos nobres, salame italiano, presunto de Parma, mix de castanhas, azeitonas e crostinis artesanais.', preco: 195.00, img: 'img/entradas/tabua-frios.jpg', video: 'videos/tabua-frios.mp4', categoria: 'Entradas / Saladas'},
   {id: 2, nome: 'Carpaccio de Carne Angus', desc: 'Lâminas finas de carne Angus com flor de sal e azeite trufado, servidas com chips crocantes e mostarda Dijon.', preco: 79.90, img: 'img/entradas/carpaccio-angus.jpg', categoria: 'Entradas / Saladas'},
