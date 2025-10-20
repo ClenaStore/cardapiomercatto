@@ -274,14 +274,57 @@ if (navigator.userAgent.match(/iphone|ipad|ipod/i)) {
 
 <script>
 const ENDPOINT="https://script.google.com/macros/s/AKfycbyLxzKH1MflYrVBEzEd4JaYYbAkNi5R13YWzDO9ywt2tqsx113TLYybORrKYGURowak/exec";
-const produtos=[
-  {id:1,nome:'X-Burger',desc:'Pão brioche, carne artesanal e queijo.',preco:18,img:'https://images.unsplash.com/photo-1550547660-d9450f859349?w=400',categoria:'Lanches'},
-  {id:2,nome:'X-Bacon',desc:'Hambúrguer, queijo e bacon.',preco:22,img:'https://images.unsplash.com/photo-1601050690597-6c0c9f57f3c7?w=400',categoria:'Lanches'},
-  {id:3,nome:'Batata Frita',desc:'Porção individual crocante.',preco:12,img:'https://images.unsplash.com/photo-1606756790138-640a2f1f02c0?w=400',categoria:'Acompanhamentos'},
-  {id:4,nome:'Anéis de Cebola',desc:'Crocantes e saborosos.',preco:10,img:'https://images.unsplash.com/photo-1601924928361-0f56d1a1f4d2?w=400',categoria:'Acompanhamentos'},
-  {id:5,nome:'Refrigerante Lata',desc:'Lata 350ml',preco:6,img:'https://images.unsplash.com/photo-1613470209869-1b4b4a1c1db2?w=400',categoria:'Bebidas'},
-  {id:6,nome:'Suco Natural',desc:'Suco de frutas naturais 300ml.',preco:8,img:'https://images.unsplash.com/photo-1577805947697-89e18249d767?w=400',categoria:'Bebidas'}
+const produtos = [
+  // 🧀 ENTRADAS / SALADAS
+  {id: 1, nome: 'Tábua de Frios', desc: 'Seleção de queijos nobres, salame italiano, presunto de Parma, mix de castanhas, azeitonas e crostinis artesanais.', preco: 195.00, img: 'img/entradas/tabua-frios.jpg', video: 'videos/tabua-frios.mp4', categoria: 'Entradas / Saladas'},
+  {id: 2, nome: 'Carpaccio de Carne Angus', desc: 'Lâminas finas de carne Angus com flor de sal e azeite trufado, servidas com chips crocantes e mostarda Dijon.', preco: 79.90, img: 'img/entradas/carpaccio-angus.jpg', categoria: 'Entradas / Saladas'},
+  {id: 3, nome: 'Burrata ao Forno', desc: 'Queijo burrata gratinado com tomates confitados e pesto genovês. Servida com torradas francesas.', preco: 82.90, img: 'img/entradas/burrata.jpg', categoria: 'Entradas / Saladas'},
+  {id: 4, nome: 'Provolone Crocante', desc: 'Provolone empanado na panko com melado de cana artesanal e azeite de ervas.', preco: 79.90, img: 'img/entradas/provolone.jpg', categoria: 'Entradas / Saladas'},
+  {id: 5, nome: 'Salada do Mercatto', desc: 'Mix de folhas com kani, camarão, lula e polvo grelhado, com molho de limão siciliano.', preco: 89.00, img: 'img/entradas/salada-mercatto.jpg', categoria: 'Entradas / Saladas'},
+  {id: 6, nome: 'Salada Caesar Gourmet', desc: 'Alface americana, frango grelhado, croutons, parmesão e molho Caesar especial.', preco: 85.90, img: 'img/entradas/caesar.jpg', categoria: 'Entradas / Saladas'},
+
+  // 🥩 PARRILLA / CORTES NOBRES
+  {id: 7, nome: 'Bife Ancho', desc: 'Corte argentino grelhado na parrilla com batatas rústicas.', preco: 119.90, img: 'img/parrilla/bife-ancho.jpg', categoria: 'Parrilla'},
+  {id: 8, nome: 'Prime Ribs 500g', desc: 'Lombo bovino com osso e marmoreio acentuado, preparado na brasa.', preco: 129.00, img: 'img/parrilla/prime-rib.jpg', categoria: 'Parrilla'},
+  {id: 9, nome: 'Sobrecoxa Desossada 300g', desc: 'Corte de frango grelhado e suculento, com crosta dourada.', preco: 90.00, img: 'img/parrilla/sobrecoxa.jpg', categoria: 'Parrilla'},
+  {id: 10, nome: 'Costela Bovina', desc: 'Assada lentamente na parrilla, servida com farofa e vinagrete.', preco: 135.00, img: 'img/parrilla/costela.jpg', categoria: 'Parrilla'},
+  {id: 11, nome: 'Ancho Gold', desc: 'Golden Steak Angus coberto com folhas de ouro 24K. Acompanhado de arroz à moda Mercatto e purê defumado.', preco: 199.90, img: 'img/parrilla/ancho-gold.jpg', video: 'videos/ancho-gold.mp4', categoria: 'Parrilla'},
+  {id: 12, nome: 'Prime Rib Gold', desc: 'Versão especial dourada servida para até 3 pessoas.', preco: 229.90, img: 'img/parrilla/prime-rib-gold.jpg', categoria: 'Parrilla'},
+
+  // 🍤 PARA COMPARTILHAR
+  {id: 13, nome: 'Camarão Mercatto', desc: 'Camarões grelhados no azeite com creme de leite, presunto, ervilhas e arroz.', preco: 195.00, img: 'img/compartilhar/camarao.jpg', categoria: 'Para Compartilhar'},
+  {id: 14, nome: 'Salmão Crocante', desc: 'Salmão grelhado em crosta de panko com purê de batata e gorgonzola.', preco: 159.00, img: 'img/compartilhar/salmao.jpg', categoria: 'Para Compartilhar'},
+  {id: 15, nome: 'Filé Parmegiana com Camarão', desc: 'Filé empanado com molho de tomate artesanal e camarões flambados.', preco: 139.90, img: 'img/compartilhar/file-camarao.jpg', categoria: 'Para Compartilhar'},
+
+  // 🍝 MASSAS E RISOTOS
+  {id: 16, nome: 'Espaguete à Bolonhesa', desc: 'Molho de carne moída artesanal, especiarias e parmesão.', preco: 44.90, img: 'img/massas/bolonhesa.jpg', categoria: 'Massas'},
+  {id: 17, nome: 'Risoto de Camarão', desc: 'Arroz arbório com camarões grelhados e creme de leite fresco.', preco: 69.90, img: 'img/massas/risoto-camarao.jpg', categoria: 'Massas'},
+  {id: 18, nome: 'Risoto de Funghi', desc: 'Risoto cremoso com cogumelos funghi e vinho branco.', preco: 62.90, img: 'img/massas/risoto-funghi.jpg', categoria: 'Massas'},
+
+  // 🍔 BURGERS
+  {id: 19, nome: 'Burguinhos Delícia', desc: 'Mini hambúrgueres duplos com queijo muçarela e batatas.', preco: 39.90, img: 'img/burgers/burguinhos.jpg', categoria: 'Burgers'},
+  {id: 20, nome: 'New York', desc: 'Duplo hambúrguer Angus, cheddar duplo e bacon crocante.', preco: 44.90, img: 'img/burgers/newyork.jpg', categoria: 'Burgers'},
+  {id: 21, nome: 'Vancouver', desc: 'Hambúrguer Angus com muçarela, alface, tomate e maionese da casa.', preco: 44.90, img: 'img/burgers/vancouver.jpg', categoria: 'Burgers'},
+  {id: 22, nome: 'Roma', desc: 'Hambúrguer Angus, cebola caramelizada, rúcula e tomate fresco.', preco: 49.90, img: 'img/burgers/roma.jpg', categoria: 'Burgers'},
+  {id: 23, nome: 'Berlim', desc: 'Duplo burguer de costela, alface, tomate e queijo.', preco: 54.90, img: 'img/burgers/berlim.jpg', categoria: 'Burgers'},
+  {id: 24, nome: 'Sanduíche Imperial', desc: 'Ciabatta com fraldinha Angus, folhas nobres e queijo empanado.', preco: 49.90, img: 'img/burgers/imperial.jpg', categoria: 'Burgers'},
+  {id: 25, nome: 'Sanduíche Mercatto', desc: 'Baguete com carne Angus, cream cheese e queijo frito empanado.', preco: 49.90, img: 'img/burgers/mercatto.jpg', categoria: 'Burgers'},
+
+  // 🍚 ACOMPANHAMENTOS
+  {id: 26, nome: 'Arroz à Moda Mercatto', desc: 'Arroz especial da casa com temperos e ingredientes selecionados.', preco: 19.90, img: 'img/acompanha/arroz-mercatto.jpg', categoria: 'Acompanhamentos'},
+  {id: 27, nome: 'Feijão Tropeiro', desc: 'Feijão com torresmo, linguiça e farinha de mandioca.', preco: 24.90, img: 'img/acompanha/tropeiro.jpg', categoria: 'Acompanhamentos'},
+  {id: 28, nome: 'Farofa de Banana com Bacon', desc: 'Farofa crocante com banana caramelizada e bacon.', preco: 24.90, img: 'img/acompanha/farofa-banana.jpg', categoria: 'Acompanhamentos'},
+  {id: 29, nome: 'Purê de Gorgonzola', desc: 'Purê cremoso com queijo gorgonzola.', preco: 22.90, img: 'img/acompanha/pure-gorgonzola.jpg', categoria: 'Acompanhamentos'},
+  {id: 30, nome: 'Legumes no Vapor', desc: 'Seleção de legumes frescos cozidos no vapor.', preco: 19.90, img: 'img/acompanha/legumes.jpg', categoria: 'Acompanhamentos'},
+
+  // 🍰 SOBREMESAS
+  {id: 31, nome: 'Cheesecake de Goiaba com Queijo', desc: 'Base de biscoito e cobertura de goiabada com toque suave de queijo.', preco: 29.90, img: 'img/sobremesas/cheesecake.jpg', categoria: 'Sobremesas'},
+  {id: 32, nome: 'Churros com Doce de Leite Argentino', desc: 'Churros crocantes recheados com doce de leite cremoso.', preco: 29.90, img: 'img/sobremesas/churros.jpg', categoria: 'Sobremesas'},
+  {id: 33, nome: 'Petit Gâteau', desc: 'Bolo quente de chocolate com recheio cremoso e sorvete.', preco: 34.90, img: 'img/sobremesas/petit-gateau.jpg', categoria: 'Sobremesas'},
+  {id: 34, nome: 'Pudim Golden', desc: 'Pudim dourado e cremoso com sabor suave.', preco: 24.90, img: 'img/sobremesas/pudim.jpg', categoria: 'Sobremesas'},
+  {id: 35, nome: 'Abacaxi em Rodelas', desc: 'Fatias de abacaxi com raspas de limão siciliano.', preco: 19.00, img: 'img/sobremesas/abacaxi.jpg', categoria: 'Sobremesas'}
 ];
+
 
 let carrinho=[];
 let categoriaAtiva='';
