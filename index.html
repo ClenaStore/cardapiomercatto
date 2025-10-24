@@ -270,14 +270,20 @@ setInterval(()=>{
   if(catDiv.scrollLeft+catDiv.clientWidth>=catDiv.scrollWidth||catDiv.scrollLeft<=0)dir*=-1;
 },60);
 let startX,scrollLeft,isDown=false;
-catDiv.addEventListener('mousedown',e=>{isDown=true;startX=e.pageX-catDiv.offsetLeft;scrollLeft=catDiv.scrollLeft;});
-catDiv.addEventListener('mouseleave',()=>isDown=false);
-catDiv.addEventListener('mouseup',()=>isDown=false);
-catDiv.addEventListener('mousemove',e=>{
-  if(!isDown)return;e.preventDefault();
-  const x=e.pageX-catDiv.offsetLeft;const walk=(x-startX)*2;
-  catDiv.scrollLeft=scrollLeft-walk;
+// 🔧 Suporte a toque (rolagem no celular)
+catDiv.addEventListener('touchstart', e => {
+  isDown = true;
+  startX = e.touches[0].pageX - catDiv.offsetLeft;
+  scrollLeft = catDiv.scrollLeft;
 });
+catDiv.addEventListener('touchend', () => isDown = false);
+catDiv.addEventListener('touchmove', e => {
+  if (!isDown) return;
+  const x = e.touches[0].pageX - catDiv.offsetLeft;
+  const walk = (x - startX) * 2;
+  catDiv.scrollLeft = scrollLeft - walk;
+});
+
 
 // filtrar
 function filtrar(cat){
