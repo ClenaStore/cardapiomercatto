@@ -95,13 +95,28 @@ border-radius:10px;color:#fff;font-size:14px;}
 background:var(--accent);font-weight:600;cursor:pointer;}
 .popup-body button:hover{background:var(--accent2);}
 .close-btn{position:absolute;top:20px;right:20px;background:none;border:none;color:var(--accent2);font-size:22px;cursor:pointer;}
-.sugestoes{margin-top:15px;}
-.sugestoes h3{font-family:'Playfair Display',serif;color:var(--accent);margin-bottom:10px;text-align:center;}
-.sug-card{display:flex;align-items:center;gap:10px;background:#1e293b;padding:8px;border-radius:10px;margin-bottom:10px;}
-.sug-card img{width:60px;height:60px;object-fit:cover;border-radius:8px;}
+
+/* 💡 Sugestões refinadas */
+.sugestoes{margin-top:20px;}
+.sugestoes h3{text-align:center;color:var(--accent2);font-family:'Playfair Display',serif;margin-bottom:12px;}
+.sug-card{
+  display:flex;align-items:center;gap:12px;background:#1e293b;
+  padding:10px;border-radius:14px;margin-bottom:10px;box-shadow:var(--shadow);
+  transition:.3s;cursor:pointer;
+}
+.sug-card:hover{transform:scale(1.02);background:#2b3a50;}
+.sug-card img{
+  width:70px;height:70px;border-radius:12px;object-fit:cover;
+  border:1px solid var(--accent);
+}
 .sug-card div{flex:1;}
-.sug-card strong{color:var(--accent2);}
-.sug-card button{background:var(--accent);border:none;color:#000;padding:6px 10px;border-radius:8px;font-weight:600;cursor:pointer;}
+.sug-card strong{color:var(--accent2);font-size:15px;font-family:'Playfair Display',serif;}
+.sug-card small{display:block;color:var(--muted);font-size:12px;margin-top:2px;}
+.sug-card span{color:var(--accent);font-weight:600;font-size:13px;margin-top:3px;display:block;}
+.sug-card button{
+  background:var(--accent);border:none;color:#000;font-weight:600;
+  padding:8px 10px;border-radius:10px;cursor:pointer;transition:.3s;
+}
 .sug-card button:hover{background:var(--accent2);}
 .overlay{display:none;align-items:center;justify-content:center;flex-direction:column;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;}
 .overlay img{width:90px;margin-bottom:20px;}
@@ -129,7 +144,7 @@ background:var(--accent);font-weight:600;cursor:pointer;}
 </div>
 
 <script>
-const ENDPOINT = "URL_DO_SEU_GAS"; // 🔹 Substituir depois pelo seu link do GAS
+const ENDPOINT = "URL_DO_SEU_GAS";
 
  const produtos = [
   // 🍽️ PRATOS INDIVIDUAIS DELICIOSOS
@@ -215,7 +230,6 @@ const ENDPOINT = "URL_DO_SEU_GAS"; // 🔹 Substituir depois pelo seu link do GA
   {id: 91, nome: 'Cheesecake de Goiaba com Queijo', desc: 'Base de biscoito, creme de queijo e cobertura de goiabada, equilibrando o doce e o suave.', preco: 39.90, img: 'img/padrao.jpg', categoria: 'Sobremesas Individuais Maravilhosas'}
 ];
 
-
 let carrinho = [];
 
 const categoriasUnicas = [...new Set(produtos.map(p=>p.categoria))];
@@ -231,7 +245,6 @@ categoriasUnicas.forEach((cat,i)=>{
 });
 filtrar(categoriasUnicas[0]);
 
-// 🎠 Rolagem automática + toque
 let dir=1;
 setInterval(()=>{
   categoriasDiv.scrollLeft+=dir;
@@ -289,12 +302,16 @@ function mostrarSugestoes(cat){
     <div class="popup-content">
       <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
       <div class="popup-body">
-        <h2>🍽️ Sugestões que combinam</h2>
+        <h2 style="text-align:center;">🍽️ Sugestões que combinam</h2>
         <div class="sugestoes">
           ${sugs.map(s=>`
             <div class="sug-card">
               <img src="${s.img}">
-              <div><strong>${s.nome}</strong><br><small>${s.desc}</small></div>
+              <div>
+                <strong>${s.nome}</strong>
+                <small>${s.desc}</small>
+                <span>R$ ${s.preco.toFixed(2)}</span>
+              </div>
               <button onclick="abrirPopup(${s.id});this.closest('.popup').remove()">Pedir junto</button>
             </div>`).join('')}
         </div>
@@ -355,7 +372,6 @@ async function enviarPedido(){
   document.getElementById('overlay').style.display='flex';
   try{
     const r=await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
-    const t=await r.text();
     alert("✅ Pedido enviado com sucesso!");
   }catch(e){alert("⚠️ Erro ao enviar o pedido.");}
   document.getElementById('overlay').style.display='none';
