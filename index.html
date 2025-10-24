@@ -262,10 +262,10 @@ categorias.forEach((c,i)=>{
   catDiv.appendChild(b);
 });
 filtrar(categorias[0]);
-// 🚀 Rolagem automática rápida + toque instantâneo e fluido
+// 🚀 Rolagem automática + toque em tempo real (sem delay)
 let dir = 1;
 let autoScroll;
-let scrollVel = 1.8; // velocidade do auto-scroll (↑ aumenta a rolagem automática)
+let scrollVel = 1.8; // velocidade automática
 
 function iniciarAutoScroll() {
   pararAutoScroll();
@@ -281,48 +281,35 @@ function scrollAuto() {
 }
 iniciarAutoScroll();
 
-// 🖐️ Toque super responsivo + inércia suave
-let tocando = false;
-let inicioX = 0;
-let scrollIni = 0;
-let vel = 0;
-let ultX = 0;
-let ultimoTempo = 0;
+// 🖐️ Toque 1:1 com o dedo
+let isDragging = false;
+let startX = 0;
+let scrollStart = 0;
+let momentumID = null;
 
 catDiv.addEventListener("touchstart", e => {
   pararAutoScroll();
-  tocando = true;
-  inicioX = e.touches[0].pageX;
-  scrollIni = catDiv.scrollLeft;
-  ultX = inicioX;
-  ultimoTempo = performance.now();
-  vel = 0;
+  isDragging = true;
+  startX = e.touches[0].clientX;
+  scrollStart = catDiv.scrollLeft;
+  cancelAnimationFrame(momentumID);
 });
 
 catDiv.addEventListener("touchmove", e => {
-  if (!tocando) return;
-  const x = e.touches[0].pageX;
-  const dx = x - inicioX;
-  catDiv.scrollLeft = scrollIni - dx;
-  const tempo = performance.now();
-  const deltaT = tempo - ultimoTempo;
-  vel = (x - ultX) / deltaT * 45; // ⚙️ sensibilidade do toque (↑ mais veloz e responsivo)
-  ultX = x;
-  ultimoTempo = tempo;
+  if (!isDragging) return;
+  e.preventDefault();
+  const x = e.touches[0].clientX;
+  const delta = (x - startX);
+  catDiv.scrollLeft = scrollStart - delta; // 👈 movimento exato do dedo (sem suavização)
 });
 
-catDiv.addEventListener("touchend", () => {
-  tocando = false;
-
-  // ✨ Inércia natural e acelerada
-  function momentum() {
-    catDiv.scrollLeft -= vel;
-    vel *= 0.94;
-    if (Math.abs(vel) > 0.5) requestAnimationFrame(momentum);
-    else iniciarAutoScroll();
-  }
-  requestAnimationFrame(momentum);
+catDiv.addEventListener("touchend", e => {
+  isDragging = false;
+  // 🔁 Retoma rolagem automática após pequeno intervalo
+  clearTimeout(catDiv._resumeTimeout);
+  catDiv._resumeTimeout = setTimeout(iniciarAutoScroll, 1200);
 });
+
 
 
 
