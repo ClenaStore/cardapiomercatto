@@ -297,11 +297,13 @@ catDiv.addEventListener("touchstart", e => {
 
 catDiv.addEventListener("touchmove", e => {
   if (!isDragging) return;
-  e.preventDefault();
   const x = e.touches[0].clientX;
   const delta = (x - startX);
-  catDiv.scrollLeft = scrollStart - delta; // 👈 movimento exato do dedo (sem suavização)
+  // ⚡ Atualiza em tempo real sem travar o scroll
+  catDiv.scrollLeft = scrollStart - delta;
+  // Remove preventDefault() — isso deixava o movimento "borrachudo" no mobile
 });
+
 
 catDiv.addEventListener("touchend", e => {
   isDragging = false;
