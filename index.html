@@ -41,10 +41,18 @@ header{
   font-family:'Playfair Display',serif;font-size:30px;
   text-shadow:0 3px 8px rgba(0,0,0,.6);
 }
-.categorias{
-  display:flex;overflow-x:auto;scroll-behavior:smooth;
-  padding:12px;gap:10px;scrollbar-width:none;user-select:none;
+.categorias {
+  display:flex;
+  overflow-x:auto;
+  padding:12px;
+  gap:10px;
+  scrollbar-width:none;
+  user-select:none;
+  -webkit-overflow-scrolling: auto; /* remove suavização iOS */
+  touch-action: pan-x; /* prioriza movimento horizontal */
 }
+.categorias::-webkit-scrollbar { display:none; }
+
 .categorias::-webkit-scrollbar{display:none;}
 .categorias button{
   flex-shrink:0;background:#1e293b;border:1px solid var(--accent);
@@ -262,8 +270,10 @@ categorias.forEach((c,i)=>{
   catDiv.appendChild(b);
 });
 filtrar(categorias[0]);
-// 👆 Rolagem direta com o dedo (sem atraso, sem inércia, sem auto-scroll)
-// 👆 Rolagem direta com o dedo (sem atraso, sem inércia, sem auto-scroll)
+
+
+  
+// ⚡ Rolagem 100% instantânea, sem delay nem suavização
 let isDragging = false;
 let startX = 0;
 let scrollStart = 0;
@@ -272,18 +282,19 @@ catDiv.addEventListener("touchstart", e => {
   isDragging = true;
   startX = e.touches[0].pageX;
   scrollStart = catDiv.scrollLeft;
-});
+  catDiv.style.scrollBehavior = "auto"; // remove qualquer suavização
+}, { passive: true });
 
 catDiv.addEventListener("touchmove", e => {
   if (!isDragging) return;
-  const x = e.touches[0].pageX;
-  const delta = x - startX;
-  catDiv.scrollLeft = scrollStart - delta; // 1:1 com o movimento
-});
+  const delta = e.touches[0].pageX - startX;
+  catDiv.scrollLeft = scrollStart - delta;
+}, { passive: true });
 
 catDiv.addEventListener("touchend", () => {
   isDragging = false;
-});
+}, { passive: true });
+
 
 
 
