@@ -5,15 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>🍽️ Mercatto Delivery</title>
 
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#b8860b">
 <link rel="apple-touch-icon" href="https://github.com/ClenaStore/cardapiomercatto/blob/main/icons/logo.png?raw=true">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mercatto Delivery">
-
-<!-- FONTES -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 
 <style>
@@ -61,7 +58,7 @@ header{
 .categorias{
   display:flex;overflow-x:auto;padding:12px;gap:10px;
   scrollbar-width:none;user-select:none;
-  -webkit-overflow-scrolling:auto;touch-action:pan-x;
+  -webkit-overflow-scrolling:touch;touch-action:pan-x;
 }
 .categorias::-webkit-scrollbar{display:none;}
 .categorias button{
@@ -166,9 +163,7 @@ header{
 
 <script>
 const ENDPOINT = "URL_DO_SEU_GAS";
-
-// ⚙️ TAXAS POR BAIRRO
-const taxas = {"Vila Brasil":58,"São Caetano":7,"Primavera":9,"Jardim Europa":10,"Piatã":12};
+const taxas = {"Vila Brasil":8,"São Caetano":7,"Primavera":9,"Jardim Europa":10,"Piatã":12};
 
  const produtos = [
   // 🍽️ PRATOS INDIVIDUAIS DELICIOSOS
@@ -261,71 +256,98 @@ const catDiv=document.getElementById('categorias'),menuDiv=document.getElementBy
 categorias.forEach((c,i)=>{const b=document.createElement('button');b.textContent=c;if(i===0)b.classList.add('active');b.onclick=()=>filtrar(c);catDiv.appendChild(b);});
 filtrar(categorias[0]);
 
-// Rolagem instantânea
 let isDragging=false,startX=0,scrollStart=0;
 catDiv.addEventListener("touchstart",e=>{isDragging=true;startX=e.touches[0].pageX;scrollStart=catDiv.scrollLeft;catDiv.style.scrollBehavior="auto";},{passive:true});
 catDiv.addEventListener("touchmove",e=>{if(!isDragging)return;catDiv.scrollLeft=scrollStart-(e.touches[0].pageX-startX);},{passive:true});
 catDiv.addEventListener("touchend",()=>{isDragging=false;},{passive:true});
 
-function filtrar(cat){
-  document.querySelectorAll('.categorias button').forEach(b=>b.classList.remove('active'));
-  [...catDiv.children].find(b=>b.textContent===cat).classList.add('active');
-  renderizar(produtos.filter(p=>p.categoria===cat));
-}
-function buscarItem(){
-  const termo=document.getElementById('busca').value.toLowerCase();
-  if(!termo)return filtrar(document.querySelector('.categorias button.active').textContent);
-  const filtrado=produtos.filter(p=>p.nome.toLowerCase().includes(termo)||p.desc.toLowerCase().includes(termo));
-  renderizar(filtrado);
-}
+function filtrar(cat){document.querySelectorAll('.categorias button').forEach(b=>b.classList.remove('active'));
+[...catDiv.children].find(b=>b.textContent===cat).classList.add('active');
+renderizar(produtos.filter(p=>p.categoria===cat));}
+function buscarItem(){const termo=document.getElementById('busca').value.toLowerCase();
+if(!termo)return filtrar(document.querySelector('.categorias button.active').textContent);
+renderizar(produtos.filter(p=>p.nome.toLowerCase().includes(termo)||p.desc.toLowerCase().includes(termo)));}
+
 function renderizar(lista){
-  menuDiv.innerHTML='';
-  lista.forEach(p=>{
-    const c=document.createElement('div');
-    c.className='card';
-    c.innerHTML=`
-      <img src="${p.img}">
-      <div class="card-body">
-        <h3>${p.nome}</h3>
-        <p>${p.desc}</p>
-        <span>R$ ${p.preco.toFixed(2)}</span>
-        <button onclick="abrirPopup(${p.id})">Adicionar</button>
-      </div>`;
-    menuDiv.appendChild(c);
-  });
+menuDiv.innerHTML='';
+lista.forEach(p=>{
+const c=document.createElement('div');
+c.className='card';
+c.innerHTML=`
+<img src="${p.img}">
+<div class="card-body">
+<h3>${p.nome}</h3>
+<p>${p.desc}</p>
+<span>R$ ${p.preco.toFixed(2)}</span>
+<button onclick="abrirPopup(${p.id})">Adicionar</button>
+</div>`;
+menuDiv.appendChild(c);
+});
 }
 
 function abrirPopup(id){
-  const p=produtos.find(x=>x.id===id);
-  const div=document.createElement('div');
-  div.classList.add('popup');
-  div.innerHTML=`
-    <div class="popup-content">
-      <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-      <img src="${p.img}">
-      <div class="popup-body">
-        <h2>${p.nome}</h2>
-        <p>${p.desc}</p>
-        <label>Quantidade</label><input id="qtd" type="number" min="1" value="1">
-        <label>Observação</label><textarea id="obs" placeholder="Ex: sem cebola..."></textarea>
-        <button onclick="adicionar(${p.id})">Adicionar ao Carrinho</button>
-      </div>
-    </div>`;
-  document.body.appendChild(div);
+const p=produtos.find(x=>x.id===id);
+const div=document.createElement('div');
+div.classList.add('popup');
+div.innerHTML=`
+<div class="popup-content">
+<button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+<img src="${p.img}">
+<div class="popup-body">
+<h2>${p.nome}</h2>
+<p>${p.desc}</p>
+<label>Quantidade</label><input id="qtd" type="number" min="1" value="1">
+<label>Observação</label><textarea id="obs" placeholder="Ex: sem cebola..."></textarea>
+<button onclick="adicionar(${p.id})">Adicionar ao Carrinho</button>
+</div>
+</div>`;
+document.body.appendChild(div);
 }
 
 function adicionar(id){
-  const qtd=parseInt(document.getElementById('qtd').value)||1;
-  const obs=document.getElementById('obs').value||'';
-  const p=produtos.find(x=>x.id===id);
-  carrinho.push({...p,qtd,obs});
-  document.querySelector('.popup')?.remove();
-  atualizarCarrinho();
+const qtd=parseInt(document.getElementById('qtd').value)||1;
+const obs=document.getElementById('obs').value||'';
+const p=produtos.find(x=>x.id===id);
+carrinho.push({...p,qtd,obs});
+document.querySelector('.popup')?.remove();
+atualizarCarrinho();
+mostrarSugestoes(p.categoria);
+}
+
+function mostrarSugestoes(cat){
+const sugs=produtos.filter(p=>p.categoria!==cat).sort(()=>Math.random()-0.5).slice(0,3);
+const div=document.createElement('div');
+div.classList.add('popup');
+div.innerHTML=`
+<div class="popup-content">
+<button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+<div class="popup-body">
+<h2>🍷 Sugestões que combinam</h2>
+${sugs.map(s=>`
+<div class="sug-card">
+<img src="${s.img}">
+<div style="flex:1;">
+<strong>${s.nome}</strong>
+<small>${s.desc}</small>
+<span>R$ ${s.preco.toFixed(2)}</span>
+</div>
+<button style="background:var(--accent);border:none;color:#000;padding:6px 10px;border-radius:8px;cursor:pointer;font-weight:600;" onclick="pedirJunto(${s.id},this)">Pedir junto</button>
+</div>`).join('')}
+<button onclick="abrirCarrinho()">Ver Carrinho</button>
+</div>
+</div>`;
+document.body.appendChild(div);
+}
+
+function pedirJunto(id,btn){
+btn.closest('.popup').remove();
+abrirPopup(id);
 }
 
 function atualizarCarrinho(){
-  document.getElementById('cart-count').textContent=carrinho.reduce((s,i)=>s+i.qtd,0);
+document.getElementById('cart-count').textContent=carrinho.reduce((s,i)=>s+i.qtd,0);
 }
+
 
 function abrirCarrinho(){
   if(!carrinho.length)return alert("Carrinho vazio!");
