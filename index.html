@@ -180,6 +180,15 @@ header{
 <script>
 const ENDPOINT = "URL_DO_SEU_GAS";
 
+// ⚙️ TAXAS POR BAIRRO
+const taxas = {
+  "Centro": 5,
+  "São Caetano": 7,
+  "Primavera": 9,
+  "Jardim Europa": 10,
+  "Piatã": 12
+};
+
  const produtos = [
   // 🍽️ PRATOS INDIVIDUAIS DELICIOSOS
   {id: 36, nome: 'Risoto de Cogumelos', desc: 'Arroz arbóreo cremoso, preparado com uma seleção de cogumelos frescos e servido com torres de legumes no crocante de parmesão, realçando um sabor incrível!', preco: 87.50, img: 'img/padrao.jpg', categoria: 'Pratos Individuais Deliciosos'},
@@ -264,9 +273,10 @@ const ENDPOINT = "URL_DO_SEU_GAS";
   {id: 91, nome: 'Cheesecake de Goiaba com Queijo', desc: 'Base de biscoito, creme de queijo e cobertura de goiabada, equilibrando o doce e o suave.', preco: 39.90, img: 'img/padrao.jpg', categoria: 'Sobremesas Individuais Maravilhosas'}
 ];
 
+
 let carrinho = [];
-const categorias = [...new Set(produtos.map(p=>p.categoria))];
-const catDiv=document.getElementById('categorias'), menuDiv=document.getElementById('menu');
+const categorias=[...new Set(produtos.map(p=>p.categoria))];
+const catDiv=document.getElementById('categorias'),menuDiv=document.getElementById('menu');
 
 categorias.forEach((c,i)=>{
   const b=document.createElement('button');
@@ -281,7 +291,6 @@ catDiv.addEventListener("touchstart",e=>{isDragging=true;startX=e.touches[0].pag
 catDiv.addEventListener("touchmove",e=>{if(!isDragging)return;catDiv.scrollLeft=scrollStart-(e.touches[0].pageX-startX);},{passive:true});
 catDiv.addEventListener("touchend",()=>{isDragging=false;},{passive:true});
 
-// renderização
 function filtrar(cat){
   document.querySelectorAll('.categorias button').forEach(b=>b.classList.remove('active'));
   [...catDiv.children].find(b=>b.textContent===cat).classList.add('active');
@@ -434,17 +443,35 @@ async function buscarEndereco(){
 }
 
 async function enviarPedido(){
-  const c={nome:nome.value,email:email.value,whats:whats.value,cep:cep.value,endereco:endereco.value,bairro:bairro.value,numero:numero.value,complemento:complemento.value,pagamento:pagamento.value,troco:troco.value};
+  const c={nome:nome.value,email:email.value,whats:whats.value,cep:cep...value,endereco:endereco.value,bairro:bairro.value,numero:numero.value,complemento:complemento.value,pagamento:pagamento.value,troco:troco.value};
   localStorage.setItem("cliente",JSON.stringify(c));
-  const taxa=c.bairro.includes("Centro")?5:8;
-  const total=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0)+taxa;
-  const payload={acao:"pedido",cliente:c,itens:carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),obs:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),subtotal:carrinho.reduce((s,i)=>s+i.qtd*i.preco,0),taxa:taxa,total:total};
+
+  // 🧮 cálculo da taxa por bairro
+  const taxa = taxas[c.bairro] ?? 8; // usa valor fixo de 8 se bairro não estiver listado
+
+  const subtotal = carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
+  const total = subtotal + taxa;
+
+  const payload = {
+    acao: "pedido",
+    cliente: c,
+    itens: carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),
+    obs: carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),
+    subtotal: subtotal,
+    taxa: taxa,
+    total: total
+  };
+
   overlay.style.display='flex';
-  try{
+  try {
     await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
-    alert("✅ Pedido enviado com sucesso!");
-  }catch(e){alert("⚠️ Erro ao enviar pedido.");}
-  overlay.style.display='none';carrinho=[];atualizarCarrinho();
+    alert(`✅ Pedido enviado com sucesso!\n\nSubtotal: R$ ${subtotal.toFixed(2)}\nTaxa de entrega: R$ ${taxa.toFixed(2)}\nTotal: R$ ${total.toFixed(2)}`);
+  } catch(e) {
+    alert("⚠️ Erro ao enviar pedido.");
+  }
+  overlay.style.display='none';
+  carrinho=[];
+  atualizarCarrinho();
 }
 </script>
 
