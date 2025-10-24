@@ -263,26 +263,28 @@ categorias.forEach((c,i)=>{
 });
 filtrar(categorias[0]);
 // 👆 Rolagem direta com o dedo (sem atraso, sem inércia, sem auto-scroll)
+// 👆 Rolagem direta com o dedo (sem atraso, sem inércia, sem auto-scroll)
 let isDragging = false;
 let startX = 0;
 let scrollStart = 0;
 
 catDiv.addEventListener("touchstart", e => {
   isDragging = true;
-  startX = e.touches[0].clientX;
+  startX = e.touches[0].pageX;
   scrollStart = catDiv.scrollLeft;
 });
 
 catDiv.addEventListener("touchmove", e => {
   if (!isDragging) return;
-  const x = e.touches[0].clientX;
+  const x = e.touches[0].pageX;
   const delta = x - startX;
-  catDiv.scrollLeft = scrollStart - delta; // 💨 movimento 1:1 com o dedo
+  catDiv.scrollLeft = scrollStart - delta; // 1:1 com o movimento
 });
 
 catDiv.addEventListener("touchend", () => {
   isDragging = false;
 });
+
 
 
 
