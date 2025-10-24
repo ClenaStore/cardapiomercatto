@@ -262,55 +262,28 @@ categorias.forEach((c,i)=>{
   catDiv.appendChild(b);
 });
 filtrar(categorias[0]);
-// 🚀 Rolagem automática + toque em tempo real (sem delay)
-let dir = 1;
-let autoScroll;
-let scrollVel = 1.8; // velocidade automática
-
-function iniciarAutoScroll() {
-  pararAutoScroll();
-  autoScroll = requestAnimationFrame(scrollAuto);
-}
-function pararAutoScroll() {
-  cancelAnimationFrame(autoScroll);
-}
-function scrollAuto() {
-  catDiv.scrollLeft += dir * scrollVel;
-  if (catDiv.scrollLeft + catDiv.clientWidth >= catDiv.scrollWidth || catDiv.scrollLeft <= 0) dir *= -1;
-  autoScroll = requestAnimationFrame(scrollAuto);
-}
-iniciarAutoScroll();
-
-// 🖐️ Toque 1:1 com o dedo
+// 👆 Rolagem direta com o dedo (sem atraso, sem inércia, sem auto-scroll)
 let isDragging = false;
 let startX = 0;
 let scrollStart = 0;
-let momentumID = null;
 
 catDiv.addEventListener("touchstart", e => {
-  pararAutoScroll();
   isDragging = true;
   startX = e.touches[0].clientX;
   scrollStart = catDiv.scrollLeft;
-  cancelAnimationFrame(momentumID);
 });
 
 catDiv.addEventListener("touchmove", e => {
   if (!isDragging) return;
   const x = e.touches[0].clientX;
-  const delta = (x - startX);
-  // ⚡ Atualiza em tempo real sem travar o scroll
-  catDiv.scrollLeft = scrollStart - delta;
-  // Remove preventDefault() — isso deixava o movimento "borrachudo" no mobile
+  const delta = x - startX;
+  catDiv.scrollLeft = scrollStart - delta; // 💨 movimento 1:1 com o dedo
 });
 
-
-catDiv.addEventListener("touchend", e => {
+catDiv.addEventListener("touchend", () => {
   isDragging = false;
-  // 🔁 Retoma rolagem automática após pequeno intervalo
-  clearTimeout(catDiv._resumeTimeout);
-  catDiv._resumeTimeout = setTimeout(iniciarAutoScroll, 1200);
 });
+
 
 
 
