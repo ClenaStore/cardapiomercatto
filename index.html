@@ -19,27 +19,14 @@
   --radius:12px;--shadow:0 3px 8px rgba(0,0,0,0.08);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{
-  font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);
-  overflow-x:hidden;scroll-behavior:smooth;
-}
-header{
-  background:var(--accent);color:#fff;text-align:center;
-  padding:18px 10px;font-family:'Playfair Display',serif;font-size:22px;
-  box-shadow:var(--shadow);
-}
-.banner{width:100%;max-width:600px;margin:15px auto;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
-.banner img{width:100%;display:block;}
-.categorias{
-  display:flex;overflow-x:auto;gap:10px;
-  padding:10px;margin:0 auto 10px;scrollbar-width:none;max-width:600px;
-}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
+header{background:var(--accent);color:#fff;text-align:center;padding:18px;font-family:'Playfair Display',serif;font-size:22px;box-shadow:var(--shadow);}
+.banner{width:100%;height:90vh;overflow:hidden;position:relative;margin-bottom:10px;}
+.banner img{width:100%;height:100%;object-fit:cover;}
+.banner h1{position:absolute;bottom:40px;left:20px;color:#fff;font-size:32px;font-family:'Playfair Display',serif;text-shadow:0 2px 8px rgba(0,0,0,0.6);}
+.categorias{display:flex;overflow-x:auto;gap:10px;padding:10px;scrollbar-width:none;max-width:600px;margin:10px auto;}
 .categorias::-webkit-scrollbar{display:none;}
-.categorias button{
-  flex-shrink:0;background:var(--card);border:1px solid #e0d7c5;
-  color:var(--accent);padding:8px 16px;border-radius:20px;
-  font-weight:600;white-space:nowrap;cursor:pointer;transition:.2s;box-shadow:var(--shadow);
-}
+.categorias button{flex-shrink:0;background:var(--card);border:1px solid #e0d7c5;color:var(--accent);padding:8px 16px;border-radius:20px;font-weight:600;white-space:nowrap;cursor:pointer;transition:.2s;box-shadow:var(--shadow);}
 .categorias button.active{background:var(--accent);color:#fff;}
 .container{padding:10px;margin:0 auto;max-width:600px;}
 h2{margin-top:10px;color:var(--accent);font-family:'Playfair Display',serif;border-bottom:1px solid #d7ccbb;padding-bottom:4px;}
@@ -52,7 +39,6 @@ h2{margin-top:10px;color:var(--accent);font-family:'Playfair Display',serif;bord
 .card-body p{font-size:13px;color:var(--muted);margin:4px 0;}
 .card-body span{font-weight:600;color:var(--accent);}
 button.add{background:var(--accent);color:#fff;border:none;padding:8px;border-radius:var(--radius);width:100%;margin-top:8px;font-weight:600;cursor:pointer;}
-button.add:hover{opacity:.85;}
 #cart-btn{position:fixed;bottom:20px;right:20px;background:var(--accent);color:#fff;border:none;border-radius:50%;width:60px;height:60px;box-shadow:var(--shadow);font-size:24px;cursor:pointer;z-index:20;}
 #cart-count{position:absolute;top:6px;right:6px;background:#a12f2f;color:#fff;font-size:12px;border-radius:50%;padding:2px 6px;}
 #cart-modal{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;justify-content:center;align-items:center;z-index:999;}
@@ -65,14 +51,21 @@ label{font-size:13px;font-weight:600;color:var(--muted);}
 #overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:9999;color:#fff;font-size:18px;flex-direction:column;text-align:center;}
 #overlay img{width:90px;margin-bottom:20px;animation:pulse 1.2s infinite;}
 @keyframes pulse{0%,100%{opacity:.8}50%{opacity:1}}
+#dadosCard{background:var(--card);padding:18px;border-radius:var(--radius);box-shadow:var(--shadow);margin:15px auto;max-width:600px;}
+#dadosCard h3{color:var(--accent);font-family:'Playfair Display',serif;margin-bottom:8px;}
+#dadosCard p{font-size:14px;color:var(--muted);}
+#dadosCard button{margin-right:8px;}
 </style>
 </head>
 <body>
 
 <header>🍽️ Mercatto Delivery</header>
 <div class="banner">
-  <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200" alt="Banner principal">
+  <img src="https://images.unsplash.com/photo-1600891964091-27e930a3a4e2?w=1200" alt="Banner principal">
+  <h1>Bem-vindo ao Mercatto Delícia</h1>
 </div>
+
+<div id="dadosCard"></div>
 
 <div class="categorias" id="categorias"></div>
 <div class="container">
@@ -96,8 +89,7 @@ label{font-size:13px;font-weight:600;color:var(--muted);}
 </div>
 
 <script>
-const ENDPOINT = "https://script.google.com/macros/s/AKfycbxcdhUN2YY-iSejxsxc7AWAG4t_DYKN7_tJkNrZ4O1acG5v0Wr0zUDMga2b2FiOs6Qa/exec"; // coloque seu GAS aqui
-
+const ENDPOINT = "URL_DO_SEU_SCRIPT"; // Substitua pelo link do GAS
 let carrinho = [], categoriaAtiva = '';
 
  const produtos = [
@@ -185,6 +177,7 @@ let carrinho = [], categoriaAtiva = '';
 ];
 
 
+// ======== CATEGORIAS ========
 const categoriasUnicas=[...new Set(produtos.map(p=>p.categoria))];
 const categoriasDiv=document.getElementById('categorias'),menuDiv=document.getElementById('menu');
 categoriasUnicas.forEach((cat,i)=>{const b=document.createElement('button');b.textContent=cat;b.onclick=()=>filtrarCategoria(cat);if(i===0)b.classList.add('active');categoriasDiv.appendChild(b);});
@@ -202,6 +195,7 @@ function filtrarCategoria(cat){
   });
 }
 
+// ======== CARRINHO ========
 function abrirAdd(id){
   const p=produtos.find(x=>x.id===id);
   const m=document.createElement('div');
@@ -239,87 +233,75 @@ function renderCarrinho(){
 function remover(i){carrinho.splice(i,1);renderCarrinho();}
 document.getElementById('cart-btn').onclick=()=>document.getElementById('cart-modal').style.display='flex';
 document.getElementById('cart-modal').onclick=e=>{if(e.target.id==='cart-modal')e.target.style.display='none';};
-document.getElementById('btnFinalizar').onclick=abrirForm;
+document.getElementById('btnFinalizar').onclick=mostrarDadosCliente;
+
+// ======== DADOS DO CLIENTE COM LOCALSTORAGE ========
+function mostrarDadosCliente(){
+  const saved=JSON.parse(localStorage.getItem("cliente")||"{}");
+  const div=document.getElementById("dadosCard");
+  if(saved.nome){
+    div.innerHTML=`
+    <h3>👤 Seus Dados</h3>
+    <p><strong>${saved.nome}</strong><br>${saved.endereco}, ${saved.numero} - ${saved.bairro}<br>${saved.cep}</p>
+    <button onclick="abrirForm()">✏️ Editar</button>
+    <button onclick="enviarPedido()">Enviar Pedido</button>`;
+  }else abrirForm();
+}
 
 function abrirForm(){
+  const saved=JSON.parse(localStorage.getItem("cliente")||"{}");
   const f=document.createElement('div');
   f.style.cssText=`position:fixed;inset:0;background:#fffaf5;overflow:auto;z-index:9999;padding:20px;`;
   f.innerHTML=`
-  <h2 style="color:#b8860b;font-family:'Playfair Display',serif;">📋 Dados do Pedido</h2>
-  <label>Nome</label><input id="nome">
-  <label>E-mail</label><input id="email" type="email">
-  <label>WhatsApp</label><input id="whats">
-  <label>CEP</label><input id="cep" maxlength="9" onblur="buscarEndereco()">
-  <label>Endereço</label><input id="endereco">
-  <label>Número</label><input id="numero" type="number">
-  <label>Bairro</label><input id="bairro" oninput="atualizarTotais()">
-  <label>Complemento</label><input id="complemento">
+  <h2 style="color:#b8860b;">📋 Dados do Pedido</h2>
+  <label>Nome</label><input id="nome" value="${saved.nome||''}">
+  <label>E-mail</label><input id="email" type="email" value="${saved.email||''}">
+  <label>WhatsApp</label><input id="whats" value="${saved.whats||''}">
+  <label>CEP</label><input id="cep" maxlength="9" onblur="buscarEndereco()" value="${saved.cep||''}">
+  <label>Endereço</label><input id="endereco" value="${saved.endereco||''}">
+  <label>Número</label><input id="numero" type="number" value="${saved.numero||''}">
+  <label>Bairro</label><input id="bairro" value="${saved.bairro||''}">
+  <label>Complemento</label><input id="complemento" value="${saved.complemento||''}">
   <label>Forma de Pagamento</label>
   <select id="pagamento">
-    <option>Pix</option><option>Cartão</option><option>Dinheiro</option>
+    <option ${saved.pagamento==='Pix'?'selected':''}>Pix</option>
+    <option ${saved.pagamento==='Cartão'?'selected':''}>Cartão</option>
+    <option ${saved.pagamento==='Dinheiro'?'selected':''}>Dinheiro</option>
   </select>
-  <label>Troco para (se dinheiro)</label><input id="troco">
-  <p id="infoTotais"></p>
-  <button style="background:#b8860b;color:#fff;border:none;padding:12px 20px;width:100%;border-radius:8px;font-weight:600;" onclick="enviarPedido()">Enviar Pedido</button>`;
+  <label>Troco para (se dinheiro)</label><input id="troco" value="${saved.troco||''}">
+  <button onclick="salvarCliente()">Salvar Dados</button>`;
   document.body.appendChild(f);
-  atualizarTotais();
 }
-
+function salvarCliente(){
+  const c={nome:nome.value,email:email.value,whats:whats.value,cep:cep.value,endereco:endereco.value,numero:numero.value,bairro:bairro.value,complemento:complemento.value,pagamento:pagamento.value,troco:troco.value};
+  localStorage.setItem("cliente",JSON.stringify(c));
+  alert("✅ Dados salvos!");
+  document.querySelectorAll('div[style*="position:fixed"]').forEach(x=>x.remove());
+  mostrarDadosCliente();
+}
 async function buscarEndereco(){
   const cep=document.getElementById('cep').value.replace(/\D/g,'');
   if(cep.length!==8)return;
   const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
   const d=await r.json();
-  if(d.erro)return alert('CEP não encontrado');
-  document.getElementById('endereco').value=d.logradouro||'';
-  document.getElementById('bairro').value=d.bairro||'';
-  atualizarTotais();
+  if(!d.erro){endereco.value=d.logradouro;bairro.value=d.bairro;}
 }
 
-function taxaPorBairro(b){const t={Centro:5,"Vila Brasil":8,"Santa Luzia":10};return t[b]||8;}
-function atualizarTotais(){
-  const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
-  const bairro=document.getElementById('bairro')?.value||'';
-  const taxa=taxaPorBairro(bairro);
-  const total=subtotal+taxa;
-  document.getElementById('infoTotais').innerHTML=`Subtotal: R$${subtotal.toFixed(2)}<br>Taxa: R$${taxa.toFixed(2)}<br><strong>Total: R$${total.toFixed(2)}</strong>`;
-}
-
+// ======== ENVIO PARA PLANILHA ========
 async function enviarPedido(){
-  const nome=document.getElementById('nome').value.trim();
-  const email=document.getElementById('email').value.trim();
-  const whats=document.getElementById('whats').value.trim();
-  const cep=document.getElementById('cep').value.trim();
-  const endereco=document.getElementById('endereco').value.trim();
-  const numero=document.getElementById('numero').value.trim();
-  const bairro=document.getElementById('bairro').value.trim();
-  const complemento=document.getElementById('complemento').value.trim();
-  const pagamento=document.getElementById('pagamento').value;
-  const troco=document.getElementById('troco').value;
-  const taxa=taxaPorBairro(bairro);
+  const c=JSON.parse(localStorage.getItem("cliente")||"{}");
+  const taxa=8;
   const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
   const total=subtotal+taxa;
-
-  if(!nome||!email||!whats||!cep||!endereco||!bairro||!pagamento){
-    alert("Preencha todos os campos obrigatórios.");return;
-  }
-
+  const payload={acao:"adicionar",...c,itens:carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),observacoes:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),subtotal,taxa,total};
   document.getElementById('overlay').style.display='flex';
-  const payload={acao:"adicionar",nome,email,whats,cep,endereco,numero,bairro,complemento,pagamento,troco,
-  itens:carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),
-  observacoes:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),
-  subtotal,taxa,total};
-
   try{
     const r=await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
     const t=await r.text();
     document.getElementById('overlay').style.display='none';
-    if(t.includes('ok')){alert("✅ Pedido enviado com sucesso!");location.reload();}
-    else alert("Erro ao salvar pedido.");
-  }catch(e){
-    document.getElementById('overlay').style.display='none';
-    alert("⚠️ Erro de conexão.");
-  }
+    if(t.includes('ok')){alert("✅ Pedido enviado!");localStorage.removeItem("carrinho");location.reload();}
+    else alert("Erro ao enviar.");
+  }catch(e){document.getElementById('overlay').style.display='none';alert("Erro de conexão.");}
 }
 </script>
 </body>
