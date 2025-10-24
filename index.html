@@ -1,174 +1,77 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <title>🍽️ Mercatto Delivery</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#b8860b">
+<link rel="icon" sizes="192x192" href="https://github.com/ClenaStore/cardapiomercatto/blob/main/icons/logo.png?raw=true">
+<link rel="apple-touch-icon" href="https://github.com/ClenaStore/cardapiomercatto/blob/main/icons/logo.png?raw=true">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mercatto Delivery">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
-
+<script src="https://unpkg.com/imask"></script>
 <style>
-:root {
-  --bg: #0b0f19;
-  --card: #151d2f;
-  --accent: #b8860b;
-  --accent-light: #e4b64b;
-  --text: #f8fafc;
-  --muted: #94a3b8;
-  --radius: 14px;
-  --shadow: 0 6px 18px rgba(0,0,0,0.35);
+:root{
+  --bg:#f4f1ec;--card:#fffaf5;--accent:#b8860b;--ink:#3a2e1f;--muted:#6e6252;
+  --radius:12px;--shadow:0 3px 8px rgba(0,0,0,0.08);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{
-  font-family:'Inter',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  overflow-x:hidden;
+  font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);
+  overflow-x:hidden;scroll-behavior:smooth;
 }
 header{
-  text-align:center;
-  font-family:'Playfair Display',serif;
-  background:linear-gradient(90deg,#b8860b,#d6a318);
-  color:#fff;
-  padding:18px;
-  font-size:22px;
-  letter-spacing:.3px;
+  background:var(--accent);color:#fff;text-align:center;
+  padding:18px 10px;font-family:'Playfair Display',serif;font-size:22px;
   box-shadow:var(--shadow);
 }
-.banner img{
-  width:100%;
-  border-radius:0 0 var(--radius) var(--radius);
-  box-shadow:var(--shadow);
-}
+.banner{width:100%;max-width:600px;margin:15px auto;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+.banner img{width:100%;display:block;}
 .categorias{
   display:flex;overflow-x:auto;gap:10px;
-  padding:10px;scrollbar-width:none;
-  -ms-overflow-style:none;justify-content:center;
+  padding:10px;margin:0 auto 10px;scrollbar-width:none;max-width:600px;
 }
 .categorias::-webkit-scrollbar{display:none;}
 .categorias button{
-  flex-shrink:0;background:var(--card);
-  color:var(--accent-light);
-  border:1px solid #2c3347;
-  padding:8px 18px;border-radius:20px;
-  cursor:pointer;font-weight:600;
-  transition:.3s;box-shadow:var(--shadow);
+  flex-shrink:0;background:var(--card);border:1px solid #e0d7c5;
+  color:var(--accent);padding:8px 16px;border-radius:20px;
+  font-weight:600;white-space:nowrap;cursor:pointer;transition:.2s;box-shadow:var(--shadow);
 }
-.categorias button.active,
-.categorias button:hover{
-  background:var(--accent);
-  color:#fff;
-}
-.container{
-  padding:20px;max-width:800px;margin:auto;
-}
-h2{
-  font-family:'Playfair Display',serif;
-  color:var(--accent-light);
-  border-bottom:1px solid #2a3245;
-  padding-bottom:4px;margin-bottom:10px;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:14px;
-}
-.card{
-  background:var(--card);
-  border-radius:var(--radius);
-  overflow:hidden;
-  box-shadow:var(--shadow);
-  transition:transform .2s, box-shadow .3s;
-  border:1px solid #2a3245;
-}
-.card:hover{
-  transform:scale(1.02);
-  box-shadow:0 0 15px rgba(184,134,11,0.4);
-}
-.card img{
-  width:100%;height:130px;object-fit:cover;
-}
-.card-body{
-  padding:10px;
-}
-.card-body h3{
-  font-family:'Playfair Display',serif;
-  font-size:16px;color:var(--accent-light);
-}
-.card-body p{
-  font-size:13px;color:var(--muted);
-  margin:4px 0;min-height:40px;
-}
-.card-body span{color:#fff;font-weight:600;}
-button.add{
-  background:var(--accent);
-  color:#fff;border:none;
-  width:100%;padding:8px;
-  border-radius:var(--radius);
-  margin-top:6px;cursor:pointer;
-  font-weight:600;
-  transition:.3s;
-}
+.categorias button.active{background:var(--accent);color:#fff;}
+.container{padding:10px;margin:0 auto;max-width:600px;}
+h2{margin-top:10px;color:var(--accent);font-family:'Playfair Display',serif;border-bottom:1px solid #d7ccbb;padding-bottom:4px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:transform .2s;border:1px solid #e2d8c5;}
+.card:hover{transform:scale(1.02);}
+.card img{width:100%;height:120px;object-fit:cover;}
+.card-body{padding:10px;}
+.card-body h3{margin:0;font-size:16px;font-family:'Playfair Display',serif;}
+.card-body p{font-size:13px;color:var(--muted);margin:4px 0;}
+.card-body span{font-weight:600;color:var(--accent);}
+button.add{background:var(--accent);color:#fff;border:none;padding:8px;border-radius:var(--radius);width:100%;margin-top:8px;font-weight:600;cursor:pointer;}
 button.add:hover{opacity:.85;}
-
-/* 🛒 CARRINHO */
-#cart-btn{
-  position:fixed;bottom:22px;right:22px;
-  background:var(--accent);
-  color:#fff;border:none;border-radius:50%;
-  width:60px;height:60px;font-size:24px;
-  box-shadow:var(--shadow);cursor:pointer;
-  z-index:1000;
-}
-#cart-count{
-  position:absolute;top:6px;right:6px;
-  background:#a12f2f;color:#fff;
-  font-size:12px;border-radius:50%;
-  padding:2px 6px;
-}
-#cart-modal{
-  position:fixed;inset:0;background:rgba(0,0,0,.7);
-  display:none;justify-content:center;align-items:center;
-  z-index:2000;
-}
-#cart-modal.ativo{display:flex;}
-.cart-content{
-  background:var(--card);
-  border-radius:var(--radius);
-  padding:20px;
-  width:90%;max-width:420px;
-  max-height:90vh;overflow:auto;
-  box-shadow:var(--shadow);
-  border:1px solid #2c3347;
-}
-.cart-content h3{text-align:center;color:var(--accent-light);margin-bottom:10px;}
-.item-line{display:flex;justify-content:space-between;margin:6px 0;}
-.finalizar{
-  background:var(--accent);
-  color:#fff;width:100%;border:none;
-  border-radius:var(--radius);
-  padding:10px;font-weight:600;margin-top:10px;
-}
-
-/* 🔔 Overlay */
-#overlay{
-  position:fixed;inset:0;display:none;
-  align-items:center;justify-content:center;
-  background:rgba(0,0,0,.85);
-  flex-direction:column;z-index:9999;
-}
-#overlay img{width:80px;margin-bottom:16px;animation:pulse 1.3s infinite;}
-@keyframes pulse{0%,100%{opacity:.7}50%{opacity:1}}
+#cart-btn{position:fixed;bottom:20px;right:20px;background:var(--accent);color:#fff;border:none;border-radius:50%;width:60px;height:60px;box-shadow:var(--shadow);font-size:24px;cursor:pointer;z-index:20;}
+#cart-count{position:absolute;top:6px;right:6px;background:#a12f2f;color:#fff;font-size:12px;border-radius:50%;padding:2px 6px;}
+#cart-modal{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;justify-content:center;align-items:center;z-index:999;}
+.cart-content{background:#fffaf5;width:90%;max-width:430px;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border:2px solid #e0d7c5;display:flex;flex-direction:column;align-items:stretch;max-height:90vh;overflow:hidden;}
+.cart-body{flex:1;overflow-y:auto;padding-right:6px;}
+.item-line{display:flex;justify-content:space-between;align-items:center;margin:6px 0;padding-bottom:6px;border-bottom:1px solid #e6dcc8;}
+.finalizar{background:var(--accent);color:#fff;border:none;padding:10px;width:100%;border-radius:var(--radius);font-weight:600;margin-top:10px;}
+input,select{width:100%;padding:10px;margin:6px 0 12px;border:1px solid #d7ccbb;border-radius:8px;font-size:15px;background:#fffefb;}
+label{font-size:13px;font-weight:600;color:var(--muted);}
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:9999;color:#fff;font-size:18px;flex-direction:column;text-align:center;}
+#overlay img{width:90px;margin-bottom:20px;animation:pulse 1.2s infinite;}
+@keyframes pulse{0%,100%{opacity:.8}50%{opacity:1}}
 </style>
 </head>
-
 <body>
-<header>🍽️ Mercatto Delivery</header>
 
+<header>🍽️ Mercatto Delivery</header>
 <div class="banner">
-  <img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?w=1200" alt="Banner Mercatto">
+  <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200" alt="Banner principal">
 </div>
 
 <div class="categorias" id="categorias"></div>
@@ -181,18 +84,22 @@ button.add:hover{opacity:.85;}
 
 <div id="cart-modal">
   <div class="cart-content">
-    <h3>Seu Pedido</h3>
-    <div id="cart-items"></div>
-    <button class="finalizar" onclick="abrirForm()">Continuar</button>
+    <h3 style="text-align:center;color:var(--accent);font-family:'Playfair Display',serif;">🧾 Seu Pedido</h3>
+    <div class="cart-body" id="cart-items"></div>
+    <button class="finalizar" id="btnFinalizar" style="display:none;">Continuar</button>
   </div>
 </div>
 
 <div id="overlay">
-  <img src="https://i.imgur.com/8Km9tLL.png" alt="Logo">
-  <p>Salvando seu pedido... aguarde 🍽️</p>
+  <img src="https://i.imgur.com/8Km9tLL.png" alt="logo">
+  <p>Enviando seu pedido...<br>Por favor, aguarde 🕒</p>
 </div>
 
 <script>
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbxcdhUN2YY-iSejxsxc7AWAG4t_DYKN7_tJkNrZ4O1acG5v0Wr0zUDMga2b2FiOs6Qa/exec"; // coloque seu GAS aqui
+
+let carrinho = [], categoriaAtiva = '';
+
  const produtos = [
   // 🍽️ PRATOS INDIVIDUAIS DELICIOSOS
   {id: 36, nome: 'Risoto de Cogumelos', desc: 'Arroz arbóreo cremoso, preparado com uma seleção de cogumelos frescos e servido com torres de legumes no crocante de parmesão, realçando um sabor incrível!', preco: 87.50, img: 'img/padrao.jpg', categoria: 'Pratos Individuais Deliciosos'},
@@ -277,116 +184,142 @@ button.add:hover{opacity:.85;}
   {id: 91, nome: 'Cheesecake de Goiaba com Queijo', desc: 'Base de biscoito, creme de queijo e cobertura de goiabada, equilibrando o doce e o suave.', preco: 39.90, img: 'img/padrao.jpg', categoria: 'Sobremesas Individuais Maravilhosas'}
 ];
 
-// 🛍️ Carrinho
-let carrinho=[];
-const categorias=[...new Set(produtos.map(p=>p.categoria))];
-const categoriasDiv=document.getElementById('categorias');
-const menuDiv=document.getElementById('menu');
-const titulo=document.getElementById('tituloCategoria');
 
-categorias.forEach((cat,i)=>{
-  const btn=document.createElement('button');
-  btn.textContent=cat;
-  btn.onclick=()=>filtrar(cat);
-  if(i===0)btn.classList.add('active');
-  categoriasDiv.appendChild(btn);
-});
-filtrar(categorias[0]);
+const categoriasUnicas=[...new Set(produtos.map(p=>p.categoria))];
+const categoriasDiv=document.getElementById('categorias'),menuDiv=document.getElementById('menu');
+categoriasUnicas.forEach((cat,i)=>{const b=document.createElement('button');b.textContent=cat;b.onclick=()=>filtrarCategoria(cat);if(i===0)b.classList.add('active');categoriasDiv.appendChild(b);});
+filtrarCategoria(categoriasUnicas[0]);
 
-function filtrar(cat){
-  titulo.textContent=cat;
-  document.querySelectorAll('.categorias button').forEach(b=>b.classList.remove('active'));
+function filtrarCategoria(cat){
+  categoriaAtiva=cat;document.querySelectorAll('.categorias button').forEach(b=>b.classList.remove('active'));
   [...categoriasDiv.children].find(b=>b.textContent===cat)?.classList.add('active');
   menuDiv.innerHTML='';
   produtos.filter(p=>p.categoria===cat).forEach(p=>{
     const c=document.createElement('div');
     c.className='card';
-    c.innerHTML=`
-      <img src="${p.img}">
-      <div class="card-body">
-        <h3>${p.nome}</h3>
-        <p>${p.desc}</p>
-        <span>R$ ${p.preco.toFixed(2)}</span>
-        <button class="add" onclick="add(${p.id})">Adicionar</button>
-      </div>`;
+    c.innerHTML=`<img src="${p.img}"><div class="card-body"><h3>${p.nome}</h3><p>${p.desc}</p><span>R$${p.preco.toFixed(2)}</span><button class="add" onclick="abrirAdd(${p.id})">Adicionar</button></div>`;
     menuDiv.appendChild(c);
   });
 }
 
-function add(id){
-  const prod=produtos.find(p=>p.id===id);
-  const existe=carrinho.find(i=>i.id===id);
-  if(existe)existe.qtd++; else carrinho.push({...prod,qtd:1});
-  atualizarCarrinho();
+function abrirAdd(id){
+  const p=produtos.find(x=>x.id===id);
+  const m=document.createElement('div');
+  m.style.cssText=`position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:10000;`;
+  m.innerHTML=`<div style="background:#fffaf5;padding:25px;border-radius:12px;width:90%;max-width:320px;text-align:center;">
+  <h3 style="color:#b8860b;">${p.nome}</h3>
+  <p>${p.desc}</p>
+  <label>Quantidade:</label><input id="qtdTemp" type="number" min="1" value="1" style="width:80px;">
+  <label>Observação:</label><input id="obsTemp" placeholder="(opcional)" style="width:100%;margin-top:5px;">
+  <button style="margin-top:12px;background:#b8860b;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-weight:600;" onclick="confirmarAdd(${p.id})">Adicionar</button>
+  </div>`;
+  document.body.appendChild(m);
+  m.addEventListener('click',e=>{if(e.target===m)m.remove();});
+}
+function confirmarAdd(id){
+  const qtd=parseInt(document.getElementById('qtdTemp').value)||1;
+  const obs=document.getElementById('obsTemp').value||'';
+  const p=produtos.find(x=>x.id===id);
+  const existe=carrinho.find(i=>i.id===id&&i.obs===obs);
+  if(existe){existe.qtd+=qtd;}else{carrinho.push({...p,qtd,obs});}
+  document.querySelectorAll('div[style*="position:fixed"]').forEach(x=>x.remove());
+  renderCarrinho();
 }
 
-function atualizarCarrinho(){
-  document.getElementById('cart-count').innerText=carrinho.reduce((a,b)=>a+b.qtd,0);
-  const items=document.getElementById('cart-items');
-  items.innerHTML='';
+function renderCarrinho(){
+  const div=document.getElementById('cart-items');
+  const btn=document.getElementById('btnFinalizar');
+  div.innerHTML='';
   carrinho.forEach((i,idx)=>{
-    items.innerHTML+=`
-      <div class="item-line">
-        <span>${i.nome} x${i.qtd}</span>
-        <span>R$ ${(i.qtd*i.preco).toFixed(2)}</span>
-      </div>`;
+    div.innerHTML+=`<div class="item-line"><span>${i.nome} x${i.qtd}</span><span>R$${(i.preco*i.qtd).toFixed(2)}</span><button onclick="remover(${idx})">✖</button></div><small>Obs: ${i.obs||'-'}</small>`;
   });
+  document.getElementById('cart-count').textContent=carrinho.reduce((s,i)=>s+i.qtd,0);
+  btn.style.display=carrinho.length?'block':'none';
 }
+function remover(i){carrinho.splice(i,1);renderCarrinho();}
+document.getElementById('cart-btn').onclick=()=>document.getElementById('cart-modal').style.display='flex';
+document.getElementById('cart-modal').onclick=e=>{if(e.target.id==='cart-modal')e.target.style.display='none';};
+document.getElementById('btnFinalizar').onclick=abrirForm;
 
-document.getElementById('cart-btn').onclick=()=>document.getElementById('cart-modal').classList.add('ativo');
-document.getElementById('cart-modal').onclick=e=>{if(e.target.id==='cart-modal')e.target.classList.remove('ativo');};
-
-// 💾 Formulário simplificado
 function abrirForm(){
-  const modal=document.getElementById('cart-modal');
-  modal.innerHTML=`
-    <div class="cart-content">
-      <h3>Seus Dados</h3>
-      <input id="nome" placeholder="Seu nome completo">
-      <input id="email" placeholder="Seu e-mail">
-      <input id="endereco" placeholder="Endereço completo">
-      <button class="finalizar" onclick="salvarPedido()">Enviar Pedido</button>
-    </div>`;
+  const f=document.createElement('div');
+  f.style.cssText=`position:fixed;inset:0;background:#fffaf5;overflow:auto;z-index:9999;padding:20px;`;
+  f.innerHTML=`
+  <h2 style="color:#b8860b;font-family:'Playfair Display',serif;">📋 Dados do Pedido</h2>
+  <label>Nome</label><input id="nome">
+  <label>E-mail</label><input id="email" type="email">
+  <label>WhatsApp</label><input id="whats">
+  <label>CEP</label><input id="cep" maxlength="9" onblur="buscarEndereco()">
+  <label>Endereço</label><input id="endereco">
+  <label>Número</label><input id="numero" type="number">
+  <label>Bairro</label><input id="bairro" oninput="atualizarTotais()">
+  <label>Complemento</label><input id="complemento">
+  <label>Forma de Pagamento</label>
+  <select id="pagamento">
+    <option>Pix</option><option>Cartão</option><option>Dinheiro</option>
+  </select>
+  <label>Troco para (se dinheiro)</label><input id="troco">
+  <p id="infoTotais"></p>
+  <button style="background:#b8860b;color:#fff;border:none;padding:12px 20px;width:100%;border-radius:8px;font-weight:600;" onclick="enviarPedido()">Enviar Pedido</button>`;
+  document.body.appendChild(f);
+  atualizarTotais();
 }
 
-async function salvarPedido(){
+async function buscarEndereco(){
+  const cep=document.getElementById('cep').value.replace(/\D/g,'');
+  if(cep.length!==8)return;
+  const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+  const d=await r.json();
+  if(d.erro)return alert('CEP não encontrado');
+  document.getElementById('endereco').value=d.logradouro||'';
+  document.getElementById('bairro').value=d.bairro||'';
+  atualizarTotais();
+}
+
+function taxaPorBairro(b){const t={Centro:5,"Vila Brasil":8,"Santa Luzia":10};return t[b]||8;}
+function atualizarTotais(){
+  const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
+  const bairro=document.getElementById('bairro')?.value||'';
+  const taxa=taxaPorBairro(bairro);
+  const total=subtotal+taxa;
+  document.getElementById('infoTotais').innerHTML=`Subtotal: R$${subtotal.toFixed(2)}<br>Taxa: R$${taxa.toFixed(2)}<br><strong>Total: R$${total.toFixed(2)}</strong>`;
+}
+
+async function enviarPedido(){
+  const nome=document.getElementById('nome').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const whats=document.getElementById('whats').value.trim();
+  const cep=document.getElementById('cep').value.trim();
+  const endereco=document.getElementById('endereco').value.trim();
+  const numero=document.getElementById('numero').value.trim();
+  const bairro=document.getElementById('bairro').value.trim();
+  const complemento=document.getElementById('complemento').value.trim();
+  const pagamento=document.getElementById('pagamento').value;
+  const troco=document.getElementById('troco').value;
+  const taxa=taxaPorBairro(bairro);
+  const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
+  const total=subtotal+taxa;
+
+  if(!nome||!email||!whats||!cep||!endereco||!bairro||!pagamento){
+    alert("Preencha todos os campos obrigatórios.");return;
+  }
+
   document.getElementById('overlay').style.display='flex';
-  const dados={
-    nome:document.getElementById('nome').value,
-    email:document.getElementById('email').value,
-    endereco:document.getElementById('endereco').value,
-    itens:carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),
-    total:carrinho.reduce((s,i)=>s+i.qtd*i.preco,0),
-    status:'PENDENTE'
-  };
+  const payload={acao:"adicionar",nome,email,whats,cep,endereco,numero,bairro,complemento,pagamento,troco,
+  itens:carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),
+  observacoes:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),
+  subtotal,taxa,total};
 
   try{
-    await fetch('https://script.google.com/macros/s/AKfycbxcdhUN2YY-iSejxsxc7AWAG4t_DYKN7_tJkNrZ4O1acG5v0Wr0zUDMga2b2FiOs6Qa/exec',{
-      method:'POST',
-      body:JSON.stringify(dados)
-    });
+    const r=await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
+    const t=await r.text();
     document.getElementById('overlay').style.display='none';
-    alert('✅ Pedido registrado! Você receberá uma notificação ao ser aprovado.');
-    carrinho=[];
-    atualizarCarrinho();
-    document.getElementById('cart-modal').classList.remove('ativo');
+    if(t.includes('ok')){alert("✅ Pedido enviado com sucesso!");location.reload();}
+    else alert("Erro ao salvar pedido.");
   }catch(e){
     document.getElementById('overlay').style.display='none';
-    alert('❌ Falha ao enviar pedido.');
+    alert("⚠️ Erro de conexão.");
   }
-}
-</script>
-
-<script>
-// 🔔 Notificações Push
-if('Notification' in window && 'serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').then(reg=>{
-    Notification.requestPermission().then(p=>{
-      if(p==='granted'){
-        console.log('✅ Notificações ativas');
-      }
-    });
-  });
 }
 </script>
 </body>
