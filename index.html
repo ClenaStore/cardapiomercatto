@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" />
 <title>🍽️ Mercatto Delivery</title>
 
 <!-- CONFIGURAÇÕES PWA -->
@@ -13,295 +13,81 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mercatto Delivery">
-
-<!-- FONTES -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
-
-<!-- ANIMAÇÕES -->
-<script src="https://unpkg.com/imask"></script>
 <script src="https://unpkg.com/scrollreveal"></script>
 
 <style>
 :root {
-  --bg: #0b0f19;
-  --card: #151d2f;
-  --text: #f8fafc;
-  --muted: #a5b4fc;
-  --accent: #b8860b;
-  --accent2: #ffcc70;
-  --radius: 14px;
-  --shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  --bg:#0b0f19;--card:#151d2f;--text:#f8fafc;--muted:#9ca3af;
+  --accent:#b8860b;--accent2:#ffcc70;
+  --radius:14px;--shadow:0 6px 20px rgba(0,0,0,.3);
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-}
-
-/* HEADER */
-header {
-  background: linear-gradient(90deg, #000, #1a1208);
-  color: var(--accent2);
-  text-align: center;
-  padding: 18px;
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  box-shadow: var(--shadow);
-  letter-spacing: 1px;
-}
-
-/* BANNER PRINCIPAL */
-.banner {
-  position: relative;
-  width: 100%;
-  height: 90vh;
-  overflow: hidden;
-}
-.banner img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(60%);
-  transition: transform 2s ease;
-}
-.banner:hover img { transform: scale(1.05); }
-.banner h1 {
-  position: absolute;
-  bottom: 30px;
-  left: 20px;
-  right: 20px;
-  font-size: 34px;
-  color: #fff;
-  text-shadow: 0 3px 12px rgba(0,0,0,.6);
-  font-family: 'Playfair Display', serif;
-  line-height: 1.3;
-}
-
-/* CATEGORIAS */
-.categorias {
-  display: flex;
-  overflow-x: auto;
-  gap: 10px;
-  padding: 14px;
-  margin: 10px auto;
-  scrollbar-width: none;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-.categorias::-webkit-scrollbar { display: none; }
-.categorias button {
-  background: #1f2937;
-  border: 1px solid var(--accent);
-  color: var(--accent2);
-  padding: 10px 18px;
-  border-radius: 25px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all .3s;
-}
-.categorias button.active, .categorias button:hover {
-  background: var(--accent);
-  color: #000;
-  transform: scale(1.05);
-}
-
-/* CONTEÚDO */
-.container { padding: 10px 15px; max-width: 1000px; margin: 0 auto; }
-h2 {
-  margin: 20px 0 10px;
-  color: var(--accent2);
-  font-family: 'Playfair Display', serif;
-  text-align: center;
-  font-size: 22px;
-  letter-spacing: .5px;
-}
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 14px;
-}
-
-/* CARD DE PRODUTO */
-.card {
-  background: var(--card);
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  transition: all .25s ease-in-out;
-  border: 1px solid rgba(255,255,255,.05);
-}
-.card:hover { transform: scale(1.03); border-color: var(--accent2); }
-.card img { width: 100%; height: 130px; object-fit: cover; }
-.card-body { padding: 10px 12px; }
-.card-body h3 {
-  font-size: 15px;
-  font-family: 'Playfair Display', serif;
-  color: var(--accent2);
-  margin-bottom: 4px;
-}
-.card-body p { font-size: 13px; color: var(--muted); min-height: 38px; }
-.card-body span { display: block; color: var(--accent); font-weight: 600; margin-top: 5px; }
-.card-body button {
-  background: var(--accent);
-  color: #000;
-  border: none;
-  width: 100%;
-  padding: 8px;
-  margin-top: 8px;
-  border-radius: var(--radius);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all .2s;
-}
-.card-body button:hover { background: var(--accent2); }
-
-/* CARRINHO */
-#cart-btn {
-  position: fixed;
-  bottom: 20px; right: 20px;
-  background: var(--accent);
-  color: #000;
-  border: none;
-  border-radius: 50%;
-  width: 65px; height: 65px;
-  box-shadow: var(--shadow);
-  font-size: 26px;
-  cursor: pointer;
-  z-index: 20;
-  transition: transform .3s;
-}
-#cart-btn:hover { transform: scale(1.1); }
-#cart-count {
-  position: absolute;
-  top: 5px; right: 5px;
-  background: #dc2626;
-  color: #fff;
-  font-size: 12px;
-  border-radius: 50%;
-  padding: 2px 6px;
-}
-
-/* MODAL CARRINHO */
-#cart-modal {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.7);
-  display: none; justify-content: center; align-items: center;
-  z-index: 999;
-}
-.cart-content {
-  background: #111827;
-  width: 92%; max-width: 440px;
-  border-radius: var(--radius);
-  padding: 20px;
-  color: var(--text);
-  box-shadow: var(--shadow);
-}
-.cart-content h3 {
-  text-align: center;
-  color: var(--accent2);
-  font-family: 'Playfair Display', serif;
-}
-.cart-body { max-height: 60vh; overflow-y: auto; margin-top: 10px; }
-.item-line {
-  display: flex; justify-content: space-between; align-items: center;
-  margin: 6px 0; padding-bottom: 6px;
-  border-bottom: 1px solid rgba(255,255,255,.1);
-}
-.finalizar {
-  background: var(--accent);
-  color: #000;
-  border: none;
-  width: 100%;
-  padding: 12px;
-  margin-top: 14px;
-  border-radius: var(--radius);
-  font-weight: 600;
-  cursor: pointer;
-}
-.finalizar:hover { background: var(--accent2); }
-
-/* OVERLAY */
-#overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.9);
-  display: none;
-  align-items: center; justify-content: center;
-  flex-direction: column;
-  z-index: 9999;
-  color: #fff;
-  font-size: 18px;
-}
-#overlay img { width: 90px; margin-bottom: 20px; animation: pulse 1.2s infinite; }
-@keyframes pulse { 0%,100%{opacity:.8;} 50%{opacity:1;} }
-
-/* FORM CLIENTE */
-.form-popup {
-  position: fixed; inset: 0;
-  background: #0f172a;
-  overflow-y: auto;
-  padding: 20px;
-  z-index: 9999;
-  animation: fadeIn .3s ease;
-}
-@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-.form-popup h2 {
-  color: var(--accent2);
-  text-align: center;
-  font-family: 'Playfair Display', serif;
-  margin-bottom: 10px;
-}
-.form-popup input, .form-popup select {
-  width: 100%;
-  padding: 10px;
-  margin: 6px 0 12px;
-  border-radius: 8px;
-  border: 1px solid #374151;
-  background: #1f2937;
-  color: #fff;
-  font-size: 15px;
-}
-.form-popup label {
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--accent2);
-}
-.form-popup button {
-  background: var(--accent);
-  color: #000;
-  border: none;
-  padding: 12px;
-  width: 100%;
-  border-radius: 8px;
-  font-weight: 600;
-  margin-top: 8px;
-}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;scroll-behavior:smooth;}
+header{background:linear-gradient(90deg,#000,#1a1208);color:var(--accent2);text-align:center;padding:18px;font-family:'Playfair Display',serif;font-size:22px;box-shadow:var(--shadow);}
+.banner{position:relative;width:100%;height:90vh;overflow:hidden;}
+.banner img{width:100%;height:100%;object-fit:cover;filter:brightness(55%);transition:transform 2s ease;}
+.banner:hover img{transform:scale(1.05);}
+.banner h1{position:absolute;bottom:30px;left:20px;right:20px;font-size:32px;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.6);font-family:'Playfair Display',serif;line-height:1.3;}
+.categorias{display:flex;overflow-x:auto;gap:10px;padding:14px;margin:10px auto;scrollbar-width:none;scroll-behavior:smooth;max-width:100vw;}
+.categorias::-webkit-scrollbar{display:none;}
+.categorias button{flex-shrink:0;background:#1f2937;border:1px solid var(--accent);color:var(--accent2);padding:10px 18px;border-radius:25px;font-weight:600;cursor:pointer;transition:all .3s;}
+.categorias button.active,.categorias button:hover{background:var(--accent);color:#000;transform:scale(1.05);}
+.container{padding:10px 15px;max-width:1000px;margin:0 auto;}
+h2{margin:20px 0 10px;color:var(--accent2);font-family:'Playfair Display',serif;text-align:center;font-size:22px;letter-spacing:.5px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;}
+.card{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:all .25s ease;border:1px solid rgba(255,255,255,.05);}
+.card:hover{transform:scale(1.03);border-color:var(--accent2);}
+.card img{width:100%;height:130px;object-fit:cover;}
+.card-body{padding:10px 12px;}
+.card-body h3{font-size:15px;font-family:'Playfair Display',serif;color:var(--accent2);margin-bottom:4px;}
+.card-body p{font-size:13px;color:var(--muted);min-height:38px;}
+.card-body span{display:block;color:var(--accent);font-weight:600;margin-top:5px;}
+.card-body button{background:var(--accent);color:#000;border:none;width:100%;padding:8px;margin-top:8px;border-radius:var(--radius);font-weight:600;cursor:pointer;transition:all .2s;}
+.card-body button:hover{background:var(--accent2);}
+#cart-btn{position:fixed;bottom:20px;right:20px;background:var(--accent);color:#000;border:none;border-radius:50%;width:65px;height:65px;box-shadow:var(--shadow);font-size:26px;cursor:pointer;z-index:20;transition:transform .3s;}
+#cart-btn:hover{transform:scale(1.1);}
+#cart-count{position:absolute;top:5px;right:5px;background:#dc2626;color:#fff;font-size:12px;border-radius:50%;padding:2px 6px;}
+#cart-modal{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;justify-content:center;align-items:center;z-index:999;}
+.cart-content{background:#111827;width:92%;max-width:440px;border-radius:var(--radius);padding:20px;color:var(--text);box-shadow:var(--shadow);}
+.cart-content h3{text-align:center;color:var(--accent2);font-family:'Playfair Display',serif;}
+.cart-body{max-height:60vh;overflow-y:auto;margin-top:10px;}
+.item-line{display:flex;justify-content:space-between;align-items:center;margin:6px 0;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.1);}
+.finalizar{background:var(--accent);color:#000;border:none;width:100%;padding:12px;margin-top:14px;border-radius:var(--radius);font-weight:600;cursor:pointer;}
+.finalizar:hover{background:var(--accent2);}
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:9999;color:#fff;font-size:18px;}
+#overlay img{width:90px;margin-bottom:20px;animation:pulse 1.2s infinite;}
+@keyframes pulse{0%,100%{opacity:.8;}50%{opacity:1;}}
+.form-popup{position:fixed;inset:0;background:#0f172a;overflow-y:auto;padding:20px;z-index:9999;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.form-popup h2{color:var(--accent2);text-align:center;font-family:'Playfair Display',serif;margin-bottom:10px;}
+.form-popup input,.form-popup select{width:100%;padding:10px;margin:6px 0 12px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#fff;font-size:15px;}
+.form-popup label{font-weight:600;font-size:13px;color:var(--accent2);}
+.form-popup button{background:var(--accent);color:#000;border:none;padding:12px;width:100%;border-radius:8px;font-weight:600;margin-top:8px;}
+.close-btn{background:none;color:var(--accent2);border:none;font-size:22px;float:right;cursor:pointer;}
+.sugestoes{margin-top:20px;}
+.sugestoes h4{color:var(--accent);font-family:'Playfair Display',serif;margin-bottom:8px;}
+.sugestoes .mini-card{display:flex;align-items:center;gap:10px;background:#1e293b;padding:8px;border-radius:10px;margin-bottom:8px;}
+.sugestoes img{width:60px;height:60px;object-fit:cover;border-radius:8px;}
 </style>
 </head>
-
 <body>
 
 <header>🍽️ Mercatto Delivery</header>
 
-<!-- BANNER PRINCIPAL -->
 <div class="banner">
   <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200" alt="Banner principal">
   <h1>Experimente o sabor da excelência<br><small style="font-size:18px;">Mercatto Delícia</small></h1>
 </div>
 
-<!-- CATEGORIAS E CARDÁPIO -->
 <div class="categorias" id="categorias"></div>
 <div class="container">
   <h2 id="tituloCategoria">Nosso Cardápio</h2>
   <div class="grid" id="menu"></div>
 </div>
 
-<!-- BOTÃO CARRINHO -->
 <button id="cart-btn">🛒<span id="cart-count">0</span></button>
 
-<!-- MODAL CARRINHO -->
 <div id="cart-modal">
   <div class="cart-content">
     <h3>🧾 Seu Pedido</h3>
@@ -310,14 +96,13 @@ h2 {
   </div>
 </div>
 
-<!-- OVERLAY -->
 <div id="overlay">
   <img src="https://i.imgur.com/8Km9tLL.png" alt="logo">
   <p>Enviando seu pedido...<br>Por favor, aguarde 🕒</p>
 </div>
 
 <script>
-const ENDPOINT = "URL_DO_SEU_SCRIPT"; // substitua pelo GAS
+const ENDPOINT = "URL_DO_SEU_GAS";
 
 let carrinho = [], categoriaAtiva = '';
  const produtos = [
@@ -410,6 +195,10 @@ const categoriasDiv=document.getElementById('categorias'),menuDiv=document.getEl
 categoriasUnicas.forEach((cat,i)=>{const b=document.createElement('button');b.textContent=cat;b.onclick=()=>filtrarCategoria(cat);if(i===0)b.classList.add('active');categoriasDiv.appendChild(b);});
 filtrarCategoria(categoriasUnicas[0]);
 
+// 🔄 Rolagem automática suave
+let scrollDir=1;
+setInterval(()=>{categoriasDiv.scrollLeft+=scrollDir; if(categoriasDiv.scrollLeft+categoriasDiv.clientWidth>=categoriasDiv.scrollWidth||categoriasDiv.scrollLeft<=0){scrollDir*=-1;}},60);
+
 function filtrarCategoria(cat){
   categoriaAtiva=cat;
   document.querySelectorAll('.categorias button').forEach(b=>b.classList.remove('active'));
@@ -429,13 +218,13 @@ function abrirAdd(id){
   const m=document.createElement('div');
   m.classList.add('form-popup');
   m.innerHTML=`
-    <h2>${p.nome}</h2>
-    <p>${p.desc}</p>
+    <button class="close-btn" onclick="this.parentElement.remove()">✖</button>
+    <h2>${p.nome}</h2><p>${p.desc}</p>
     <label>Quantidade</label><input id="qtdTemp" type="number" min="1" value="1">
     <label>Observação</label><input id="obsTemp" placeholder="(opcional)">
+    <div id="resumo"></div>
     <button onclick="confirmarAdd(${p.id})">Adicionar ao Carrinho</button>`;
   document.body.appendChild(m);
-  m.addEventListener('click',e=>{if(e.target===m)m.remove();});
 }
 
 function confirmarAdd(id){
@@ -458,7 +247,6 @@ function renderCarrinho(){
   document.getElementById('cart-count').textContent=carrinho.reduce((s,i)=>s+i.qtd,0);
   btn.style.display=carrinho.length?'block':'none';
 }
-
 function remover(i){carrinho.splice(i,1);renderCarrinho();}
 document.getElementById('cart-btn').onclick=()=>document.getElementById('cart-modal').style.display='flex';
 document.getElementById('cart-modal').onclick=e=>{if(e.target.id==='cart-modal')e.target.style.display='none';};
@@ -466,41 +254,38 @@ document.getElementById('btnFinalizar').onclick=abrirForm;
 
 function abrirForm(){
   const saved=JSON.parse(localStorage.getItem("cliente")||"{}");
+  const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
   const f=document.createElement('div');
   f.classList.add('form-popup');
   f.innerHTML=`
-    <h2>📋 Seus Dados</h2>
+    <button class="close-btn" onclick="this.parentElement.remove()">✖</button>
+    <h2>📋 Finalizar Pedido</h2>
+    <p style="text-align:center;color:var(--accent2);margin-bottom:10px;">Total: R$ ${subtotal.toFixed(2)}</p>
     <label>Nome</label><input id="nome" value="${saved.nome||''}">
-    <label>E-mail</label><input id="email" type="email" value="${saved.email||''}">
+    <label>E-mail</label><input id="email" value="${saved.email||''}">
     <label>WhatsApp</label><input id="whats" value="${saved.whats||''}">
-    <label>CEP</label><input id="cep" maxlength="9" onblur="buscarEndereco()" value="${saved.cep||''}">
+    <label>CEP</label><input id="cep" value="${saved.cep||''}" onblur="buscarEndereco()">
     <label>Endereço</label><input id="endereco" value="${saved.endereco||''}">
-    <label>Número</label><input id="numero" type="number" value="${saved.numero||''}">
+    <label>Número</label><input id="numero" value="${saved.numero||''}">
     <label>Bairro</label><input id="bairro" value="${saved.bairro||''}">
     <label>Complemento</label><input id="complemento" value="${saved.complemento||''}">
-    <label>Pagamento</label>
-    <select id="pagamento"><option ${saved.pagamento==='Pix'?'selected':''}>Pix</option><option ${saved.pagamento==='Cartão'?'selected':''}>Cartão</option><option ${saved.pagamento==='Dinheiro'?'selected':''}>Dinheiro</option></select>
+    <label>Pagamento</label><select id="pagamento"><option>Pix</option><option>Cartão</option><option>Dinheiro</option></select>
     <label>Troco</label><input id="troco" value="${saved.troco||''}">
-    <button onclick="salvarCliente()">Salvar e Enviar Pedido</button>`;
+    <div class="sugestoes" id="sugs"></div>
+    <button onclick="salvarCliente()">Enviar Pedido</button>`;
   document.body.appendChild(f);
+  mostrarSugestoes();
 }
 
-function salvarCliente(){
-  const cliente={
-    nome:document.getElementById('nome').value,
-    email:document.getElementById('email').value,
-    whats:document.getElementById('whats').value,
-    cep:document.getElementById('cep').value,
-    endereco:document.getElementById('endereco').value,
-    numero:document.getElementById('numero').value,
-    bairro:document.getElementById('bairro').value,
-    complemento:document.getElementById('complemento').value,
-    pagamento:document.getElementById('pagamento').value,
-    troco:document.getElementById('troco').value
-  };
-  localStorage.setItem("cliente",JSON.stringify(cliente));
-  enviarPedido(cliente);
+function mostrarSugestoes(){
+  const div=document.getElementById('sugs');
+  if(!div)return;
+  const idsNoCarrinho=carrinho.map(c=>c.id);
+  const sugestoes=produtos.filter(p=>!idsNoCarrinho.includes(p.id)).slice(0,2);
+  div.innerHTML='<h4>🍽️ Sugestões para você</h4>'+sugestoes.map(s=>`
+    <div class="mini-card"><img src="${s.img}"><div><strong>${s.nome}</strong><br><small>${s.desc}</small><br><button style="background:var(--accent);border:none;padding:4px 8px;border-radius:6px;margin-top:4px;cursor:pointer;" onclick="addSugestao(${s.id})">Adicionar</button></div></div>`).join('');
 }
+function addSugestao(id){confirmarAdd(id);document.querySelector('.form-popup')?.remove();abrirForm();}
 
 async function buscarEndereco(){
   const cep=document.getElementById('cep').value.replace(/\D/g,'');
@@ -515,26 +300,23 @@ async function buscarEndereco(){
 
 function taxaPorBairro(b){const t={Centro:5,"Vila Brasil":8,"Santa Luzia":10};return t[b]||8;}
 
+function salvarCliente(){
+  const cliente={nome:cep.value, email:email.value, whats:whats.value, cep:cep.value, endereco:endereco.value, numero:numero.value, bairro:bairro.value, complemento:complemento.value, pagamento:pagamento.value, troco:troco.value};
+  localStorage.setItem("cliente",JSON.stringify(cliente));
+  enviarPedido(cliente);
+}
+
 async function enviarPedido(cliente){
   const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
   const taxa=taxaPorBairro(cliente.bairro);
   const total=subtotal+taxa;
-
-  const payload={
-    acao:"adicionar",
-    ...cliente,
-    itens:carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),
-    observacoes:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),
-    subtotal,taxa,total
-  };
-
+  const payload={acao:"adicionar",...cliente,itens:carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),observacoes:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),subtotal,taxa,total};
   document.getElementById('overlay').style.display='flex';
   try{
     const r=await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
     const t=await r.text();
     document.getElementById('overlay').style.display='none';
-    alert(t.includes('ok')?"✅ Pedido enviado!":"Erro ao enviar pedido.");
-    location.reload();
+    alert(t.includes('ok')?"✅ Pedido enviado com sucesso!":"Erro ao enviar pedido.");location.reload();
   }catch(e){
     document.getElementById('overlay').style.display='none';
     alert("⚠️ Erro de conexão.");
