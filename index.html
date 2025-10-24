@@ -444,36 +444,57 @@ async function buscarEndereco(){
 }
 
 async function enviarPedido(){
-const c={nome:nome.value,email:email.value,whats:whats.value,cep:cep.value,endereco:endereco.value,bairro:bairro.value,numero:numero.value,complemento:complemento.value,pagamento:pagamento.value,troco:troco.value};
+  const c = {
+    nome:nome.value,email:email.value,whats:whats.value,
+    cep:cep.value,endereco:endereco.value,bairro:bairro.value,
+    numero:numero.value,complemento:complemento.value,
+    pagamento:pagamento.value,troco:troco.value
+  };
   localStorage.setItem("cliente",JSON.stringify(c));
 
-  // 🧮 cálculo da taxa por bairro
-  const taxa = taxas[c.bairro] ?? 8; // usa valor fixo de 8 se bairro não estiver listado
-
+  // 🧮 cálculo da taxa e total
+  const taxa = taxas[c.bairro] ?? 8;
   const subtotal = carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
   const total = subtotal + taxa;
+
+  // atualiza visualmente no formulário
+  let resumo = document.getElementById("resumo-total");
+  if(!resumo){
+    resumo = document.createElement("div");
+    resumo.id = "resumo-total";
+    resumo.style.marginTop = "12px";
+    resumo.style.padding = "10px";
+    resumo.style.background = "#1e293b";
+    resumo.style.borderRadius = "10px";
+    resumo.style.color = "#fff";
+    document.querySelector(".popup-body").appendChild(resumo);
+  }
+  resumo.innerHTML = `
+    <strong>Resumo do Pedido:</strong><br>
+    Subtotal: R$ ${subtotal.toFixed(2)}<br>
+    Taxa de entrega (${c.bairro || "padrão"}): R$ ${taxa.toFixed(2)}<br>
+    <strong>Total: R$ ${total.toFixed(2)}</strong>
+  `;
 
   const payload = {
     acao: "pedido",
     cliente: c,
     itens: carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),
     obs: carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),
-    subtotal: subtotal,
-    taxa: taxa,
-    total: total
+    subtotal, taxa, total
   };
 
   overlay.style.display='flex';
   try {
     await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
-    alert(`✅ Pedido enviado com sucesso!\n\nSubtotal: R$ ${subtotal.toFixed(2)}\nTaxa de entrega: R$ ${taxa.toFixed(2)}\nTotal: R$ ${total.toFixed(2)}`);
+    alert(`✅ Pedido enviado!\n\nSubtotal: R$ ${subtotal.toFixed(2)}\nTaxa: R$ ${taxa.toFixed(2)}\nTotal: R$ ${total.toFixed(2)}`);
   } catch(e) {
     alert("⚠️ Erro ao enviar pedido.");
   }
   overlay.style.display='none';
-  carrinho=[];
-  atualizarCarrinho();
+  carrinho=[]; atualizarCarrinho();
 }
+
 </script>
 
 </body>
