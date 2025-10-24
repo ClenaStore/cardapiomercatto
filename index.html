@@ -263,64 +263,68 @@ categorias.forEach((c,i)=>{
 });
 filtrar(categorias[0]);
 
-// 🔄 Rolagem automática com toque superfluido
+// 🔄 Rolagem automática contínua + toque imediato
 let dir = 1;
 let autoScroll;
-let scrollSpeed = 0.8; // velocidade do scroll automático
+let scrollVel = 0.7; // Velocidade do auto-scroll
 
 function iniciarAutoScroll() {
   pararAutoScroll();
-  autoScroll = requestAnimationFrame(scrollLoop);
+  autoScroll = requestAnimationFrame(scrollAuto);
 }
-
-function scrollLoop() {
-  catDiv.scrollLeft += dir * scrollSpeed;
-  if (catDiv.scrollLeft + catDiv.clientWidth >= catDiv.scrollWidth || catDiv.scrollLeft <= 0) dir *= -1;
-  autoScroll = requestAnimationFrame(scrollLoop);
-}
-
 function pararAutoScroll() {
   cancelAnimationFrame(autoScroll);
 }
-
+function scrollAuto() {
+  catDiv.scrollLeft += dir * scrollVel;
+  if (catDiv.scrollLeft + catDiv.clientWidth >= catDiv.scrollWidth || catDiv.scrollLeft <= 0) dir *= -1;
+  autoScroll = requestAnimationFrame(scrollAuto);
+}
 iniciarAutoScroll();
 
-// 🖐️ Toque com resposta imediata + inércia
-let startX = 0;
-let scrollStart = 0;
-let isDragging = false;
-let velocity = 0;
-let lastX = 0;
+// 🖐️ Rolagem com toque responsivo e sem atraso
+let tocando = false;
+let inicioX = 0;
+let scrollIni = 0;
+let vel = 0;
+let ultX = 0;
+let ultimoTempo = 0;
 
-catDiv.addEventListener('touchstart', e => {
+catDiv.addEventListener("touchstart", e => {
   pararAutoScroll();
-  isDragging = true;
-  startX = e.touches[0].pageX;
-  scrollStart = catDiv.scrollLeft;
-  lastX = startX;
+  tocando = true;
+  inicioX = e.touches[0].pageX;
+  scrollIni = catDiv.scrollLeft;
+  ultX = inicioX;
+  ultimoTempo = performance.now();
+  vel = 0;
 });
 
-catDiv.addEventListener('touchmove', e => {
-  if (!isDragging) return;
+catDiv.addEventListener("touchmove", e => {
+  if (!tocando) return;
   const x = e.touches[0].pageX;
-  const delta = x - startX;
-  catDiv.scrollLeft = scrollStart - delta;
-  velocity = x - lastX;
-  lastX = x;
+  const dx = x - inicioX;
+  catDiv.scrollLeft = scrollIni - dx;
+  const tempo = performance.now();
+  const deltaT = tempo - ultimoTempo;
+  vel = (x - ultX) / deltaT * 25; // 💡 25 = fator de sensibilidade (quanto maior, mais rápido)
+  ultX = x;
+  ultimoTempo = tempo;
 });
 
-catDiv.addEventListener('touchend', () => {
-  isDragging = false;
+catDiv.addEventListener("touchend", () => {
+  tocando = false;
 
-  // ✨ Inércia suave ao soltar
+  // ✨ Inércia instantânea suave
   function momentum() {
-    catDiv.scrollLeft -= velocity;
-    velocity *= 0.95;
-    if (Math.abs(velocity) > 0.3) requestAnimationFrame(momentum);
+    catDiv.scrollLeft -= vel;
+    vel *= 0.95;
+    if (Math.abs(vel) > 0.4) requestAnimationFrame(momentum);
     else iniciarAutoScroll();
   }
   requestAnimationFrame(momentum);
 });
+
 
 
 
