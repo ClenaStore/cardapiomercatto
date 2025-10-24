@@ -270,19 +270,29 @@ setInterval(()=>{
   if(catDiv.scrollLeft+catDiv.clientWidth>=catDiv.scrollWidth||catDiv.scrollLeft<=0)dir*=-1;
 },60);
 let startX,scrollLeft,isDown=false;
-// 🔧 Suporte a toque (rolagem no celular)
+// 🔧 Rolagem suave com toque (mobile otimizado)
+let touchStartX = 0;
+let scrollStartX = 0;
+let isTouching = false;
+
 catDiv.addEventListener('touchstart', e => {
-  isDown = true;
-  startX = e.touches[0].pageX - catDiv.offsetLeft;
-  scrollLeft = catDiv.scrollLeft;
+  isTouching = true;
+  touchStartX = e.touches[0].pageX;
+  scrollStartX = catDiv.scrollLeft;
 });
-catDiv.addEventListener('touchend', () => isDown = false);
+
 catDiv.addEventListener('touchmove', e => {
-  if (!isDown) return;
-  const x = e.touches[0].pageX - catDiv.offsetLeft;
-  const walk = (x - startX) * 2;
-  catDiv.scrollLeft = scrollLeft - walk;
+  if (!isTouching) return;
+  e.preventDefault(); // impede scroll vertical interferir
+  const x = e.touches[0].pageX;
+  const walk = (x - touchStartX) * 3; // ← aumente esse número (2~4) p/ mais sensibilidade
+  catDiv.scrollLeft = scrollStartX - walk;
+}, { passive: false });
+
+catDiv.addEventListener('touchend', () => {
+  isTouching = false;
 });
+
 
 
 // filtrar
