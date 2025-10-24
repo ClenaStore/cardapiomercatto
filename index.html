@@ -2,10 +2,9 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>🍽️ Mercatto Delivery</title>
 
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#b8860b">
 <link rel="apple-touch-icon" href="https://github.com/ClenaStore/cardapiomercatto/blob/main/icons/logo.png?raw=true">
@@ -17,39 +16,25 @@
   --muted:#94a3b8;--accent:#b8860b;--accent2:#ffcc70;
   --radius:16px;--shadow:0 6px 18px rgba(0,0,0,.4);
 }
-body{
-  font-family:'Inter',sans-serif;background:var(--bg);
-  color:var(--text);margin:0;overflow-x:hidden;
-}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);margin:0;overflow-x:hidden;}
 header{
-  background:linear-gradient(90deg,#000,#1c1306);
-  color:var(--accent2);padding:15px;text-align:center;
-  font-family:'Playfair Display',serif;font-size:22px;
-  letter-spacing:.5px;box-shadow:var(--shadow);
+  background:linear-gradient(90deg,#000,#1c1306);color:var(--accent2);
+  padding:15px;text-align:center;font-family:'Playfair Display',serif;
+  font-size:22px;letter-spacing:.5px;box-shadow:var(--shadow);
 }
-.banner{
-  width:100%;height:45vh;max-height:420px;overflow:hidden;position:relative;
-}
-.banner img{
-  width:100%;height:100%;object-fit:cover;filter:brightness(.85);
-}
+.banner{width:100%;height:45vh;max-height:420px;overflow:hidden;position:relative;}
+.banner img{width:100%;height:100%;object-fit:cover;filter:brightness(.85);}
 .banner h1{
   position:absolute;bottom:25px;left:20px;color:#fff;
   font-family:'Playfair Display',serif;font-size:30px;text-shadow:0 3px 8px rgba(0,0,0,.6);
 }
-.categorias{
-  display:flex;overflow-x:auto;scroll-behavior:smooth;
-  padding:12px;gap:10px;scrollbar-width:none;
-}
+.categorias{display:flex;overflow-x:auto;scroll-behavior:smooth;padding:12px;gap:10px;scrollbar-width:none;}
 .categorias::-webkit-scrollbar{display:none;}
 .categorias button{
   flex-shrink:0;background:#1e293b;border:1px solid var(--accent);
-  color:var(--accent2);padding:10px 16px;border-radius:25px;
-  cursor:pointer;font-weight:600;transition:.3s;
+  color:var(--accent2);padding:10px 16px;border-radius:25px;cursor:pointer;font-weight:600;transition:.3s;
 }
-.categorias button.active,.categorias button:hover{
-  background:var(--accent);color:#000;transform:scale(1.05);
-}
+.categorias button.active,.categorias button:hover{background:var(--accent);color:#000;transform:scale(1.05);}
 .container{padding:12px 15px;max-width:960px;margin:auto;}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;}
 .card{
@@ -62,13 +47,16 @@ header{
 .card-body h3{font-size:15px;color:var(--accent2);font-family:'Playfair Display',serif;margin-bottom:4px;}
 .card-body p{color:var(--muted);font-size:13px;min-height:36px;}
 .card-body span{display:block;margin-top:5px;color:var(--accent);font-weight:600;}
-.card-body button{width:100%;background:var(--accent);color:#000;border:none;
-padding:8px;margin-top:8px;border-radius:var(--radius);font-weight:600;cursor:pointer;transition:.2s;}
+.card-body button{
+  width:100%;background:var(--accent);color:#000;border:none;
+  padding:8px;margin-top:8px;border-radius:var(--radius);
+  font-weight:600;cursor:pointer;transition:.2s;
+}
 .card-body button:hover{background:var(--accent2);}
 #cart-btn{
-  position:fixed;bottom:20px;right:20px;width:65px;height:65px;
-  border-radius:50%;border:none;background:var(--accent);
-  box-shadow:var(--shadow);font-size:26px;cursor:pointer;z-index:10;
+  position:fixed;bottom:20px;right:20px;width:65px;height:65px;border-radius:50%;
+  border:none;background:var(--accent);box-shadow:var(--shadow);
+  font-size:26px;cursor:pointer;z-index:10;
 }
 #cart-count{
   position:absolute;top:5px;right:5px;background:#dc2626;color:#fff;
@@ -88,36 +76,31 @@ padding:8px;margin-top:8px;border-radius:var(--radius);font-weight:600;cursor:po
 .popup-body{padding:15px;}
 .popup-body h2{margin:0;font-family:'Playfair Display',serif;color:var(--accent2);}
 .popup-body p{color:var(--muted);margin:8px 0;font-size:14px;}
-.popup-body input,textarea{width:100%;margin-top:6px;padding:10px;background:#1e293b;border:1px solid #334155;
-border-radius:10px;color:#fff;font-size:14px;}
-.popup-body label{font-weight:600;font-size:13px;color:var(--accent2);}
-.popup-body button{width:100%;padding:12px;margin-top:14px;border:none;border-radius:var(--radius);
-background:var(--accent);font-weight:600;cursor:pointer;}
-.popup-body button:hover{background:var(--accent2);}
-.close-btn{position:absolute;top:20px;right:20px;background:none;border:none;color:var(--accent2);font-size:22px;cursor:pointer;}
-
-/* 💡 Sugestões refinadas */
-.sugestoes{margin-top:20px;}
-.sugestoes h3{text-align:center;color:var(--accent2);font-family:'Playfair Display',serif;margin-bottom:12px;}
-.sug-card{
-  display:flex;align-items:center;gap:12px;background:#1e293b;
-  padding:10px;border-radius:14px;margin-bottom:10px;box-shadow:var(--shadow);
-  transition:.3s;cursor:pointer;
+.popup-body input,textarea{
+  width:100%;margin-top:6px;padding:10px;background:#1e293b;
+  border:1px solid #334155;border-radius:10px;color:#fff;font-size:14px;
 }
-.sug-card:hover{transform:scale(1.02);background:#2b3a50;}
+.popup-body label{font-weight:600;font-size:13px;color:var(--accent2);}
+.popup-body button{
+  width:100%;padding:12px;margin-top:14px;border:none;border-radius:var(--radius);
+  background:var(--accent);font-weight:600;cursor:pointer;
+}
+.popup-body button:hover{background:var(--accent2);}
+.close-btn{
+  position:absolute;top:20px;right:20px;background:none;border:none;
+  color:var(--accent2);font-size:22px;cursor:pointer;
+}
+.sug-card{
+  display:flex;align-items:center;gap:10px;background:#1e293b;
+  padding:10px;border-radius:14px;margin-bottom:10px;box-shadow:var(--shadow);
+}
 .sug-card img{
-  width:70px;height:70px;border-radius:12px;object-fit:cover;
+  width:70px;height:70px;border-radius:10px;object-fit:cover;
   border:1px solid var(--accent);
 }
-.sug-card div{flex:1;}
-.sug-card strong{color:var(--accent2);font-size:15px;font-family:'Playfair Display',serif;}
-.sug-card small{display:block;color:var(--muted);font-size:12px;margin-top:2px;}
-.sug-card span{color:var(--accent);font-weight:600;font-size:13px;margin-top:3px;display:block;}
-.sug-card button{
-  background:var(--accent);border:none;color:#000;font-weight:600;
-  padding:8px 10px;border-radius:10px;cursor:pointer;transition:.3s;
-}
-.sug-card button:hover{background:var(--accent2);}
+.sug-card strong{color:var(--accent2);}
+.sug-card small{display:block;color:var(--muted);font-size:12px;}
+.sug-card span{color:var(--accent);font-weight:600;font-size:13px;}
 .overlay{display:none;align-items:center;justify-content:center;flex-direction:column;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;}
 .overlay img{width:90px;margin-bottom:20px;}
 </style>
@@ -132,11 +115,9 @@ background:var(--accent);font-weight:600;cursor:pointer;}
 </div>
 
 <div class="categorias" id="categorias"></div>
-<div class="container">
-  <div class="grid" id="menu"></div>
-</div>
+<div class="container"><div class="grid" id="menu"></div></div>
 
-<button id="cart-btn">🛒<span id="cart-count">0</span></button>
+<button id="cart-btn" onclick="abrirCarrinho()">🛒<span id="cart-count">0</span></button>
 
 <div class="overlay" id="overlay">
   <img src="https://i.imgur.com/8Km9tLL.png" alt="logo">
@@ -145,7 +126,6 @@ background:var(--accent);font-weight:600;cursor:pointer;}
 
 <script>
 const ENDPOINT = "URL_DO_SEU_GAS";
-
  const produtos = [
   // 🍽️ PRATOS INDIVIDUAIS DELICIOSOS
   {id: 36, nome: 'Risoto de Cogumelos', desc: 'Arroz arbóreo cremoso, preparado com uma seleção de cogumelos frescos e servido com torres de legumes no crocante de parmesão, realçando um sabor incrível!', preco: 87.50, img: 'img/padrao.jpg', categoria: 'Pratos Individuais Deliciosos'},
@@ -230,11 +210,12 @@ const ENDPOINT = "URL_DO_SEU_GAS";
   {id: 91, nome: 'Cheesecake de Goiaba com Queijo', desc: 'Base de biscoito, creme de queijo e cobertura de goiabada, equilibrando o doce e o suave.', preco: 39.90, img: 'img/padrao.jpg', categoria: 'Sobremesas Individuais Maravilhosas'}
 ];
 
-let carrinho = [];
 
-const categoriasUnicas = [...new Set(produtos.map(p=>p.categoria))];
-const categoriasDiv = document.getElementById('categorias');
-const menuDiv = document.getElementById('menu');
+let carrinho=[];
+
+const categoriasUnicas=[...new Set(produtos.map(p=>p.categoria))];
+const categoriasDiv=document.getElementById('categorias');
+const menuDiv=document.getElementById('menu');
 
 categoriasUnicas.forEach((cat,i)=>{
   const b=document.createElement('button');
@@ -245,12 +226,13 @@ categoriasUnicas.forEach((cat,i)=>{
 });
 filtrar(categoriasUnicas[0]);
 
+// Rolagem automática e toque
 let dir=1;
 setInterval(()=>{
   categoriasDiv.scrollLeft+=dir;
   if(categoriasDiv.scrollLeft+categoriasDiv.clientWidth>=categoriasDiv.scrollWidth||categoriasDiv.scrollLeft<=0)
     dir*=-1;
-},40);
+},50);
 
 function filtrar(cat){
   document.querySelectorAll('.categorias button').forEach(b=>b.classList.remove('active'));
@@ -265,19 +247,17 @@ function filtrar(cat){
 }
 
 function abrirPopup(id){
-  const p = produtos.find(x=>x.id===id);
+  const p=produtos.find(x=>x.id===id);
   const div=document.createElement('div');
   div.classList.add('popup');
   div.innerHTML=`
     <div class="popup-content">
       <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-      <img src="${p.img}" alt="${p.nome}">
+      <img src="${p.img}">
       <div class="popup-body">
         <h2>${p.nome}</h2><p>${p.desc}</p>
-        <label>Quantidade</label>
-        <input id="qtd" type="number" min="1" value="1">
-        <label>Observação</label>
-        <textarea id="obs" placeholder="Ex: sem cebola, bem passado..."></textarea>
+        <label>Quantidade</label><input id="qtd" type="number" min="1" value="1">
+        <label>Observação</label><textarea id="obs" placeholder="Ex: sem cebola, bem passado..."></textarea>
         <button onclick="adicionar(${p.id})">Adicionar ao Carrinho</button>
       </div>
     </div>`;
@@ -290,39 +270,42 @@ function adicionar(id){
   const p=produtos.find(x=>x.id===id);
   carrinho.push({...p,qtd,obs});
   document.querySelector('.popup')?.remove();
-  mostrarSugestoes(p.categoria);
   atualizarCarrinho();
 }
 
-function mostrarSugestoes(cat){
-  const sugs=produtos.filter(p=>p.categoria!==cat).slice(0,3);
+function atualizarCarrinho(){
+  document.getElementById('cart-count').textContent=carrinho.reduce((s,i)=>s+i.qtd,0);
+}
+
+function abrirCarrinho(){
+  if(carrinho.length===0)return alert("Carrinho vazio!");
   const div=document.createElement('div');
   div.classList.add('popup');
+  const total=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
   div.innerHTML=`
     <div class="popup-content">
       <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
       <div class="popup-body">
-        <h2 style="text-align:center;">🍽️ Sugestões que combinam</h2>
-        <div class="sugestoes">
-          ${sugs.map(s=>`
-            <div class="sug-card">
-              <img src="${s.img}">
-              <div>
-                <strong>${s.nome}</strong>
-                <small>${s.desc}</small>
-                <span>R$ ${s.preco.toFixed(2)}</span>
-              </div>
-              <button onclick="abrirPopup(${s.id});this.closest('.popup').remove()">Pedir junto</button>
-            </div>`).join('')}
-        </div>
+        <h2>🛍️ Seu Carrinho</h2>
+        ${carrinho.map((i,ix)=>`
+          <div class="sug-card">
+            <img src="${i.img}">
+            <div><strong>${i.nome}</strong>
+            <small>${i.qtd}x ${i.obs||''}</small>
+            <span>R$ ${(i.qtd*i.preco).toFixed(2)}</span></div>
+            <button onclick="removerItem(${ix});this.closest('.popup').remove()">❌</button>
+          </div>`).join('')}
+        <h3>Total: R$ ${total.toFixed(2)}</h3>
         <button onclick="finalizarPedido()">Finalizar Pedido</button>
       </div>
     </div>`;
   document.body.appendChild(div);
 }
 
-function atualizarCarrinho(){
-  document.getElementById('cart-count').textContent=carrinho.reduce((s,i)=>s+i.qtd,0);
+function removerItem(ix){
+  carrinho.splice(ix,1);
+  atualizarCarrinho();
+  abrirCarrinho();
 }
 
 function finalizarPedido(){
@@ -355,29 +338,24 @@ async function buscarEndereco(){
   const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
   const d=await r.json();
   if(!d.erro){
-    document.getElementById('endereco').value=d.logradouro||'';
-    document.getElementById('bairro').value=d.bairro||'';
+    endereco.value=d.logradouro||'';bairro.value=d.bairro||'';
   }
 }
 
 async function enviarPedido(){
-  const cliente={
-    nome:nome.value,email:email.value,whats:whats.value,cep:cep.value,
-    endereco:endereco.value,bairro:bairro.value,numero:numero.value,complemento:complemento.value
-  };
+  const cliente={nome:nome.value,email:email.value,whats:whats.value,cep:cep.value,
+  endereco:endereco.value,bairro:bairro.value,numero:numero.value,complemento:complemento.value};
   localStorage.setItem("cliente",JSON.stringify(cliente));
   const taxa=cliente.bairro.includes("Centro")?5:8;
   const total=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0)+taxa;
   const payload={acao:"pedido",cliente,itens:carrinho,total,taxa};
   document.getElementById('overlay').style.display='flex';
   try{
-    const r=await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
+    await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
     alert("✅ Pedido enviado com sucesso!");
-  }catch(e){alert("⚠️ Erro ao enviar o pedido.");}
+  }catch(e){alert("⚠️ Erro ao enviar pedido.");}
   document.getElementById('overlay').style.display='none';
-  carrinho=[];
-  atualizarCarrinho();
-  document.querySelector('.popup')?.remove();
+  carrinho=[];atualizarCarrinho();
 }
 </script>
 </body>
