@@ -120,64 +120,8 @@ header{
   position:absolute;top:15px;right:15px;background:none;
   border:none;color:var(--accent2);font-size:22px;cursor:pointer;
 }
-.sug-card{
-  background:#1b2435;
-  border-radius:var(--radius);
-  overflow:hidden;
-  box-shadow:var(--shadow);
-  margin-bottom:14px;
-  transition:.3s;
-}
-.sug-card:hover{transform:scale(1.03);background:#222f45;}
-.sug-card img{
-  width:100%;
-  height:150px;
-  object-fit:cover;
-  border-bottom:2px solid var(--accent);
-}
-.sug-info{
-  padding:10px 14px;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-.sug-info strong{
-  font-family:'Playfair Display',serif;
-  font-size:16px;
-  color:var(--accent2);
-}
-.sug-info small{
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.4;
-  min-height:36px;
-}
-.sug-info span{
-  color:var(--accent);
-  font-weight:600;
-  font-size:15px;
-}
-.sug-card button{
-  margin:10px;
-  width:calc(100% - 20px);
-  background:var(--accent);
-  color:#000;
-  border:none;
-  border-radius:var(--radius);
-  padding:10px;
-  font-weight:600;
-  cursor:pointer;
-  transition:.3s;
-}
-.sug-card button:hover{background:var(--accent2);}
 
-.overlay{
-  display:none;align-items:center;justify-content:center;flex-direction:column;
-  position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;
-}
-.overlay img{width:90px;margin-bottom:20px;}
-
-/* 💅 Sugestões de compra - layout aprimorado */
+/* 💅 Sugestões de compra */
 .popup-body .sug-card{
   display:flex;flex-direction:column;align-items:center;
   background:#1e2538;margin-bottom:14px;border-radius:16px;
@@ -201,16 +145,19 @@ header{
   padding:8px;border-radius:10px;cursor:pointer;font-weight:600;
 }
 .popup-body .sug-card button:hover{background:var(--accent2);}
-
-  
+.overlay{
+  display:none;align-items:center;justify-content:center;flex-direction:column;
+  position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;
+}
+.overlay img{width:90px;margin-bottom:20px;}
 </style>
 </head>
-<body>
 
+<body>
 <header>🍽️ Mercatto Delivery</header>
 
 <div class="banner">
-  <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200" alt="Banner principal">
+  <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200">
   <h1>Sabores que inspiram momentos</h1>
   <div class="search-area">
     <input type="text" id="busca" placeholder="Buscar no cardápio..." oninput="buscarItem()">
@@ -222,13 +169,13 @@ header{
 <div class="container"><div class="grid" id="menu"></div></div>
 
 <div class="overlay" id="overlay">
-  <img src="https://i.imgur.com/8Km9tLL.png" alt="logo">
-  <p>Enviando seu pedido...</p>
+  <img src="https://i.imgur.com/8Km9tLL.png"><p>Enviando seu pedido...</p>
 </div>
 
 <script>
-const ENDPOINT = "URL_DO_SEU_GAS";
-const taxas = {"Vila Brasil":8,"São Caetano":7,"Primavera":9,"Jardim Europa":10,"Piatã":12};
+// 🔗 CONFIG
+const ENDPOINT="URL_DO_SEU_GAS";
+const taxas={"Vila Brasil":8,"São Caetano":7,"Primavera":9,"Jardim Europa":10,"Piatã":12};
 
  const produtos = [
   // 🍽️ PRATOS INDIVIDUAIS DELICIOSOS
@@ -314,268 +261,231 @@ const taxas = {"Vila Brasil":8,"São Caetano":7,"Primavera":9,"Jardim Europa":10
   {id: 91, nome: 'Cheesecake de Goiaba com Queijo', desc: 'Base de biscoito, creme de queijo e cobertura de goiabada, equilibrando o doce e o suave.', preco: 39.90, img: 'img/padrao.jpg', categoria: 'Sobremesas Individuais Maravilhosas'}
 ];
 
-
+// 🧠 VARIÁVEIS
 let carrinho=[];
 const categorias=[...new Set(produtos.map(p=>p.categoria))];
-const catDiv=document.getElementById('categorias'),menuDiv=document.getElementById('menu');
-categorias.forEach((c,i)=>{const b=document.createElement('button');b.textContent=c;if(i===0)b.classList.add('active');b.onclick=()=>filtrar(c);catDiv.appendChild(b);});
+const catDiv=document.getElementById("categorias"),menuDiv=document.getElementById("menu");
+
+// 🔹 GERA CATEGORIAS
+categorias.forEach((c,i)=>{
+ const b=document.createElement("button");
+ b.textContent=c;if(i===0)b.classList.add("active");
+ b.onclick=()=>filtrar(c);catDiv.appendChild(b);
+});
 filtrar(categorias[0]);
 
+// 🔹 ROLAGEM CATEGORIAS
 let isDragging=false,startX=0,scrollStart=0;
 catDiv.addEventListener("touchstart",e=>{isDragging=true;startX=e.touches[0].pageX;scrollStart=catDiv.scrollLeft;catDiv.style.scrollBehavior="auto";},{passive:true});
 catDiv.addEventListener("touchmove",e=>{if(!isDragging)return;catDiv.scrollLeft=scrollStart-(e.touches[0].pageX-startX);},{passive:true});
 catDiv.addEventListener("touchend",()=>{isDragging=false;},{passive:true});
-// 🌀 Rolagem automática das categorias
 setInterval(()=>{
-  if(isDragging) return;
+  if(isDragging)return;
   catDiv.scrollBy({left:3,behavior:"auto"});
-  if(catDiv.scrollLeft + catDiv.clientWidth >= catDiv.scrollWidth){
+  if(catDiv.scrollLeft+catDiv.clientWidth>=catDiv.scrollWidth)
     catDiv.scrollTo({left:0,behavior:"smooth"});
-  }
 },60);
 
+// 🔹 FILTROS
+function filtrar(cat){
+ document.querySelectorAll('.categorias button').forEach(b=>b.classList.remove('active'));
+ [...catDiv.children].find(b=>b.textContent===cat).classList.add('active');
+ renderizar(produtos.filter(p=>p.categoria===cat));
+}
+function buscarItem(){
+ const termo=document.getElementById("busca").value.toLowerCase();
+ if(!termo)return filtrar(document.querySelector(".categorias button.active").textContent);
+ renderizar(produtos.filter(p=>p.nome.toLowerCase().includes(termo)||p.desc.toLowerCase().includes(termo)));
+}
 
-function filtrar(cat){document.querySelectorAll('.categorias button').forEach(b=>b.classList.remove('active'));
-[...catDiv.children].find(b=>b.textContent===cat).classList.add('active');
-renderizar(produtos.filter(p=>p.categoria===cat));}
-function buscarItem(){const termo=document.getElementById('busca').value.toLowerCase();
-if(!termo)return filtrar(document.querySelector('.categorias button.active').textContent);
-renderizar(produtos.filter(p=>p.nome.toLowerCase().includes(termo)||p.desc.toLowerCase().includes(termo)));}
-
+// 🔹 RENDERIZAÇÃO
 function renderizar(lista){
-menuDiv.innerHTML='';
-lista.forEach(p=>{
-const c=document.createElement('div');
-c.className='card';
-c.innerHTML=`
-<img src="${p.img}">
-<div class="card-body">
-<h3>${p.nome}</h3>
-<p>${p.desc}</p>
-<span>R$ ${p.preco.toFixed(2)}</span>
-<button onclick="abrirPopup(${p.id})">Adicionar</button>
-</div>`;
-menuDiv.appendChild(c);
-});
-}
-
-function abrirPopup(id){
-const p=produtos.find(x=>x.id===id);
-const div=document.createElement('div');
-div.classList.add('popup');
-div.innerHTML=`
-<div class="popup-content">
-<button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-<img src="${p.img}">
-<div class="popup-body">
-<h2>${p.nome}</h2>
-<p>${p.desc}</p>
-<label>Quantidade</label><input id="qtd" type="number" min="1" value="1">
-<label>Observação</label><textarea id="obs" placeholder="Ex: sem cebola..."></textarea>
-<button onclick="adicionar(${p.id})">Adicionar ao Carrinho</button>
-</div>
-</div>`;
-document.body.appendChild(div);
-}
-
-function adicionar(id){
-const qtd=parseInt(document.getElementById('qtd').value)||1;
-const obs=document.getElementById('obs').value||'';
-const p=produtos.find(x=>x.id===id);
-carrinho.push({...p,qtd,obs});
-document.querySelector('.popup')?.remove();
-atualizarCarrinho();
-mostrarSugestoes(p.categoria);
-}
-
-function mostrarSugestoes(cat){
-  const sugs = produtos.filter(p=>p.categoria!==cat).sort(()=>Math.random()-0.5).slice(0,3);
-  const div = document.createElement('div');
-  div.classList.add('popup');
-  div.innerHTML = `
-  <div class="popup-content">
-    <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-    <div class="popup-body">
-      <h2>🍷 Sugestões que combinam</h2>
-      ${sugs.map(s=>`
-        <div class="sug-card">
-          <img src="${s.img}" alt="${s.nome}">
-          <div class="sug-info">
-            <strong>${s.nome}</strong>
-            <small>${s.desc}</small>
-            <span>R$ ${s.preco.toFixed(2)}</span>
-          </div>
-          <button onclick="pedirJunto(${s.id},this)">Pedir junto</button>
-        </div>`).join('')}
-      <button onclick="abrirCarrinho()">🛒 Ver Carrinho</button>
-    </div>
+ menuDiv.innerHTML='';
+ lista.forEach(p=>{
+  const c=document.createElement("div");
+  c.className="card";
+  c.innerHTML=`
+  <img src="${p.img}">
+  <div class="card-body">
+    <h3>${p.nome}</h3>
+    <p>${p.desc}</p>
+    <span>R$ ${p.preco.toFixed(2)}</span>
+    <button onclick="abrirPopup(${p.id})">Adicionar</button>
   </div>`;
-  document.body.appendChild(div);
+  menuDiv.appendChild(c);
+ });
 }
 
-
-function pedirJunto(id,btn){
-btn.closest('.popup').remove();
-abrirPopup(id);
+// 🔹 POPUP ITEM
+function abrirPopup(id){
+ const p=produtos.find(x=>x.id===id);
+ const div=document.createElement("div");
+ div.classList.add("popup");
+ div.innerHTML=`
+ <div class="popup-content">
+  <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+  <img src="${p.img}">
+  <div class="popup-body">
+    <h2>${p.nome}</h2><p>${p.desc}</p>
+    <label>Quantidade</label><input id="qtd" type="number" min="1" value="1">
+    <label>Observação</label><textarea id="obs" placeholder="Ex: sem cebola..."></textarea>
+    <button onclick="adicionar(${p.id})">Adicionar ao Carrinho</button>
+  </div>
+ </div>`;
+ document.body.appendChild(div);
 }
 
-function atualizarCarrinho(){
-document.getElementById('cart-count').textContent=carrinho.reduce((s,i)=>s+i.qtd,0);
+// 🔹 ADICIONAR AO CARRINHO
+function adicionar(id){
+ const qtd=parseInt(document.getElementById('qtd').value)||1;
+ const obs=document.getElementById('obs').value||'';
+ const p=produtos.find(x=>x.id===id);
+ carrinho.push({...p,qtd,obs});
+ document.querySelector('.popup')?.remove();
+ atualizarCarrinho();
+ mostrarSugestoes(p.categoria);
 }
 
+// 🔹 SUGESTÕES
+function mostrarSugestoes(cat){
+ const sugs=produtos.filter(p=>p.categoria!==cat).slice(0,3);
+ const div=document.createElement("div");
+ div.classList.add("popup");
+ div.innerHTML=`
+ <div class="popup-content">
+   <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+   <div class="popup-body">
+     <h2>🍷 Sugestões que combinam</h2>
+     ${sugs.map(s=>`
+     <div class="sug-card">
+       <img src="${s.img}" alt="${s.nome}">
+       <strong>${s.nome}</strong>
+       <small>${s.desc}</small>
+       <span>R$ ${s.preco.toFixed(2)}</span>
+       <button onclick="pedirJunto(${s.id},this)">Pedir junto</button>
+     </div>`).join('')}
+     <button onclick="abrirCarrinho()">🛒 Ver Carrinho</button>
+   </div>
+ </div>`;
+ document.body.appendChild(div);
+}
+function pedirJunto(id,btn){btn.closest('.popup').remove();abrirPopup(id);}
+function atualizarCarrinho(){document.getElementById('cart-count').textContent=carrinho.reduce((s,i)=>s+i.qtd,0);}
 
+// 🔹 CARRINHO
 function abrirCarrinho(){
-  if(!carrinho.length)return alert("Carrinho vazio!");
-  const total=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
-  const div=document.createElement('div');
-  div.classList.add('popup');
-  div.innerHTML=`
-    <div class="popup-content">
-      <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-      <div class="popup-body">
-        <h2>🛍️ Seu Carrinho</h2>
-        ${carrinho.map((i,ix)=>`
-          <div class="sug-card">
-            <img src="${i.img}">
-            <div><strong>${i.nome}</strong><small>${i.qtd}x ${i.obs||''}</small><span>R$ ${(i.qtd*i.preco).toFixed(2)}</span></div>
-            <button onclick="removerItem(${ix});this.closest('.popup').remove()">❌</button>
-          </div>`).join('')}
-        <h3>Total: R$ ${total.toFixed(2)}</h3>
-        <button onclick="finalizarPedido()">Finalizar Pedido</button>
-      </div>
-    </div>`;
-  document.body.appendChild(div);
+ if(!carrinho.length)return alert("Carrinho vazio!");
+ const total=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
+ const div=document.createElement("div");
+ div.classList.add("popup");
+ div.innerHTML=`
+ <div class="popup-content">
+  <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+  <div class="popup-body">
+    <h2>🛍️ Seu Carrinho</h2>
+    ${carrinho.map((i,ix)=>`
+      <div class="sug-card">
+        <img src="${i.img}">
+        <div><strong>${i.nome}</strong><small>${i.qtd}x ${i.obs||''}</small><span>R$ ${(i.qtd*i.preco).toFixed(2)}</span></div>
+        <button onclick="removerItem(${ix});this.closest('.popup').remove()">❌</button>
+      </div>`).join('')}
+    <h3>Total: R$ ${total.toFixed(2)}</h3>
+    <button onclick="finalizarPedido()">Finalizar Pedido</button>
+  </div>
+ </div>`;
+ document.body.appendChild(div);
 }
 function removerItem(ix){carrinho.splice(ix,1);atualizarCarrinho();abrirCarrinho();}
 
+// 🔹 FINALIZAR PEDIDO
 function finalizarPedido(){
-  document.querySelectorAll('.popup').forEach(p=>p.remove());
-  const c=JSON.parse(localStorage.getItem('cliente')||'{}');
-  const div=document.createElement('div');
-  div.classList.add('popup');
-  div.innerHTML=`
-    <div class="popup-content">
-      <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-      <div class="popup-body">
-        <h2>📦 Dados de Entrega</h2>
-        <label>Nome</label><input id="nome" value="${c.nome||''}">
-        <label>Email</label><input id="email" value="${c.email||''}">
-        <label>WhatsApp</label><input id="whats" value="${c.whats||''}">
-        <label>CEP</label><input id="cep" value="${c.cep||''}" onblur="buscarEndereco()">
-        <label>Endereço</label><input id="endereco" value="${c.endereco||''}">
-        <label>Bairro</label><input id="bairro" value="${c.bairro||''}" onblur="mostrarResumo()">
-        <label>Número</label><input id="numero" value="${c.numero||''}">
-        <label>Complemento</label><input id="complemento" value="${c.complemento||''}">
-        <label>Forma de pagamento</label>
-        <select id="pagamento">
-          <option>Pix</option><option>Cartão</option><option>Dinheiro</option>
-        </select>
-        <label id="lTroco" style="display:none;">Troco para:</label>
-        <input id="troco" style="display:none;" placeholder="Ex: R$ 100,00">
-        <div id="resumo-total"></div>
-        <button onclick="enviarPedido()">Enviar Pedido</button>
-      </div>
-    </div>`;
-  document.body.appendChild(div);
-  document.getElementById('pagamento').onchange=()=>{
-    const v=document.getElementById('pagamento').value;
-    document.getElementById('lTroco').style.display=v==='Dinheiro'?'block':'none';
-    document.getElementById('troco').style.display=v==='Dinheiro'?'block':'none';
-  };
+ document.querySelectorAll('.popup').forEach(p=>p.remove());
+ const c=JSON.parse(localStorage.getItem('cliente')||'{}');
+ const div=document.createElement("div");
+ div.classList.add("popup");
+ div.innerHTML=`
+ <div class="popup-content">
+  <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+  <div class="popup-body">
+    <h2>📦 Dados de Entrega</h2>
+    <label>Nome</label><input id="nome" value="${c.nome||''}">
+    <label>Email</label><input id="email" value="${c.email||''}">
+    <label>WhatsApp</label><input id="whats" value="${c.whats||''}">
+    <label>CEP</label><input id="cep" value="${c.cep||''}" onblur="buscarEndereco()">
+    <label>Endereço</label><input id="endereco" value="${c.endereco||''}">
+    <label>Bairro</label><input id="bairro" value="${c.bairro||''}" onblur="mostrarResumo()">
+    <label>Número</label><input id="numero" value="${c.numero||''}">
+    <label>Complemento</label><input id="complemento" value="${c.complemento||''}">
+    <label>Forma de pagamento</label>
+    <select id="pagamento"><option>Pix</option><option>Cartão</option><option>Dinheiro</option></select>
+    <label id="lTroco" style="display:none;">Troco para:</label>
+    <input id="troco" style="display:none;" placeholder="Ex: R$ 100,00">
+    <div id="resumo-total"></div>
+    <button onclick="enviarPedido()">Enviar Pedido</button>
+  </div>
+ </div>`;
+ document.body.appendChild(div);
+ document.getElementById('pagamento').onchange=()=>{
+   const v=document.getElementById('pagamento').value;
+   document.getElementById('lTroco').style.display=v==='Dinheiro'?'block':'none';
+   document.getElementById('troco').style.display=v==='Dinheiro'?'block':'none';
+ };
 }
 
+// 🔹 CEP
 async function buscarEndereco(){
-  const cep=document.getElementById('cep').value.replace(/\D/g,'');
-  if(cep.length!==8)return;
-  const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-  const d=await r.json();
-  if(!d.erro){endereco.value=d.logradouro||'';bairro.value=d.bairro||'';}
+ const cep=document.getElementById('cep').value.replace(/\D/g,'');
+ if(cep.length!==8)return;
+ const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+ const d=await r.json();
+ if(!d.erro){endereco.value=d.logradouro||'';bairro.value=d.bairro||'';}
 }
 
+// 🔹 RESUMO + TAXA
 function mostrarResumo(){
-  const bairro=document.getElementById('bairro').value.trim();
-  const resumoDiv=document.getElementById('resumo-total');
-  const botaoEnviar=document.querySelector("#resumo-total + button");
-  resumoDiv.innerHTML='';
-
-  if(!bairro){botaoEnviar.disabled=true;botaoEnviar.style.opacity=".5";return;}
-
-  if(!(bairro in taxas)){
-    resumoDiv.innerHTML=`
-      <div style="background:#3f1d1d;padding:10px;border-radius:10px;color:#fca5a5;">
-        🚫 Não entregamos neste bairro.<br>Entre em contato pelo WhatsApp para verificar disponibilidade.
-      </div>
-      <a href="https://wa.me/557736135148?text=Olá! Gostaria de saber se fazem entregas no bairro ${bairro}."
-         target="_blank"
-         style="display:inline-block;margin-top:10px;background:#25D366;color:#fff;padding:10px 16px;
-                border-radius:10px;text-decoration:none;font-weight:600;">
-        💬 Falar no WhatsApp
-      </a>`;
-    botaoEnviar.disabled=true;
-    botaoEnviar.style.opacity=".5";
-    return;
-  }
-
-  // ✅ bairro com taxa
-  const taxa=taxas[bairro];
-  const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
-  const total=subtotal+taxa;
-  resumoDiv.innerHTML=`
-    <strong>Resumo do Pedido:</strong><br>
-    Subtotal: R$ ${subtotal.toFixed(2)}<br>
-    Taxa de entrega (${bairro}): R$ ${taxa.toFixed(2)}<br>
-    <strong>Total: R$ ${total.toFixed(2)}</strong>`;
-  
-  botaoEnviar.disabled=false;
-  botaoEnviar.style.opacity="1";
+ const bairro=document.getElementById('bairro').value.trim();
+ const resumoDiv=document.getElementById('resumo-total');
+ const botaoEnviar=document.querySelector("#resumo-total + button");
+ resumoDiv.innerHTML='';
+ if(!bairro){botaoEnviar.disabled=true;botaoEnviar.style.opacity=".5";return;}
+ if(!(bairro in taxas)){
+   resumoDiv.innerHTML=`
+   <div style="background:#3f1d1d;padding:10px;border-radius:10px;color:#fca5a5;">
+     🚫 Não entregamos neste bairro.<br>Entre em contato pelo WhatsApp para verificar disponibilidade.
+   </div>
+   <a href="https://wa.me/557736135148?text=Olá! Gostaria de saber se fazem entregas no bairro ${bairro}." target="_blank"
+   style="display:inline-block;margin-top:10px;background:#25D366;color:#fff;padding:10px 16px;border-radius:10px;text-decoration:none;font-weight:600;">💬 Falar no WhatsApp</a>`;
+   botaoEnviar.disabled=true;botaoEnviar.style.opacity=".5";return;
+ }
+ const taxa=taxas[bairro];
+ const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
+ const total=subtotal+taxa;
+ resumoDiv.innerHTML=`<strong>Resumo:</strong><br>Subtotal: R$ ${subtotal.toFixed(2)}<br>Entrega (${bairro}): R$ ${taxa.toFixed(2)}<br><strong>Total: R$ ${total.toFixed(2)}</strong>`;
+ botaoEnviar.disabled=false;botaoEnviar.style.opacity="1";
 }
 
-
-  // ✅ bairro com taxa
-  document.querySelector("#resumo-total + button").disabled=false;
-  document.querySelector("#resumo-total + button").style.opacity="1";
-  const taxa=taxas[bairro];
-  const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
-  const total=subtotal+taxa;
-  resumoDiv.innerHTML=`
-    <strong>Resumo do Pedido:</strong><br>
-    Subtotal: R$ ${subtotal.toFixed(2)}<br>
-    Taxa de entrega (${bairro}): R$ ${taxa.toFixed(2)}<br>
-    <strong>Total: R$ ${total.toFixed(2)}</strong>`;
-}
-
+// 🔹 ENVIAR PEDIDO
 async function enviarPedido(){
-  const bairro=document.getElementById('bairro').value.trim();
-  if(!(bairro in taxas)){
-    alert("⚠️ Este bairro ainda não possui entrega. Contate-nos via WhatsApp.");
-    window.open(`https://wa.me/557736135148?text=Olá! Gostaria de saber se fazem entregas no bairro ${bairro}.`);
-    return;
-  }
-
-  const c={nome:nome.value,email:email.value,whats:whats.value,
-    cep:cep.value,endereco:endereco.value,bairro,bairro,
-    numero:numero.value,complemento:complemento.value,
-    pagamento:pagamento.value,troco:troco.value};
-  localStorage.setItem("cliente",JSON.stringify(c));
-
-  const taxa=taxas[bairro];
-  const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
-  const total=subtotal+taxa;
-
-  const payload={acao:"pedido",cliente:c,itens:carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),
-    obs:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),subtotal,taxa,total};
-
-  overlay.style.display='flex';
-  try{
-    await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
-    alert(`✅ Pedido enviado!\nSubtotal: R$ ${subtotal.toFixed(2)}\nTaxa: R$ ${taxa.toFixed(2)}\nTotal: R$ ${total.toFixed(2)}`);
-  }catch(e){
-    alert("⚠️ Erro ao enviar pedido.");
-  }
-  overlay.style.display='none';
-  carrinho=[];atualizarCarrinho();
+ const bairro=document.getElementById('bairro').value.trim();
+ if(!(bairro in taxas)){
+   alert("⚠️ Este bairro ainda não possui entrega. Contate-nos via WhatsApp.");
+   window.open(`https://wa.me/557736135148?text=Olá! Gostaria de saber se fazem entregas no bairro ${bairro}.`);
+   return;
+ }
+ const c={nome:nome.value,email:email.value,whats:whats.value,cep:cep.value,endereco:endereco.value,bairro,numero:numero.value,complemento:complemento.value,pagamento:pagamento.value,troco:troco.value};
+ localStorage.setItem("cliente",JSON.stringify(c));
+ const taxa=taxas[bairro];
+ const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
+ const total=subtotal+taxa;
+ const payload={acao:"pedido",cliente:c,itens:carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),obs:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),subtotal,taxa,total};
+ overlay.style.display='flex';
+ try{
+   await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
+   alert(`✅ Pedido enviado!\nTotal: R$ ${total.toFixed(2)}`);
+ }catch(e){alert("⚠️ Erro ao enviar pedido.");}
+ overlay.style.display='none';
+ carrinho=[];atualizarCarrinho();
 }
-
 </script>
 </body>
 </html>
