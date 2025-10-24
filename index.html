@@ -1,371 +1,198 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#b8860b">
-<link rel="icon" sizes="192x192" href="https://github.com/ClenaStore/cardapiomercatto/blob/main/icons/logo.png?raw=true">
-<link rel="apple-touch-icon" href="https://github.com/ClenaStore/cardapiomercatto/blob/main/icons/logo.png?raw=true">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Mercatto Delivery">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>🍽️ Mercatto Delivery</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#b8860b">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/imask"></script>
+
 <style>
-/* 🎨 PALETA DE CORES */
-:root{
-  --bg:#f4f1ec;--card:#fffaf5;--accent:#b8860b;--ink:#3a2e1f;--muted:#6e6252;
-  --radius:12px;--shadow:0 3px 8px rgba(0,0,0,0.08);
+:root {
+  --bg: #0b0f19;
+  --card: #151d2f;
+  --accent: #b8860b;
+  --accent-light: #e4b64b;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --radius: 14px;
+  --shadow: 0 6px 18px rgba(0,0,0,0.35);
 }
-
-/* 🌿 BASE GERAL */
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{
-  width:100%;height:100%;
+body{
   font-family:'Inter',sans-serif;
-  background:var(--bg);color:var(--ink);
-  overflow-x:hidden; /* 🚫 impede rolagem lateral */
-  scroll-behavior:smooth;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
 }
-body.modal-aberto{overflow:hidden;} /* 🚫 trava o fundo quando modal aberto */
-
 header{
-  background:var(--accent);color:#fff;text-align:center;
-  padding:20px 10px;font-family:'Playfair Display',serif;font-size:22px;
+  text-align:center;
+  font-family:'Playfair Display',serif;
+  background:linear-gradient(90deg,#b8860b,#d6a318);
+  color:#fff;
+  padding:18px;
+  font-size:22px;
+  letter-spacing:.3px;
+  box-shadow:var(--shadow);
 }
-
-/* 📸 BANNER */
-.banner{
-  width:100%;max-width:600px;margin:15px auto;
-  border-radius:var(--radius);overflow:hidden;
-  box-shadow:var(--shadow);border:3px solid #e0d7c5;
+.banner img{
+  width:100%;
+  border-radius:0 0 var(--radius) var(--radius);
+  box-shadow:var(--shadow);
 }
-.banner img{width:100%;display:block;}
-
-/* 🧭 CATEGORIAS */
 .categorias{
   display:flex;overflow-x:auto;gap:10px;
-  padding:10px;margin:0 auto 10px;scrollbar-width:none;
-  -ms-overflow-style:none;max-width:600px;
+  padding:10px;scrollbar-width:none;
+  -ms-overflow-style:none;justify-content:center;
 }
 .categorias::-webkit-scrollbar{display:none;}
 .categorias button{
-  flex-shrink:0;background:var(--card);border:1px solid #e0d7c5;
-  color:var(--accent);padding:8px 16px;border-radius:20px;
-  font-weight:600;white-space:nowrap;cursor:pointer;
-  transition:all .2s ease;box-shadow:var(--shadow);
+  flex-shrink:0;background:var(--card);
+  color:var(--accent-light);
+  border:1px solid #2c3347;
+  padding:8px 18px;border-radius:20px;
+  cursor:pointer;font-weight:600;
+  transition:.3s;box-shadow:var(--shadow);
 }
-.categorias button.active{background:var(--accent);color:#fff;}
-.categorias button:hover{opacity:.85;}
-
-/* 🧾 GRID DE PRODUTOS */
+.categorias button.active,
+.categorias button:hover{
+  background:var(--accent);
+  color:#fff;
+}
 .container{
-  padding:10px;margin:0 auto;max-width:600px;overflow:hidden;
+  padding:20px;max-width:800px;margin:auto;
 }
 h2{
-  margin-top:10px;color:var(--accent);
   font-family:'Playfair Display',serif;
-  border-bottom:1px solid #d7ccbb;padding-bottom:4px;
+  color:var(--accent-light);
+  border-bottom:1px solid #2a3245;
+  padding-bottom:4px;margin-bottom:10px;
 }
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-  gap:12px;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:14px;
 }
 .card{
-  background:var(--card);border-radius:var(--radius);
-  box-shadow:var(--shadow);overflow:hidden;
-  transition:transform .2s;border:1px solid #e2d8c5;
+  background:var(--card);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  transition:transform .2s, box-shadow .3s;
+  border:1px solid #2a3245;
 }
-.card:hover{transform:scale(1.02);}
-.card img{width:100%;height:120px;object-fit:cover;}
-.card-body{padding:10px;}
-.card-body h3{margin:0;font-size:16px;font-family:'Playfair Display',serif;}
-.card-body p{font-size:13px;color:var(--muted);margin:4px 0;}
-.card-body span{font-weight:600;color:var(--accent);}
+.card:hover{
+  transform:scale(1.02);
+  box-shadow:0 0 15px rgba(184,134,11,0.4);
+}
+.card img{
+  width:100%;height:130px;object-fit:cover;
+}
+.card-body{
+  padding:10px;
+}
+.card-body h3{
+  font-family:'Playfair Display',serif;
+  font-size:16px;color:var(--accent-light);
+}
+.card-body p{
+  font-size:13px;color:var(--muted);
+  margin:4px 0;min-height:40px;
+}
+.card-body span{color:#fff;font-weight:600;}
 button.add{
-  background:var(--accent);color:#fff;border:none;
-  padding:8px;border-radius:var(--radius);
-  width:100%;margin-top:8px;font-weight:600;
-  cursor:pointer;letter-spacing:.3px;
+  background:var(--accent);
+  color:#fff;border:none;
+  width:100%;padding:8px;
+  border-radius:var(--radius);
+  margin-top:6px;cursor:pointer;
+  font-weight:600;
+  transition:.3s;
 }
 button.add:hover{opacity:.85;}
 
-/* 🛒 BOTÃO DO CARRINHO */
+/* 🛒 CARRINHO */
 #cart-btn{
-  position:fixed;bottom:20px;right:20px;
-  background:var(--accent);color:#fff;border:none;
-  border-radius:50%;width:60px;height:60px;
-  box-shadow:var(--shadow);font-size:24px;cursor:pointer;
-  z-index:20;
+  position:fixed;bottom:22px;right:22px;
+  background:var(--accent);
+  color:#fff;border:none;border-radius:50%;
+  width:60px;height:60px;font-size:24px;
+  box-shadow:var(--shadow);cursor:pointer;
+  z-index:1000;
 }
 #cart-count{
   position:absolute;top:6px;right:6px;
-  background:#a12f2f;color:#fff;font-size:12px;
-  border-radius:50%;padding:2px 6px;
+  background:#a12f2f;color:#fff;
+  font-size:12px;border-radius:50%;
+  padding:2px 6px;
 }
-#cart-content {
-  overflow-y: auto;
-  max-height: 85vh;
-}
-
-  #formCliente {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 2px solid #d7ccbb;
-  background: #fffaf5;
-  border-radius: 10px;
-}
-
-/* 💬 MODAL DO CARRINHO */
 #cart-modal{
-  position:fixed;inset:0;background:rgba(0,0,0,0.55);
-  display:none;justify-content:center;align-items:center;z-index:999;
-  backdrop-filter:blur(3px);
+  position:fixed;inset:0;background:rgba(0,0,0,.7);
+  display:none;justify-content:center;align-items:center;
+  z-index:2000;
 }
-
-/* Evita scroll do fundo quando o modal está aberto */
-#cart-modal.ativo ~ * {pointer-events:none;}
 #cart-modal.ativo{display:flex;}
-#cart-modal.ativo body{overflow:hidden;}
-
 .cart-content{
-  background:#fffaf5;width:90%;max-width:430px;
-  border-radius:var(--radius);padding:20px;
-  box-shadow:var(--shadow);border:2px solid #e0d7c5;
-  display:flex;flex-direction:column;align-items:stretch;
-  max-height:90vh;overflow:hidden;
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:20px;
+  width:90%;max-width:420px;
+  max-height:90vh;overflow:auto;
+  box-shadow:var(--shadow);
+  border:1px solid #2c3347;
 }
-.cart-body{
-  flex:1;overflow-y:auto;padding-right:6px;scrollbar-width:thin;
-}
-.cart-body::-webkit-scrollbar{width:6px;}
-.cart-body::-webkit-scrollbar-thumb{background:#d7ccbb;border-radius:6px;}
-.cart-content h3{
-  text-align:center;color:var(--accent);
-  font-family:'Playfair Display',serif;margin-bottom:12px;
-}
-
-/* LINHAS DO CARRINHO */
-.item-line{
-  display:flex;justify-content:space-between;
-  align-items:center;margin:6px 0;padding-bottom:6px;
-  border-bottom:1px solid #e6dcc8;
-}
-.summary{margin-top:15px;border-top:2px solid #d7ccbb;padding-top:10px;}
+.cart-content h3{text-align:center;color:var(--accent-light);margin-bottom:10px;}
+.item-line{display:flex;justify-content:space-between;margin:6px 0;}
 .finalizar{
-  background:var(--accent);color:#fff;border:none;padding:10px;width:100%;
-  border-radius:var(--radius);font-weight:600;margin-top:10px;letter-spacing:.3px;
+  background:var(--accent);
+  color:#fff;width:100%;border:none;
+  border-radius:var(--radius);
+  padding:10px;font-weight:600;margin-top:10px;
 }
 
-/* CAMPOS DO FORMULÁRIO */
-input,select{
-  width:100%;padding:10px;margin:6px 0 12px;
-  border:1px solid #d7ccbb;border-radius:8px;
-  font-size:15px;background:#fffefb;
-}
-label{font-size:13px;font-weight:600;color:var(--muted);}
-#infoTotais{font-size:14px;margin-top:-4px;color:var(--muted);}
-#infoTotais p strong{color:var(--accent);}
-
-/* 🔄 OVERLAY DE CARREGAMENTO */
+/* 🔔 Overlay */
 #overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,0.8);
-  display:none;align-items:center;justify-content:center;
-  z-index:9999;color:#fff;font-size:18px;
-  flex-direction:column;text-align:center;
+  position:fixed;inset:0;display:none;
+  align-items:center;justify-content:center;
+  background:rgba(0,0,0,.85);
+  flex-direction:column;z-index:9999;
 }
-#overlay img{width:100px;margin-bottom:20px;animation:pulse 1.2s infinite;}
-@keyframes pulse{0%,100%{opacity:.8}50%{opacity:1}}
+#overlay img{width:80px;margin-bottom:16px;animation:pulse 1.3s infinite;}
+@keyframes pulse{0%,100%{opacity:.7}50%{opacity:1}}
 </style>
-
 </head>
-<!-- 📲 BOTÃO DE INSTALAÇÃO PWA -->
-<button id="btnInstall" style="
-  position:fixed;bottom:20px;left:20px;z-index:9999;
-  background:#b8860b;color:#fff;border:none;
-  border-radius:30px;padding:12px 22px;
-  font-weight:600;box-shadow:0 3px 6px rgba(0,0,0,0.25);
-  display:none;">📲 Baixar App</button>
-
-<script>
-// ✅ REGISTRA SERVICE WORKER
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js')
-    .then(reg => console.log('Service Worker registrado:', reg.scope))
-    .catch(err => console.error('Erro no SW:', err));
-}
-
-// 📲 BOTÃO "BAIXAR APP"
-let deferredPrompt;
-const btnInstall = document.getElementById('btnInstall');
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  btnInstall.style.display = 'block';
-});
-
-btnInstall.addEventListener('click', async () => {
-  btnInstall.style.display = 'none';
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  console.log('Instalação:', outcome);
-  deferredPrompt = null;
-});
-
-// 🍎 iOS - mostra instrução manual
-if (navigator.userAgent.match(/iphone|ipad|ipod/i)) {
-  setTimeout(() => {
-    if (!window.matchMedia('(display-mode: standalone)').matches) {
-      alert('📲 Para instalar, toque em "Compartilhar" (ícone ↗) e escolha "Adicionar à Tela de Início".');
-    }
-  }, 3000);
-}
-</script>
 
 <body>
-
 <header>🍽️ Mercatto Delivery</header>
 
-<!-- 📸 BANNER PRINCIPAL -->
 <div class="banner">
-  <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200" alt="Banner principal">
+  <img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?w=1200" alt="Banner Mercatto">
 </div>
 
-<!-- 🧭 BOTÕES DE CATEGORIA -->
 <div class="categorias" id="categorias"></div>
-
-<!-- 🧾 LISTAGEM DE PRODUTOS -->
 <div class="container">
   <h2 id="tituloCategoria">Cardápio</h2>
   <div class="grid" id="menu"></div>
 </div>
 
-<!-- 🛒 BOTÃO FIXO DO CARRINHO -->
 <button id="cart-btn">🛒<span id="cart-count">0</span></button>
 
 <div id="cart-modal">
-  <div class="cart-content" id="cart-content">
-    <h3>🧾 Seu Pedido</h3>
-    <div class="cart-body" id="cart-body">
-      <div id="cart-items"></div>
-    </div>
-
-    <!-- ✅ Formulário fora da área com scroll -->
-    <div id="formCliente" class="summary" style="display:none;"></div>
-
-    <!-- ✅ Botão fixo dentro do modal -->
-    <div style="margin-top:10px;">
-      <button class="finalizar" id="btnContinuarCarrinho" style="display:none;" onclick="abrirFormCliente()">Continuar</button>
-    </div>
+  <div class="cart-content">
+    <h3>Seu Pedido</h3>
+    <div id="cart-items"></div>
+    <button class="finalizar" onclick="abrirForm()">Continuar</button>
   </div>
 </div>
 
-
-<!-- ⏳ OVERLAY DE ENVIO -->
 <div id="overlay">
-  <img src="https://i.imgur.com/8Km9tLL.png" alt="logo">
-  <p>Enviando seu pedido...<br>Por favor, aguarde 🕒</p>
+  <img src="https://i.imgur.com/8Km9tLL.png" alt="Logo">
+  <p>Salvando seu pedido... aguarde 🍽️</p>
 </div>
 
 <script>
-const ENDPOINT="https://script.google.com/macros/s/AKfycbyLxzKH1MflYrVBEzEd4JaYYbAkNi5R13YWzDO9ywt2tqsx113TLYybORrKYGURowak/exec";
-// 🕒 CONFIGURAÇÃO DE HORÁRIO DE FUNCIONAMENTO
-// 🕒 HORÁRIOS DE FUNCIONAMENTO POR DIA (com 2 turnos possíveis)
-const horariosSemana = {
-  0: [ // domingo
-    {inicio: "11:00", fim: "15:00"},
-    {inicio: "18:00", fim: "22:30"}
-  ],
-  1: [ // segunda-feira
-    {inicio: "11:00", fim: "15:00"},
-    {inicio: "18:00", fim: "22:30"}
-  ],
-  2: [ // terça-feira
-    {inicio: "11:00", fim: "15:00"},
-    {inicio: "18:00", fim: "22:30"}
-  ],
-  3: [ // quarta-feira
-    {inicio: "11:00", fim: "15:00"},
-    {inicio: "18:00", fim: "22:30"}
-  ],
-  4: [ // quinta-feira
-    {inicio: "11:00", fim: "15:00"},
-    {inicio: "18:00", fim: "22:30"}
-  ],
-  5: [ // sexta-feira
-    {inicio: "11:00", fim: "15:00"},
-    {inicio: "18:00", fim: "23:30"}
-  ],
-  6: [ // sábado
-    {inicio: "11:00", fim: "16:00"},
-    {inicio: "18:00", fim: "23:30"}
-  ]
-};
-
-// ✅ Função para verificar se o restaurante está aberto
-function estaAberto() {
-  const agora = new Date();
-  const dia = agora.getDay();
-  const turnos = horariosSemana[dia] || [];
-  return turnos.some(t => {
-    const [hIni, mIni] = t.inicio.split(":").map(Number);
-    const [hFim, mFim] = t.fim.split(":").map(Number);
-    const inicio = new Date();
-    const fim = new Date();
-    inicio.setHours(hIni, mIni, 0);
-    fim.setHours(hFim, mFim, 0);
-    return agora >= inicio && agora <= fim;
-  });
-}
-
-// 🧾 Texto com horários do dia atual (para o banner)
-function textoHorarioHoje() {
-  const hoje = new Date().getDay();
-  const turnos = horariosSemana[hoje] || [];
-  if (!turnos.length) return "Fechado hoje";
-  return turnos.map(t => `${t.inicio} às ${t.fim}`).join(" e ");
-}
-
-// 🔔 Exibe aviso se estiver fechado
-function verificarHorario() {
-  const avisoExistente = document.getElementById("avisoHorario");
-  const aberto = estaAberto();
-  if (!aberto) {
-    if (!avisoExistente) {
-      const aviso = document.createElement("div");
-      aviso.id = "avisoHorario";
-      aviso.style.cssText = `
-        background:#a12f2f;color:#fff;padding:10px;text-align:center;
-        font-weight:600;position:fixed;top:0;left:0;width:100%;
-        z-index:9999;font-size:15px;box-shadow:0 2px 6px rgba(0,0,0,0.2);
-      `;
-      aviso.textContent = `⏰ Restaurante fechado — hoje abrimos das ${textoHorarioHoje()}`;
-      document.body.appendChild(aviso);
-    }
-    document.querySelectorAll("button.add").forEach(btn=>{
-      btn.disabled = true;
-      btn.style.opacity = 0.5;
-      btn.style.cursor = "not-allowed";
-    });
-  } else {
-    avisoExistente?.remove();
-    document.querySelectorAll("button.add").forEach(btn=>{
-      btn.disabled = false;
-      btn.style.opacity = 1;
-      btn.style.cursor = "pointer";
-    });
-  }
-}
-
-// 🕐 Verifica automaticamente ao carregar e a cada minuto
-setInterval(verificarHorario, 60000);
-window.addEventListener("load", verificarHorario);
-
  const produtos = [
   // 🍽️ PRATOS INDIVIDUAIS DELICIOSOS
   {id: 36, nome: 'Risoto de Cogumelos', desc: 'Arroz arbóreo cremoso, preparado com uma seleção de cogumelos frescos e servido com torres de legumes no crocante de parmesão, realçando um sabor incrível!', preco: 87.50, img: 'img/padrao.jpg', categoria: 'Pratos Individuais Deliciosos'},
@@ -450,27 +277,24 @@ window.addEventListener("load", verificarHorario);
   {id: 91, nome: 'Cheesecake de Goiaba com Queijo', desc: 'Base de biscoito, creme de queijo e cobertura de goiabada, equilibrando o doce e o suave.', preco: 39.90, img: 'img/padrao.jpg', categoria: 'Sobremesas Individuais Maravilhosas'}
 ];
 
-
+// 🛍️ Carrinho
 let carrinho=[];
-let categoriaAtiva='';
-
+const categorias=[...new Set(produtos.map(p=>p.categoria))];
 const categoriasDiv=document.getElementById('categorias');
 const menuDiv=document.getElementById('menu');
 const titulo=document.getElementById('tituloCategoria');
-const categoriasUnicas=[...new Set(produtos.map(p=>p.categoria))];
 
-categoriasUnicas.forEach((cat,i)=>{
+categorias.forEach((cat,i)=>{
   const btn=document.createElement('button');
   btn.textContent=cat;
-  btn.onclick=()=>filtrarCategoria(cat);
-  if(i===0){btn.classList.add('active');categoriaAtiva=cat;}
+  btn.onclick=()=>filtrar(cat);
+  if(i===0)btn.classList.add('active');
   categoriasDiv.appendChild(btn);
 });
-filtrarCategoria(categoriaAtiva);
+filtrar(categorias[0]);
 
-function filtrarCategoria(cat){
-  categoriaAtiva=cat;
-  titulo.innerText=cat;
+function filtrar(cat){
+  titulo.textContent=cat;
   document.querySelectorAll('.categorias button').forEach(b=>b.classList.remove('active'));
   [...categoriasDiv.children].find(b=>b.textContent===cat)?.classList.add('active');
   menuDiv.innerHTML='';
@@ -478,179 +302,92 @@ function filtrarCategoria(cat){
     const c=document.createElement('div');
     c.className='card';
     c.innerHTML=`
-      <img src="${p.img}" alt="${p.nome}">
+      <img src="${p.img}">
       <div class="card-body">
         <h3>${p.nome}</h3>
         <p>${p.desc}</p>
-        <span>R$${p.preco.toFixed(2)}</span>
-        <button class="add" onclick="addCarrinho(${p.id})">Adicionar</button>
+        <span>R$ ${p.preco.toFixed(2)}</span>
+        <button class="add" onclick="add(${p.id})">Adicionar</button>
       </div>`;
     menuDiv.appendChild(c);
   });
 }
 
-function addCarrinho(id){
-  const prod = produtos.find(p=>p.id===id);
-  const modal=document.createElement('div');
-  modal.style.cssText=`position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:10000;`;
-  modal.innerHTML=`
-    <div style="background:#fffaf5;padding:25px;border-radius:10px;max-width:300px;width:90%;text-align:center;">
-      <h3 style="color:#b8860b;font-family:'Playfair Display',serif;">🧾 Adicionar ${prod.nome}</h3>
-      <label>Quantidade:</label><input id="qtdTemp" type="number" min="1" value="1" style="width:80px;margin:6px;">
-      <label>Observação:</label><input id="obsTemp" placeholder="(opcional)" style="width:100%;padding:6px;margin-top:5px;">
-      <button id="btnConfirma" style="margin-top:15px;background:#b8860b;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;">Adicionar</button>
-    </div>`;
-  document.body.appendChild(modal);
-
-  document.getElementById('btnConfirma').onclick=()=>{
-    const qtd=parseInt(document.getElementById('qtdTemp').value)||1;
-    const obs=document.getElementById('obsTemp').value||'';
-    const existente=carrinho.find(i=>i.id===id && i.obs===obs);
-    if(existente){
-      existente.qtd+=qtd;
-    }else{
-      carrinho.push({...prod,obs,qtd});
-    }
-    renderCarrinho();
-    modal.remove();
-  };
-  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+function add(id){
+  const prod=produtos.find(p=>p.id===id);
+  const existe=carrinho.find(i=>i.id===id);
+  if(existe)existe.qtd++; else carrinho.push({...prod,qtd:1});
+  atualizarCarrinho();
 }
 
-function renderCarrinho(){
-  const countEl=document.getElementById('cart-count');
-  const div=document.getElementById('cart-items');
-  const btnContinuar=document.getElementById('btnContinuarCarrinho');
-  div.innerHTML='';
-  carrinho.forEach((item,i)=>{
-    div.innerHTML+=`
+function atualizarCarrinho(){
+  document.getElementById('cart-count').innerText=carrinho.reduce((a,b)=>a+b.qtd,0);
+  const items=document.getElementById('cart-items');
+  items.innerHTML='';
+  carrinho.forEach((i,idx)=>{
+    items.innerHTML+=`
       <div class="item-line">
-        <span>${item.nome} x${item.qtd}</span>
-        <span>R$${(item.preco*item.qtd).toFixed(2)}</span>
-        <button onclick="removeItem(${i})">✖</button>
-      </div>
-      <small>Obs: ${item.obs||'-'}</small>`;
+        <span>${i.nome} x${i.qtd}</span>
+        <span>R$ ${(i.qtd*i.preco).toFixed(2)}</span>
+      </div>`;
   });
-  countEl.innerText=carrinho.reduce((s,i)=>s+i.qtd,0);
-  btnContinuar.style.display=carrinho.length?'block':'none';
 }
 
-function removeItem(i){carrinho.splice(i,1);renderCarrinho();}
-document.getElementById('cart-btn').onclick=()=>document.getElementById('cart-modal').style.display='flex';
-document.getElementById('cart-modal').onclick=e=>{if(e.target.id==='cart-modal')e.target.style.display='none';};
+document.getElementById('cart-btn').onclick=()=>document.getElementById('cart-modal').classList.add('ativo');
+document.getElementById('cart-modal').onclick=e=>{if(e.target.id==='cart-modal')e.target.classList.remove('ativo');};
 
-function abrirFormCliente(){
-  const saved=JSON.parse(localStorage.getItem('cliente')||'{}');
-  const form=document.getElementById('formCliente');
-  form.style.display='block';
-  form.innerHTML=`
-    <h3>📋 Dados do Cliente</h3>
-    <label>Nome completo</label><input id="nome" value="${saved.nome||''}">
-    <label>WhatsApp</label><input id="whats" type="tel" inputmode="numeric" value="${saved.whats||''}">
-    <label>CEP</label><input id="cep" inputmode="numeric" maxlength="9" onblur="buscarEndereco()" value="${saved.cep||''}">
-    <div id="bairroDetectado" style="font-size:13px;color:var(--muted);margin-top:-6px;"></div>
-    <label>Endereço</label><input id="endereco" value="${saved.endereco||''}">
-    <label>Número</label><input id="numero" type="number" value="${saved.numero||''}">
-    <label>Bairro</label>
-    <select id="bairro" onchange="atualizarTotais()">
-      <option value="">Selecione</option>
-      <option value="Centro" data-taxa="5">Centro - R$5,00</option>
-      <option value="Vila Brasil" data-taxa="8">Vila Brasil - R$8,00</option>
-      <option value="Santa Luzia" data-taxa="10">Santa Luzia - R$10,00</option>
-    </select>
-    <label>Forma de pagamento</label>
-    <select id="pagamento" onchange="verificarTroco()">
-      <option value="">Selecione</option>
-      <option value="Pix">Pix</option>
-      <option value="Cartão">Cartão</option>
-      <option value="Dinheiro">Dinheiro</option>
-    </select>
-    <div id="campoTroco"></div>
-    <div id="infoTotais"></div>
-    <button class="finalizar" onclick="mostrarResumo()">Ver Resumo</button>
-  `;
+// 💾 Formulário simplificado
+function abrirForm(){
+  const modal=document.getElementById('cart-modal');
+  modal.innerHTML=`
+    <div class="cart-content">
+      <h3>Seus Dados</h3>
+      <input id="nome" placeholder="Seu nome completo">
+      <input id="email" placeholder="Seu e-mail">
+      <input id="endereco" placeholder="Endereço completo">
+      <button class="finalizar" onclick="salvarPedido()">Enviar Pedido</button>
+    </div>`;
 }
 
-function atualizarTotais(){
-  const b=document.getElementById('bairro');
-  const taxa=parseFloat(b.selectedOptions[0]?.dataset.taxa||0);
-  const subtotal=carrinho.reduce((s,i)=>s+i.preco*i.qtd,0);
-  const total=subtotal+taxa;
-  document.getElementById('infoTotais').innerHTML=`
-    <p><strong>Taxa:</strong> R$${taxa.toFixed(2)}</p>
-    <p><strong>💰 Total:</strong> R$${total.toFixed(2)}</p>`;
-}
-
-function mostrarResumo(){
-  const nome=document.getElementById('nome').value.trim();
-  const whats=document.getElementById('whats').value.trim();
-  const cep=document.getElementById('cep').value.trim();
-  const endereco=document.getElementById('endereco').value.trim();
-  const numero=document.getElementById('numero').value.trim();
-  const bairroSel=document.getElementById('bairro');
-  const bairro=bairroSel.value;
-  const forma=document.getElementById('pagamento').value;
-  const precisa=document.getElementById('precisaTroco')?.value||'Não';
-  const troco=document.getElementById('valorTroco')?.value||'';
-  const taxa=parseFloat(bairroSel.selectedOptions[0]?.dataset.taxa||0);
-  const subtotal=carrinho.reduce((s,i)=>s+i.preco*i.qtd,0);
-  const total=subtotal+taxa;
-
-  if(!nome||!whats||!bairro||!forma){alert('Preencha todos os campos obrigatórios.');return;}
-
-  let itensHTML='<ul>';
-  carrinho.forEach(i=>{itensHTML+=`<li>${i.nome} x${i.qtd} — R$${(i.preco*i.qtd).toFixed(2)}<br><small>Obs: ${i.obs||'-'}</small></li>`;});
-  itensHTML+='</ul>';
-
-  document.getElementById('formCliente').innerHTML=`
-    <h3>📦 Resumo do Pedido</h3>
-    ${itensHTML}
-    <p><strong>Cliente:</strong> ${nome}</p>
-    <p><strong>Endereço:</strong> ${endereco}, ${numero} - ${bairro}</p>
-    <p><strong>Forma de Pagamento:</strong> ${forma}</p>
-    <h3 style="color:var(--accent)">Total: R$${total.toFixed(2)}</h3>
-    <button class="finalizar" onclick="enviarPedido('${nome}','${whats}','${cep}','${endereco}','${numero}','${bairro}','${forma}','${precisa}','${troco}',${taxa},${subtotal},${total})">Enviar Pedido</button>`;
-}
-
-/* 🚀 ENVIA PEDIDO PARA O GOOGLE SHEETS E ABRE O WHATSAPP */
-async function enviarPedido(nome,whats,cep,endereco,numero,bairro,forma,precisa,troco,taxa,subtotal,total){
+async function salvarPedido(){
   document.getElementById('overlay').style.display='flex';
-
-  const payload={
-    acao:"adicionar",
-    nome,whats,cep,endereco,numero,bairro,forma,precisa,troco,
-    itens:carrinho.map(i=>i.nome).join(', '),
-    observacoes:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),
-    subtotal,taxa,total
+  const dados={
+    nome:document.getElementById('nome').value,
+    email:document.getElementById('email').value,
+    endereco:document.getElementById('endereco').value,
+    itens:carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),
+    total:carrinho.reduce((s,i)=>s+i.qtd*i.preco,0),
+    status:'PENDENTE'
   };
 
   try{
-    const r=await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
-    const t=await r.text();
-
+    await fetch('https://script.google.com/macros/s/SEU-ENDPOINT/exec',{
+      method:'POST',
+      body:JSON.stringify(dados)
+    });
     document.getElementById('overlay').style.display='none';
-
-    if(t.includes("ok")){
-
-
-      // Limpa carrinho e fecha modal
-      carrinho=[];
-      document.getElementById('cart-modal').style.display='none';
-      renderCarrinho();
-
-      // Mensagem de confirmação visual
-      alert("✅ Pedido enviado com sucesso!");
-    }else{
-      alert("❌ Erro ao registrar o pedido na planilha.");
-    }
-
+    alert('✅ Pedido registrado! Você receberá uma notificação ao ser aprovado.');
+    carrinho=[];
+    atualizarCarrinho();
+    document.getElementById('cart-modal').classList.remove('ativo');
   }catch(e){
     document.getElementById('overlay').style.display='none';
-    alert("⚠️ Erro de conexão. Tente novamente em alguns segundos.");
-    console.error(e);
+    alert('❌ Falha ao enviar pedido.');
   }
 }
 </script>
 
+<script>
+// 🔔 Notificações Push
+if('Notification' in window && 'serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(reg=>{
+    Notification.requestPermission().then(p=>{
+      if(p==='granted'){
+        console.log('✅ Notificações ativas');
+      }
+    });
+  });
+}
+</script>
 </body>
 </html>
