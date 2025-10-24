@@ -263,60 +263,65 @@ categorias.forEach((c,i)=>{
 });
 filtrar(categorias[0]);
 
-// 🔄 Rolagem automática com pausa ao tocar
+// 🔄 Rolagem automática com toque superfluido
 let dir = 1;
 let autoScroll;
+let scrollSpeed = 0.8; // velocidade do scroll automático
 
 function iniciarAutoScroll() {
   pararAutoScroll();
-  autoScroll = setInterval(() => {
-    catDiv.scrollLeft += dir;
-    if (catDiv.scrollLeft + catDiv.clientWidth >= catDiv.scrollWidth || catDiv.scrollLeft <= 0)
-      dir *= -1;
-  }, 20); // velocidade automática (quanto menor, mais rápido)
+  autoScroll = requestAnimationFrame(scrollLoop);
+}
+
+function scrollLoop() {
+  catDiv.scrollLeft += dir * scrollSpeed;
+  if (catDiv.scrollLeft + catDiv.clientWidth >= catDiv.scrollWidth || catDiv.scrollLeft <= 0) dir *= -1;
+  autoScroll = requestAnimationFrame(scrollLoop);
 }
 
 function pararAutoScroll() {
-  clearInterval(autoScroll);
+  cancelAnimationFrame(autoScroll);
 }
 
 iniciarAutoScroll();
 
-// 🖐️ Toque responsivo com inércia
-let touchStartX = 0;
-let scrollStartX = 0;
-let isTouching = false;
-let lastDelta = 0;
+// 🖐️ Toque com resposta imediata + inércia
+let startX = 0;
+let scrollStart = 0;
+let isDragging = false;
 let velocity = 0;
+let lastX = 0;
 
 catDiv.addEventListener('touchstart', e => {
   pararAutoScroll();
-  isTouching = true;
-  touchStartX = e.touches[0].pageX;
-  scrollStartX = catDiv.scrollLeft;
-  velocity = 0;
+  isDragging = true;
+  startX = e.touches[0].pageX;
+  scrollStart = catDiv.scrollLeft;
+  lastX = startX;
 });
 
 catDiv.addEventListener('touchmove', e => {
-  if (!isTouching) return;
-  e.preventDefault();
+  if (!isDragging) return;
   const x = e.touches[0].pageX;
-  const delta = (x - touchStartX) * 2.8; // ← sensibilidade (aumente para rolar mais rápido)
-  catDiv.scrollLeft = scrollStartX - delta;
-  velocity = delta - lastDelta;
-  lastDelta = delta;
-}, { passive: false });
+  const delta = x - startX;
+  catDiv.scrollLeft = scrollStart - delta;
+  velocity = x - lastX;
+  lastX = x;
+});
 
 catDiv.addEventListener('touchend', () => {
-  isTouching = false;
-  // ✨ Efeito de inércia (momentum)
-  let momentum = setInterval(() => {
+  isDragging = false;
+
+  // ✨ Inércia suave ao soltar
+  function momentum() {
     catDiv.scrollLeft -= velocity;
-    velocity *= 0.93;
-    if (Math.abs(velocity) < 0.3) clearInterval(momentum);
-  }, 16);
-  iniciarAutoScroll(); // retoma scroll automático
+    velocity *= 0.95;
+    if (Math.abs(velocity) > 0.3) requestAnimationFrame(momentum);
+    else iniciarAutoScroll();
+  }
+  requestAnimationFrame(momentum);
 });
+
 
 
 
