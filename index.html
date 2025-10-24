@@ -37,9 +37,30 @@ header{
   width:100%;height:100%;object-fit:cover;filter:brightness(.85);
 }
 .banner h1{
-  position:absolute;bottom:25px;left:20px;color:#fff;
-  font-family:'Playfair Display',serif;font-size:30px;
+  position:absolute;bottom:70px;left:20px;color:#fff;
+  font-family:'Playfair Display',serif;font-size:28px;
   text-shadow:0 3px 8px rgba(0,0,0,.6);
+}
+.search-area{
+  position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+  width:90%;display:flex;align-items:center;gap:10px;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(8px);
+  border-radius:50px;padding:6px 14px;
+}
+.search-area input{
+  flex:1;background:none;border:none;outline:none;
+  color:#fff;font-size:14px;
+}
+.search-area input::placeholder{color:#ccc;}
+.search-area button{
+  background:var(--accent);border:none;border-radius:50%;
+  width:40px;height:40px;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;box-shadow:var(--shadow);
+  font-size:20px;position:relative;
+}
+#cart-count{
+  position:absolute;top:-4px;right:-4px;background:#dc2626;
+  color:#fff;font-size:12px;border-radius:50%;padding:2px 6px;
 }
 .categorias {
   display:flex;
@@ -48,12 +69,10 @@ header{
   gap:10px;
   scrollbar-width:none;
   user-select:none;
-  -webkit-overflow-scrolling: auto; /* remove suavização iOS */
-  touch-action: pan-x; /* prioriza movimento horizontal */
+  -webkit-overflow-scrolling:auto;
+  touch-action:pan-x;
 }
-.categorias::-webkit-scrollbar { display:none; }
-
-.categorias::-webkit-scrollbar{display:none;}
+.categorias::-webkit-scrollbar {display:none;}
 .categorias button{
   flex-shrink:0;background:#1e293b;border:1px solid var(--accent);
   color:var(--accent2);padding:10px 16px;border-radius:25px;
@@ -88,15 +107,6 @@ header{
   font-weight:600;cursor:pointer;transition:.2s;
 }
 .card-body button:hover{background:var(--accent2);}
-#cart-btn{
-  position:fixed;bottom:20px;right:20px;width:65px;height:65px;
-  border-radius:50%;border:none;background:var(--accent);
-  box-shadow:var(--shadow);font-size:26px;cursor:pointer;z-index:10;
-}
-#cart-count{
-  position:absolute;top:5px;right:5px;background:#dc2626;
-  color:#fff;font-size:12px;border-radius:50%;padding:2px 6px;
-}
 .popup{
   position:fixed;inset:0;background:rgba(0,0,0,.9);
   display:flex;align-items:center;justify-content:center;
@@ -110,9 +120,7 @@ header{
 }
 .popup-content img{width:100%;height:180px;object-fit:cover;}
 .popup-body{padding:15px;}
-.popup-body h2{
-  margin:0;font-family:'Playfair Display',serif;color:var(--accent2);
-}
+.popup-body h2{margin:0;font-family:'Playfair Display',serif;color:var(--accent2);}
 .popup-body p{color:var(--muted);margin:8px 0;font-size:14px;}
 .popup-body input,textarea,select{
   width:100%;margin-top:6px;padding:10px;background:#1e293b;
@@ -125,7 +133,7 @@ header{
 }
 .popup-body button:hover{background:var(--accent2);}
 .close-btn{
-  position:absolute;top:20px;right:20px;background:none;
+  position:absolute;top:15px;right:15px;background:none;
   border:none;color:var(--accent2);font-size:22px;cursor:pointer;
 }
 .sug-card{
@@ -155,12 +163,14 @@ header{
 <div class="banner">
   <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200" alt="Banner principal">
   <h1>Sabores que inspiram momentos</h1>
+  <div class="search-area">
+    <input type="text" id="busca" placeholder="Buscar no cardápio..." oninput="buscarItem()">
+    <button onclick="abrirCarrinho()">🛒<span id="cart-count">0</span></button>
+  </div>
 </div>
 
 <div class="categorias" id="categorias"></div>
 <div class="container"><div class="grid" id="menu"></div></div>
-
-<button id="cart-btn" onclick="abrirCarrinho()">🛒<span id="cart-count">0</span></button>
 
 <div class="overlay" id="overlay">
   <img src="https://i.imgur.com/8Km9tLL.png" alt="logo">
@@ -168,7 +178,7 @@ header{
 </div>
 
 <script>
-const ENDPOINT = "URL_DO_SEU_GAS"; // Substituir depois
+const ENDPOINT = "URL_DO_SEU_GAS";
 
  const produtos = [
   // 🍽️ PRATOS INDIVIDUAIS DELICIOSOS
@@ -254,63 +264,38 @@ const ENDPOINT = "URL_DO_SEU_GAS"; // Substituir depois
   {id: 91, nome: 'Cheesecake de Goiaba com Queijo', desc: 'Base de biscoito, creme de queijo e cobertura de goiabada, equilibrando o doce e o suave.', preco: 39.90, img: 'img/padrao.jpg', categoria: 'Sobremesas Individuais Maravilhosas'}
 ];
 
-
 let carrinho = [];
-
-// montar categorias
 const categorias = [...new Set(produtos.map(p=>p.categoria))];
-const catDiv = document.getElementById('categorias');
-const menuDiv = document.getElementById('menu');
+const catDiv=document.getElementById('categorias'), menuDiv=document.getElementById('menu');
 
 categorias.forEach((c,i)=>{
   const b=document.createElement('button');
-  b.textContent=c;
-  if(i===0)b.classList.add('active');
-  b.onclick=()=>filtrar(c);
-  catDiv.appendChild(b);
+  b.textContent=c;if(i===0)b.classList.add('active');
+  b.onclick=()=>filtrar(c);catDiv.appendChild(b);
 });
 filtrar(categorias[0]);
 
+// Rolagem instantânea
+let isDragging=false,startX=0,scrollStart=0;
+catDiv.addEventListener("touchstart",e=>{isDragging=true;startX=e.touches[0].pageX;scrollStart=catDiv.scrollLeft;catDiv.style.scrollBehavior="auto";},{passive:true});
+catDiv.addEventListener("touchmove",e=>{if(!isDragging)return;catDiv.scrollLeft=scrollStart-(e.touches[0].pageX-startX);},{passive:true});
+catDiv.addEventListener("touchend",()=>{isDragging=false;},{passive:true});
 
-  
-// ⚡ Rolagem 100% instantânea, sem delay nem suavização
-let isDragging = false;
-let startX = 0;
-let scrollStart = 0;
-
-catDiv.addEventListener("touchstart", e => {
-  isDragging = true;
-  startX = e.touches[0].pageX;
-  scrollStart = catDiv.scrollLeft;
-  catDiv.style.scrollBehavior = "auto"; // remove qualquer suavização
-}, { passive: true });
-
-catDiv.addEventListener("touchmove", e => {
-  if (!isDragging) return;
-  const delta = e.touches[0].pageX - startX;
-  catDiv.scrollLeft = scrollStart - delta;
-}, { passive: true });
-
-catDiv.addEventListener("touchend", () => {
-  isDragging = false;
-}, { passive: true });
-
-
-
-
-
-
-
-
-
-
-
-// filtrar
+// renderização
 function filtrar(cat){
   document.querySelectorAll('.categorias button').forEach(b=>b.classList.remove('active'));
   [...catDiv.children].find(b=>b.textContent===cat).classList.add('active');
+  renderizar(produtos.filter(p=>p.categoria===cat));
+}
+function buscarItem(){
+  const termo=document.getElementById('busca').value.toLowerCase();
+  if(!termo)return filtrar(document.querySelector('.categorias button.active').textContent);
+  const filtrado=produtos.filter(p=>p.nome.toLowerCase().includes(termo)||p.desc.toLowerCase().includes(termo));
+  renderizar(filtrado);
+}
+function renderizar(lista){
   menuDiv.innerHTML='';
-  produtos.filter(p=>p.categoria===cat).forEach(p=>{
+  lista.forEach(p=>{
     const c=document.createElement('div');
     c.className='card';
     c.innerHTML=`
@@ -325,7 +310,6 @@ function filtrar(cat){
   });
 }
 
-// popup item
 function abrirPopup(id){
   const p=produtos.find(x=>x.id===id);
   const div=document.createElement('div');
@@ -338,14 +322,13 @@ function abrirPopup(id){
         <h2>${p.nome}</h2>
         <p>${p.desc}</p>
         <label>Quantidade</label><input id="qtd" type="number" min="1" value="1">
-        <label>Observação</label><textarea id="obs" placeholder="Ex: sem cebola, bem passado..."></textarea>
+        <label>Observação</label><textarea id="obs" placeholder="Ex: sem cebola..."></textarea>
         <button onclick="adicionar(${p.id})">Adicionar ao Carrinho</button>
       </div>
     </div>`;
   document.body.appendChild(div);
 }
 
-// adicionar item e sugerir
 function adicionar(id){
   const qtd=parseInt(document.getElementById('qtd').value)||1;
   const obs=document.getElementById('obs').value||'';
@@ -368,11 +351,7 @@ function mostrarSugestoes(cat){
         ${sugs.map(s=>`
           <div class="sug-card" onclick="abrirPopup(${s.id});this.closest('.popup').remove()">
             <img src="${s.img}">
-            <div>
-              <strong>${s.nome}</strong>
-              <small>${s.desc}</small>
-              <span>R$ ${s.preco.toFixed(2)}</span>
-            </div>
+            <div><strong>${s.nome}</strong><small>${s.desc}</small><span>R$ ${s.preco.toFixed(2)}</span></div>
           </div>`).join('')}
         <button onclick="abrirCarrinho()">Ver Carrinho</button>
       </div>
@@ -384,7 +363,6 @@ function atualizarCarrinho(){
   document.getElementById('cart-count').textContent=carrinho.reduce((s,i)=>s+i.qtd,0);
 }
 
-// carrinho
 function abrirCarrinho(){
   if(!carrinho.length)return alert("Carrinho vazio!");
   const div=document.createElement('div');
@@ -410,10 +388,9 @@ function abrirCarrinho(){
 
 function removerItem(ix){carrinho.splice(ix,1);atualizarCarrinho();abrirCarrinho();}
 
-// finalizar
 function finalizarPedido(){
   document.querySelectorAll('.popup').forEach(p=>p.remove());
-  const cliente=JSON.parse(localStorage.getItem('cliente')||'{}');
+  const c=JSON.parse(localStorage.getItem('cliente')||'{}');
   const div=document.createElement('div');
   div.classList.add('popup');
   div.innerHTML=`
@@ -421,14 +398,14 @@ function finalizarPedido(){
       <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
       <div class="popup-body">
         <h2>📦 Dados de Entrega</h2>
-        <label>Nome</label><input id="nome" value="${cliente.nome||''}">
-        <label>Email</label><input id="email" value="${cliente.email||''}">
-        <label>WhatsApp</label><input id="whats" value="${cliente.whats||''}">
-        <label>CEP</label><input id="cep" value="${cliente.cep||''}" onblur="buscarEndereco()">
-        <label>Endereço</label><input id="endereco" value="${cliente.endereco||''}">
-        <label>Bairro</label><input id="bairro" value="${cliente.bairro||''}">
-        <label>Número</label><input id="numero" value="${cliente.numero||''}">
-        <label>Complemento</label><input id="complemento" value="${cliente.complemento||''}">
+        <label>Nome</label><input id="nome" value="${c.nome||''}">
+        <label>Email</label><input id="email" value="${c.email||''}">
+        <label>WhatsApp</label><input id="whats" value="${c.whats||''}">
+        <label>CEP</label><input id="cep" value="${c.cep||''}" onblur="buscarEndereco()">
+        <label>Endereço</label><input id="endereco" value="${c.endereco||''}">
+        <label>Bairro</label><input id="bairro" value="${c.bairro||''}">
+        <label>Número</label><input id="numero" value="${c.numero||''}">
+        <label>Complemento</label><input id="complemento" value="${c.complemento||''}">
         <label>Forma de pagamento</label>
         <select id="pagamento">
           <option>Pix</option><option>Cartão</option><option>Dinheiro</option>
