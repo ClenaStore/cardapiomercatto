@@ -262,11 +262,10 @@ categorias.forEach((c,i)=>{
   catDiv.appendChild(b);
 });
 filtrar(categorias[0]);
-
-// 🔄 Rolagem automática contínua + toque imediato
+// 🚀 Rolagem automática rápida + toque instantâneo e fluido
 let dir = 1;
 let autoScroll;
-let scrollVel = 0.7; // Velocidade do auto-scroll
+let scrollVel = 1.8; // velocidade do auto-scroll (↑ aumenta a rolagem automática)
 
 function iniciarAutoScroll() {
   pararAutoScroll();
@@ -282,7 +281,7 @@ function scrollAuto() {
 }
 iniciarAutoScroll();
 
-// 🖐️ Rolagem com toque responsivo e sem atraso
+// 🖐️ Toque super responsivo + inércia suave
 let tocando = false;
 let inicioX = 0;
 let scrollIni = 0;
@@ -307,7 +306,7 @@ catDiv.addEventListener("touchmove", e => {
   catDiv.scrollLeft = scrollIni - dx;
   const tempo = performance.now();
   const deltaT = tempo - ultimoTempo;
-  vel = (x - ultX) / deltaT * 25; // 💡 25 = fator de sensibilidade (quanto maior, mais rápido)
+  vel = (x - ultX) / deltaT * 45; // ⚙️ sensibilidade do toque (↑ mais veloz e responsivo)
   ultX = x;
   ultimoTempo = tempo;
 });
@@ -315,15 +314,16 @@ catDiv.addEventListener("touchmove", e => {
 catDiv.addEventListener("touchend", () => {
   tocando = false;
 
-  // ✨ Inércia instantânea suave
+  // ✨ Inércia natural e acelerada
   function momentum() {
     catDiv.scrollLeft -= vel;
-    vel *= 0.95;
-    if (Math.abs(vel) > 0.4) requestAnimationFrame(momentum);
+    vel *= 0.94;
+    if (Math.abs(vel) > 0.5) requestAnimationFrame(momentum);
     else iniciarAutoScroll();
   }
   requestAnimationFrame(momentum);
 });
+
 
 
 
