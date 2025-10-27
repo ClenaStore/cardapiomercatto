@@ -1,13 +1,15 @@
 /*******************************************************
 🍝 MERCATTO DELIVERY - SERVICE WORKER
-Versão: 1.3
+Versão: 2.0
 Funções:
-✅ Cache de páginas e imagens locais
-✅ Suporte offline total (index, manifest e mídias)
-✅ Push notifications (atualizações de pedido)
+✅ Cache de todas as páginas e imagens locais (/paste e /icons)
+✅ Suporte offline total (index, manifest, imagens)
+✅ Atualização automática
+✅ Push notifications (para atualizações de pedido)
 ********************************************************/
 
-const CACHE_NAME = "mercatto-v1";
+const CACHE_NAME = "mercatto-v2";
+
 const FILES_TO_CACHE = [
   "/",
   "/index.html",
@@ -17,7 +19,7 @@ const FILES_TO_CACHE = [
   "/icons/logo-192.png",
   "/icons/logo-512.png",
 
-  // 🍽️ Imagens da pasta /paste (adicione todas aqui)
+  // 🍽️ Imagens do cardápio (todas da pasta /paste)
   "/paste/CAPA MERCATTO.png",
   "/paste/Captura de tela 2025-10-24 100412.png",
   "/paste/Captura de tela 2025-10-24 101231.png",
@@ -28,18 +30,16 @@ const FILES_TO_CACHE = [
   "/paste/Captura de tela 2025-10-24 104231.png",
   "/paste/Captura de tela 2025-10-27 155128.png",
   "/paste/Captura de tela 2025-10-27 162118.png",
-  "/paste/polvo braseado.png",
+  "/paste/polvo braseado.png"
 ];
 
 /********************************************************
-🧩 INSTALAÇÃO DO SERVICE WORKER
+📦 INSTALAÇÃO DO SERVICE WORKER
 ********************************************************/
-self.addEventListener("install", (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log("🟡 Instalando cache inicial...");
-      return cache.addAll(FILES_TO_CACHE);
-    })
+self.addEventListener("install", (event) => {
+  console.log("📦 Instalando Service Worker e armazenando cache inicial...");
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
   );
   self.skipWaiting();
 });
@@ -47,18 +47,19 @@ self.addEventListener("install", (e) => {
 /********************************************************
 ⚡ ATIVAÇÃO (LIMPEZA DE CACHES ANTIGOS)
 ********************************************************/
-self.addEventListener("activate", (e) => {
-  e.waitUntil(
-    caches.keys().then((keyList) => {
-      return Promise.all(
+self.addEventListener("activate", (event) => {
+  console.log("⚡ Ativando nova versão e limpando caches antigos...");
+  event.waitUntil(
+    caches.keys().then((keyList) =>
+      Promise.all(
         keyList.map((key) => {
           if (key !== CACHE_NAME) {
-            console.log("🧹 Limpando cache antigo:", key);
+            console.log("🧹 Deletando cache antigo:", key);
             return caches.delete(key);
           }
         })
-      );
-    })
+      )
+    )
   );
   self.clients.claim();
 });
@@ -66,29 +67,30 @@ self.addEventListener("activate", (e) => {
 /********************************************************
 🌐 INTERCEPTADOR DE REQUISIÇÕES
 ********************************************************/
-self.addEventListener("fetch", (e) => {
-  e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // 🟢 Retorna do cache se já estiver salvo
-        return cachedResponse;
-      }
-      // 🔵 Caso contrário, faz a requisição e salva no cache dinamicamente
-      return fetch(e.request)
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) return cachedResponse;
+
+      // Busca online e adiciona ao cache (estratégia network-first)
+      return fetch(event.request)
         .then((networkResponse) => {
-          if (!networkResponse || networkResponse.status !== 200) {
+          if (
+            !networkResponse ||
+            networkResponse.status !== 200 ||
+            networkResponse.type !== "basic"
+          ) {
             return networkResponse;
           }
-          const clonedResponse = networkResponse.clone();
+          const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(e.request, clonedResponse);
+            cache.put(event.request, responseToCache);
           });
           return networkResponse;
         })
         .catch(() => {
-          // 🔴 Offline e não encontrado no cache
-          if (e.request.destination === "image") {
-            // Retorna uma imagem padrão se desejar
+          // 🔴 Caso offline e sem cache: retorna imagem padrão
+          if (event.request.destination === "image") {
             return caches.match("/paste/CAPA MERCATTO.png");
           }
         });
@@ -97,7 +99,7 @@ self.addEventListener("fetch", (e) => {
 });
 
 /********************************************************
-🔔 PUSH NOTIFICATIONS (opcional)
+🔔 PUSH NOTIFICATIONS
 ********************************************************/
 self.addEventListener("push", (event) => {
   const data = event.data?.json() || {};
