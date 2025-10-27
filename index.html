@@ -920,59 +920,13 @@ setInterval(() => {
 }, 120);
 
 
-// 🔹 FILTROS
-function filtrar(cat){
- document.querySelectorAll('.categorias button').forEach(b=>b.classList.remove('active'));
- [...catDiv.children].find(b=>b.textContent===cat).classList.add('active');
- renderizar(produtos.filter(p=>p.categoria===cat));
-}
 function buscarItem(){
  const termo=document.getElementById("busca").value.toLowerCase();
  if(!termo)return filtrar(document.querySelector(".categorias button.active").textContent);
  renderizar(produtos.filter(p=>p.nome.toLowerCase().includes(termo)||p.desc.toLowerCase().includes(termo)));
 }
 
-function abrirPopup(id) {
-  const p = produtos.find(x => x.id === id);
-  const div = document.createElement("div");
-  div.classList.add("popup");
 
-  const midias = p.midias || [p.img];
-  let midiaHTML = '';
-
-  // 🖼️ Mostra carrossel simples se tiver mais de uma mídia
-  if (midias.length > 1) {
-    midiaHTML = `
-      <div class="media-carousel">
-        ${midias.map(m =>
-          m.endsWith('.mp4')
-            ? `<video src="${m}" muted playsinline loop></video>`
-            : `<img src="${m}" alt="${p.nome}">`
-        ).join('')}
-      </div>`;
-  } else {
-    const unica = midias[0];
-    midiaHTML = unica.endsWith('.mp4')
-      ? `<video src="${unica}" autoplay muted loop playsinline></video>`
-      : `<img src="${unica}" alt="${p.nome}">`;
-  }
-
-  div.innerHTML = `
-    <div class="popup-content">
-      <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-      ${midiaHTML}
-      <div class="popup-body">
-        <h2>${p.nome}</h2>
-        <p>${p.desc}</p>
-        <label>Quantidade</label>
-        <input id="qtd" type="number" min="1" value="1">
-        <label>Observação</label>
-        <textarea id="obs" placeholder="Ex: sem cebola..."></textarea>
-        <button onclick="adicionar(${p.id})">Adicionar ao Carrinho</button>
-      </div>
-    </div>`;
-  document.body.appendChild(div);
-}
 
 
 // 🔹 POPUP DE PRODUTO — compatível com imagem e vídeo
@@ -1266,6 +1220,37 @@ Mantém apenas os dados do cliente e recarrega todo o app
     console.warn("⚠️ Falha ao executar auto refresh:", e);
   }
 })();
+// 🔹 FUNÇÃO PARA RENDERIZAR PRODUTOS NA TELA
+function renderizar(lista) {
+  const menu = document.getElementById("menu");
+  menu.innerHTML = "";
+
+  if (!lista || lista.length === 0) {
+    menu.innerHTML = `<p style="text-align:center;color:#ccc;padding:20px;">Nenhum item encontrado.</p>`;
+    return;
+  }
+
+  lista.forEach(p => {
+    const card = document.createElement("div");
+    card.classList.add("card");
+
+    const midia = p.video
+      ? `<video src="${p.video}" autoplay muted loop playsinline></video>`
+      : `<img src="${p.img}" alt="${p.nome}">`;
+
+    card.innerHTML = `
+      ${midia}
+      <div class="card-body">
+        <h3>${p.nome}</h3>
+        <p>${p.desc}</p>
+        <span>R$ ${p.preco.toFixed(2)}</span>
+        <button onclick="abrirPopup(${p.id})">Adicionar</button>
+      </div>
+    `;
+
+    menu.appendChild(card);
+  });
+}
 
 
 </script>
