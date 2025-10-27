@@ -125,6 +125,32 @@ header{
     height: 90px;
   }
 
+  .card video, .card img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  border: none;
+}
+
+/* Carrossel dentro do pop-up */
+.media-carousel {
+  display: flex;
+  overflow-x: auto;
+  gap: 6px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.media-carousel::-webkit-scrollbar { display: none; }
+
+.media-carousel img, .media-carousel video {
+  width: 100%;
+  height: 180px;
+  border-radius: 10px;
+  object-fit: cover;
+  scroll-snap-align: start;
+}
+
+
   .card-body h3 {
     font-size: 14px;
   }
@@ -589,88 +615,238 @@ const relacoesPorId = {
 
 
   
- const produtos = [
+const produtos = [
   // 🍽️ PRATOS INDIVIDUAIS DELICIOSOS
-  {id: 36, nome: 'Risoto de Cogumelos', desc: 'Arroz arbóreo cremoso, preparado com uma seleção de cogumelos frescos e servido com torres de legumes no crocante de parmesão, realçando um sabor incrível!', preco: 87.50, img: 'img/padrao.jpg', categoria: 'Pratos Individuais Deliciosos'},
-  {id: 37, nome: 'Risoto de Filé', desc: 'Arroz arbóreo cremoso com dados de filé mignon e tomate cereja, servido na casa de parmesão, proporcionando um sabor requintado e irresistível.', preco: 93.50, img: 'img/padrao.jpg', categoria: 'Pratos Individuais Deliciosos'},
-  {id: 38, nome: 'Parmegiana de Frango', desc: 'Filé de frango empanado crocante com queijo, presunto gratinado, molho de tomate da casa, arroz branco e purê de batatas, perfeito para os amantes de frango.', preco: 93.50, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true', categoria: 'Pratos Individuais Deliciosos'},
-  {id: 39, nome: 'Parmegiana de Filé', desc: 'Filé empanado e crocante com queijo, presunto gratinado, molho de tomate da casa, arroz branco e purê de batatas, uma combinação clássica e deliciosa.', preco: 97.99, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true', categoria: 'Pratos Individuais Deliciosos'},
-  {id: 40, nome: 'Talharim com Camarão e Cogumelos', desc: 'Massa fresca envolvida ao molho cremoso de pomodoro basílico, camarão flambado e uma seleção de cogumelos premium, oferecendo uma explosão de sabores.', preco: 99.90, img: 'img/padrao.jpg', categoria: 'Pratos Individuais Deliciosos'},
-  {id: 41, nome: 'Risoto de Camarão', desc: 'Arroz arbóreo cremoso, preparado com camarões flambados, champignon e servido na cesta de parmesão, criando uma experiência gastronômica sofisticada e deliciosa.', preco: 116.90, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20101231.png?raw=true', categoria: 'Pratos Individuais Deliciosos'},
-  {id: 42, nome: 'Parmegiana de Filé ao Molho de Camarão', desc: 'Tradicional filé à parmegiana, empanado e crocante, servido com um irresistível molho de camarão flambado e queijo cremoso. Acompanha purê de gorgonzola aveludado e arroz branco.', preco: 116.90, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true', categoria: 'Pratos Individuais Deliciosos'},
-  {id: 43, nome: 'Polvo Braseado', desc: 'Tentáculos de polvo braseados no azeite de ervas, proporcionando maciez por dentro e aparência crocante por fora, servidos com batata baby, cebola confit e tomate cereja.', preco: 163.90, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20101406.png?raw=true', categoria: 'Pratos Individuais Deliciosos'},
+  {
+    id: 36,
+    nome: 'Risoto de Cogumelos',
+    desc: 'Arroz arbóreo cremoso, preparado com uma seleção de cogumelos frescos e servido com torres de legumes no crocante de parmesão, realçando um sabor incrível!',
+    preco: 87.50,
+    img: 'img/padrao.jpg',
+    video: 'videos/risoto-cogumelos.mp4', // opcional
+    categoria: 'Pratos Individuais Deliciosos'
+  },
+  {
+    id: 37,
+    nome: 'Risoto de Filé',
+    desc: 'Arroz arbóreo cremoso com dados de filé mignon e tomate cereja, servido na casa de parmesão, proporcionando um sabor requintado e irresistível.',
+    preco: 93.50,
+    img: 'img/padrao.jpg',
+    video: '', // vazio = mostra imagem
+    categoria: 'Pratos Individuais Deliciosos'
+  },
+  {
+    id: 38,
+    nome: 'Parmegiana de Frango',
+    desc: 'Filé de frango empanado crocante com queijo, presunto gratinado, molho de tomate da casa, arroz branco e purê de batatas.',
+    preco: 93.50,
+    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true',
+    video: '',
+    categoria: 'Pratos Individuais Deliciosos'
+  },
+  {
+    id: 39,
+    nome: 'Parmegiana de Filé',
+    desc: 'Filé empanado e crocante com queijo, presunto gratinado e purê de batatas.',
+    preco: 97.99,
+    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true',
+    video: '',
+    categoria: 'Pratos Individuais Deliciosos'
+  },
+  {
+    id: 40,
+    nome: 'Talharim com Camarão e Cogumelos',
+    desc: 'Massa fresca envolvida ao molho cremoso de pomodoro basílico, camarão flambado e cogumelos.',
+    preco: 99.90,
+    img: 'img/padrao.jpg',
+    video: 'videos/talharim-camarao.mp4',
+    categoria: 'Pratos Individuais Deliciosos'
+  },
+  {
+    id: 41,
+    nome: 'Risoto de Camarão',
+    desc: 'Arroz arbóreo cremoso com camarões flambados e champignon na cesta de parmesão.',
+    preco: 116.90,
+    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20101231.png?raw=true',
+    video: 'videos/risoto-camarao.mp4',
+    categoria: 'Pratos Individuais Deliciosos'
+  },
+  {
+    id: 42,
+    nome: 'Parmegiana de Filé ao Molho de Camarão',
+    desc: 'Filé à parmegiana com molho de camarão flambado, purê de gorgonzola e arroz branco.',
+    preco: 116.90,
+    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true',
+    video: '',
+    categoria: 'Pratos Individuais Deliciosos'
+  },
+  {
+    id: 43,
+    nome: 'Polvo Braseado',
+    desc: 'Tentáculos de polvo braseados no azeite de ervas com batata baby e cebola confit.',
+    preco: 163.90,
+    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20101406.png?raw=true',
+    video: 'videos/polvo-braseado.mp4',
+    categoria: 'Pratos Individuais Deliciosos'
+  },
 
   // 👧 PRATOS KIDS DELICIOSOS
-  {id: 44, nome: 'Franguinho Kids', desc: 'Filé de frango grelhado ao ponto em tiras, acompanhado de arroz branco e batata frita, perfeito para agradar o paladar infantil.', preco: 40.99, img: 'img/padrao.jpg', categoria: 'Pratos Kids Deliciosos'},
-  {id: 45, nome: 'Filezinho Kids', desc: 'Mini filé grelhado em suculentas tiras, acompanhado de arroz branco, batata frita crocante e um toque especial de carinho para os pequenos.', preco: 46.70, img: 'img/padrao.jpg', categoria: 'Pratos Kids Deliciosos'},
-  {id: 46, nome: 'Espaguete à Bolonhesa', desc: 'Massa espaguete servida com delicioso molho à bolonhesa, feito de carne moída suculenta temperada com especiarias, finalizado com um toque de queijo.', preco: 46.70, img: 'img/padrao.jpg', categoria: 'Pratos Kids Deliciosos'},
-  {id: 47, nome: 'Strogonoff de Frango', desc: 'Cubos de frango macios, cozidos ao molho de creme de leite e tomate, acompanhados de arroz branco e batata frita.', preco: 46.70, img: 'img/padrao.jpg', categoria: 'Pratos Kids Deliciosos'},
+  {
+    id: 44,
+    nome: 'Franguinho Kids',
+    desc: 'Filé de frango grelhado com arroz e batata frita.',
+    preco: 40.99,
+    img: 'img/padrao.jpg',
+    video: '',
+    categoria: 'Pratos Kids Deliciosos'
+  },
+  {
+    id: 45,
+    nome: 'Filezinho Kids',
+    desc: 'Mini filé grelhado com arroz branco e batata frita crocante.',
+    preco: 46.70,
+    img: 'img/padrao.jpg',
+    video: '',
+    categoria: 'Pratos Kids Deliciosos'
+  },
+  {
+    id: 46,
+    nome: 'Espaguete à Bolonhesa',
+    desc: 'Massa espaguete servida com delicioso molho à bolonhesa, feito de carne moída suculenta temperada com especiarias.',
+    preco: 46.70,
+    img: 'img/padrao.jpg',
+    video: '',
+    categoria: 'Pratos Kids Deliciosos'
+  },
+  {
+    id: 47,
+    nome: 'Strogonoff de Frango',
+    desc: 'Cubos de frango macios, cozidos ao molho de creme de leite e tomate, acompanhados de arroz branco e batata frita.',
+    preco: 46.70,
+    img: 'img/padrao.jpg',
+    video: '',
+    categoria: 'Pratos Kids Deliciosos'
+  },
 
   // 🍤 PRATOS DE CAMARÃO SABOROSOS
-  {id: 48, nome: 'Camarão Mercatto 2 Pessoas', desc: 'Camarão grelhado no azeite e temperos especiais, preparado com creme de leite, pimentão, ervilhas, alcaparras, arroz e queijo, finalizado com camarões empanados.', preco: 175.50, img: 'img/padrao.jpg', categoria: 'Pratos de Camarão Saborosos'},
-  {id: 49, nome: 'Camarão Mercatto 4 Pessoas', desc: 'Camarão grelhado no azeite e temperos especiais, preparado com creme de leite, pimentão, ervilhas, alcaparras, arroz e queijo, finalizado com camarões empanados.', preco: 257.50, img: 'img/padrao.jpg', categoria: 'Pratos de Camarão Saborosos'},
+  {
+    id: 48,
+    nome: 'Camarão Mercatto 2 Pessoas',
+    desc: 'Camarão grelhado com creme de leite, pimentão, ervilhas e arroz, finalizado com camarões empanados.',
+    preco: 175.50,
+    img: 'img/padrao.jpg',
+    video: 'videos/camarao-mercatto.mp4',
+    categoria: 'Pratos de Camarão Saborosos'
+  },
+  {
+    id: 49,
+    nome: 'Camarão Mercatto 4 Pessoas',
+    desc: 'Camarão grelhado no azeite e temperos especiais com creme de leite, pimentão e alcaparras.',
+    preco: 257.50,
+    img: 'img/padrao.jpg',
+    video: '',
+    categoria: 'Pratos de Camarão Saborosos'
+  },
 
   // 🐟 PRATOS DE SALMÃO SENSACIONAIS
-  {id: 50, nome: 'Salmão Crocante 2 Pessoas', desc: 'Salmão grelhado até atingir ponto certo, servido em crosta de pão, purê de batata e gorgonzola e arroz com legumes.', preco: 149.90, img: 'img/padrao.jpg', categoria: 'Pratos de Salmão Sensacionais'},
-  {id: 51, nome: 'Salmão Crocante 4 Pessoas', desc: 'Salmão grelhado até atingir ponto certo, servido em crosta de pão, purê de batata e gorgonzola e arroz com legumes.', preco: 257.50, img: 'img/padrao.jpg', categoria: 'Pratos de Salmão Sensacionais'},
-
-  // 🥩 PRATOS DE FILÉ DELICIOSOS
-  {id: 52, nome: 'Parmegiana Frango 2 Pessoas', desc: 'Filé de frango empanado, coberto com queijo e presunto, finalizado no forno com molho de tomate e queijo gratinado. Acompanha arroz branco e purê.', preco: 128.60, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true', categoria: 'Pratos de Filé Deliciosos'},
-  {id: 53, nome: 'Parmegiana Filé 2 Pessoas', desc: 'Filé mignon empanado, coberto com queijo e presunto, finalizado no forno com molho de tomate e queijo gratinado. Acompanha arroz branco e purê.', preco: 140.30, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true', categoria: 'Pratos de Filé Deliciosos'},
-  {id: 54, nome: 'Filé Gratinado 2 Pessoas', desc: 'Filé mignon grelhado, coberto com queijo e gratinado ao forno, acompanhado de arroz com abóbora e molho especial.', preco: 163.90, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true', categoria: 'Pratos de Filé Deliciosos'},
-  {id: 55, nome: 'Filé Parmegiana com Camarão 2 Pessoas', desc: 'Filé empanado e crocante, coberto com molho de tomate artesanal, queijo gratinado e camarões flambados. Acompanha purê de gorgonzola e arroz branco.', preco: 179.90, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true', categoria: 'Pratos de Filé Deliciosos'},
-  {id: 56, nome: 'Parmegiana Frango 4 Pessoas', desc: 'Filé de frango empanado, coberto com queijo e presunto, finalizado no forno com molho de tomate e queijo gratinado. Acompanha arroz branco e purê.', preco: 222.20, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true', categoria: 'Pratos de Filé Deliciosos'},
-  {id: 57, nome: 'Parmegiana Filé 4 Pessoas', desc: 'Filé mignon empanado, coberto com queijo e presunto, finalizado no forno com molho de tomate e queijo gratinado. Acompanha arroz branco e purê.', preco: 233.90, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true', categoria: 'Pratos de Filé Deliciosos'},
-  {id: 58, nome: 'Filé Gratinado 4 Pessoas', desc: 'Filé mignon grelhado, coberto com queijo e gratinado ao forno, acompanhado de arroz com abóbora e molho especial.', preco: 245.60, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true', categoria: 'Pratos de Filé Deliciosos'},
-  {id: 59, nome: 'Filé Parmegiana com Camarão 4 Pessoas', desc: 'Filé empanado e crocante, coberto com molho de tomate artesanal, queijo gratinado e camarões flambados. Acompanha purê de gorgonzola e arroz branco.', preco: 268.99, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true', categoria: 'Pratos de Filé Deliciosos'},
-
-  // 🍖 PRATOS DE CARNES SABOROSAS
-  {id: 60, nome: 'Medalhão de Filé Alfredo - 2 Pessoas', desc: 'Medalhão de filé mignon grelhado ao ponto perfeito, servido com massa ao molho Alfredo cremoso e lâminas de bacon.', preco: 163.70, img: 'img/padrao.jpg', categoria: 'Pratos de Carnes Saborosas'},
-  {id: 61, nome: 'Filé com Molho Madeira - 2 Pessoas', desc: 'Escalope de filé grelhado, servido com molho madeira e risoto de banana da terra e bacon.', preco: 163.70, img: 'img/padrao.jpg', categoria: 'Pratos de Carnes Saborosas'},
-  {id: 62, nome: 'Medalhão de Filé Alfredo - 4 Pessoas', desc: 'Medalhão de filé mignon grelhado, servido com massa ao molho Alfredo cremoso, bacon e chips de batata.', preco: 245.90, img: 'img/padrao.jpg', categoria: 'Pratos de Carnes Saborosas'},
-  {id: 63, nome: 'Filé com Molho Madeira - 4 Pessoas', desc: 'Escalope de filé grelhado, servido com molho madeira e risoto de banana da terra e bacon.', preco: 245.90, img: 'img/padrao.jpg', categoria: 'Pratos de Carnes Saborosas'},
-  {id: 64, nome: 'Paleta de Cordeiro - 4 Pessoas', desc: 'Paleta de cordeiro assada lentamente, servida com molho de vinho do Porto e cuscuz.', preco: 268.99, img: 'img/padrao.jpg', categoria: 'Pratos de Carnes Saborosas'},
-  {id: 65, nome: 'Pernil de Cordeiro - 6 Pessoas', desc: 'Pernil assado no bafo, com molho de vinho do Porto e cuscuz marroquino.', preco: 268.99, img: 'img/padrao.jpg', categoria: 'Pratos de Carnes Saborosas'},
-
-  // 🐟 PRATOS DE PEIXES ESPECIAIS
-  {id: 66, nome: 'Tilápia à Belle Meunière - 2 Pessoas', desc: 'Tilápia com molho de camarão, alcaparras e champignon, acompanhada de purê e arroz com brócolis.', preco: 163.70, img: 'img/padrao.jpg', categoria: 'Pratos de Peixes Especiais'},
-  {id: 67, nome: 'Tilápia à Belle Meunière - 4 Pessoas', desc: 'Tilápia com molho de camarão, alcaparras e champignon, acompanhada de purê e arroz com brócolis.', preco: 245.60, img: 'img/padrao.jpg', categoria: 'Pratos de Peixes Especiais'},
+  {
+    id: 50,
+    nome: 'Salmão Crocante 2 Pessoas',
+    desc: 'Salmão grelhado, servido em crosta de pão, purê de batata e gorgonzola e arroz com legumes.',
+    preco: 149.90,
+    img: 'img/padrao.jpg',
+    video: 'videos/salmao-crocante.mp4',
+    categoria: 'Pratos de Salmão Sensacionais'
+  },
+  {
+    id: 51,
+    nome: 'Salmão Crocante 4 Pessoas',
+    desc: 'Salmão grelhado ao ponto, servido em crosta de pão, purê de batata e gorgonzola e arroz com legumes.',
+    preco: 257.50,
+    img: 'img/padrao.jpg',
+    video: '',
+    categoria: 'Pratos de Salmão Sensacionais'
+  },
 
   // 🍔 BURGUERS SABOROSOS
-  {id: 68, nome: 'Burguinhos Delícia', desc: 'Duplo hambúrguer com queijo muçarela e batatas, servido em mini pão brioche.', preco: 39.90, img: 'img/padrao.jpg', categoria: 'Burgues Saborosos'},
-  {id: 69, nome: 'New York', desc: 'Duplo hambúrguer Angus, cheddar duplo, bacon crocante e pão brioche.', preco: 54.90, img: 'img/padrao.jpg', categoria: 'Burgues Saborosos'},
-  {id: 70, nome: 'Vancouver', desc: 'Hambúrguer Angus com muçarela, alface, tomate e maionese da casa.', preco: 52.60, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20103740.png?raw=true', categoria: 'Burgues Saborosos'},
-  {id: 71, nome: 'Roma', desc: 'Hambúrguer Angus, cebola caramelizada, rúcula e tomate fresco.', preco: 58.40, img: 'img/padrao.jpg', categoria: 'Burgues Saborosos'},
-  {id: 72, nome: 'Berlim', desc: 'Duplo burger de costela com alface, tomate, queijo e bacon crocante.', preco: 63.20, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20103901.png?raw=true', categoria: 'Burgues Saborosos'},
+  {
+    id: 68,
+    nome: 'New York',
+    desc: 'Duplo hambúrguer Angus, cheddar duplo, bacon crocante e pão brioche.',
+    preco: 54.90,
+    img: 'img/padrao.jpg',
+    video: 'videos/new-york.mp4',
+    categoria: 'Burguers Saborosos'
+  },
+  {
+    id: 70,
+    nome: 'Vancouver',
+    desc: 'Hambúrguer Angus com muçarela, alface, tomate e maionese da casa.',
+    preco: 52.60,
+    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20103740.png?raw=true',
+    video: '',
+    categoria: 'Burguers Saborosos'
+  },
 
   // 🍣 SUSHIS DELICIOSOS
-  {id: 73, nome: 'Hot Philadelphia', desc: 'Sushi de salmão empanado na farinha panko e frito, crocante e cremoso.', preco: 85.30, img: 'img/padrao.jpg', categoria: 'Sushis Deliciosos'},
-  {id: 74, nome: 'Hot Roll', desc: 'Sushi frito em massa harumaki, recheado com salmão fresco e cream cheese.', preco: 85.30, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20104030.png?raw=true', categoria: 'Sushis Deliciosos'},
-  {id: 75, nome: 'Hot Nutella', desc: 'Banana empanada na massa harumaki, envolta em Nutella e frutas frescas.', preco: 88.80, img: 'img/padrao.jpg', categoria: 'Sushis Deliciosos'},
-
-  // 🍱 COMBINADOS DE SUSHI IRRESISTÍVEIS
-  {id: 76, nome: 'Combinado Tóquio 20 Peças', desc: '5 sashimis de salmão, 4 niguiris, 4 joy, 3 uramakis.', preco: 151.99, img: 'img/padrao.jpg', categoria: 'Combinados de Sushi Irresistíveis'},
-  {id: 77, nome: 'Combinado Kyoto 30 Peças', desc: '10 sashimis, 5 niguiris, 5 joy, 5 hot Philadelphia, 5 Ebi Tem.', preco: 198.80, img: 'img/padrao.jpg', categoria: 'Combinados de Sushi Irresistíveis'},
-  {id: 78, nome: 'Combinado Hiroshima 30 Peças', desc: 'Monte seu próprio combinado com ingredientes frescos e de alta qualidade.', preco: 239.90, img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20104231.png?raw=true', categoria: 'Combinados de Sushi Irresistíveis'},
-  {id: 79, nome: 'Combinado Saitama 40 Peças', desc: '10 sashimis, 5 hot rolls, 8 hot Philadelphia, 5 niguiris, 5 joy, 5 hossomakis.', preco: 342.70, img: 'img/padrao.jpg', categoria: 'Combinados de Sushi Irresistíveis'},
-  {id: 80, nome: 'Combinado Nigato 60 Peças', desc: '10 sashimis, 8 joy, 8 hot rolls, 8 niguiris, 7 uramakis especiais e 8 uramakis Philadelphia.', preco: 374.50, img: 'img/padrao.jpg', categoria: 'Combinados de Sushi Irresistíveis'},
+  {
+    id: 73,
+    nome: 'Hot Philadelphia',
+    desc: 'Sushi de salmão empanado na farinha panko e frito, crocante e cremoso.',
+    preco: 85.30,
+    img: 'img/padrao.jpg',
+    video: 'videos/hot-philadelphia.mp4',
+    categoria: 'Sushis Deliciosos'
+  },
+  {
+    id: 74,
+    nome: 'Hot Roll',
+    desc: 'Sushi frito em massa harumaki, recheado com salmão fresco e cream cheese.',
+    preco: 85.30,
+    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20104030.png?raw=true',
+    video: '',
+    categoria: 'Sushis Deliciosos'
+  },
 
   // 🍫 CALZONES DOCES DELICIOSOS
-  {id: 81, nome: 'Galak & Oreo Crocante', desc: 'Recheio de chocolate Galak derretido com pedaços de Oreo.', preco: 69.90, img: 'img/padrao.jpg', categoria: 'Calzones Doces Deliciosos'},
-  {id: 82, nome: 'Kit Kat', desc: 'Brigadeiro cremoso coberto com pedaços crocantes de Kit Kat.', preco: 69.90, img: 'img/padrao.jpg', categoria: 'Calzones Doces Deliciosos'},
-  {id: 83, nome: 'M&M', desc: 'Brigadeiro artesanal coberto com M&Ms crocantes.', preco: 69.90, img: 'img/padrao.jpg', categoria: 'Calzones Doces Deliciosos'},
-  {id: 84, nome: 'Doce de Leite & Banana Caramelizada', desc: 'Muçarela suave, doce de leite argentino, banana caramelizada e…aveludada.', preco: 75.90, img: 'img/padrao.jpg', categoria: 'Calzones Doces Deliciosos'},
-
-  // 🍕 CALZONES ESPECIAIS
-  {id: 85, nome: 'Calzone Calabresa Barbecue', desc: 'Molho de tomate especial, calabresa artesanal, muçarela gratinada e cebola caramelizada ao barbecue.', preco: 75.90, img: 'img/padrao.jpg', categoria: 'Calzone Especiais'},
-  {id: 86, nome: 'Calzone Carne Seca & Queijo Coalho', desc: 'Carne seca desfiada e temperada com queijo coalho grelhado, muçarela e orégano fresco.', preco: 88.40, img: 'img/padrao.jpg', categoria: 'Calzone Especiais'},
-  {id: 87, nome: 'Calzone Champignon Trufado', desc: 'Molho de tomate artesanal, champignon salteado na manteiga trufada, muçarela derretida e tomates secos.', preco: 82.90, img: 'img/padrao.jpg', categoria: 'Calzone Especiais'},
-  {id: 88, nome: 'Calzone Frango Cremoso', desc: 'Massa artesanal assada com frango desfiado, muçarela cremosa e Catupiry Original.', preco: 69.90, img: 'img/padrao.jpg', categoria: 'Calzone Especiais'},
+  {
+    id: 81,
+    nome: 'Galak & Oreo Crocante',
+    desc: 'Recheio de chocolate Galak derretido com pedaços de Oreo.',
+    preco: 69.90,
+    img: 'img/padrao.jpg',
+    video: 'videos/galak-oreo.mp4',
+    categoria: 'Calzones Doces Deliciosos'
+  },
+  {
+    id: 84,
+    nome: 'Doce de Leite & Banana Caramelizada',
+    desc: 'Muçarela suave, doce de leite argentino e banana caramelizada.',
+    preco: 75.90,
+    img: 'img/padrao.jpg',
+    video: '',
+    categoria: 'Calzones Doces Deliciosos'
+  },
 
   // 🍰 SOBREMESAS INDIVIDUAIS MARAVILHOSAS
-  {id: 89, nome: 'Abacaxi em Rodelas', desc: 'Fatias de abacaxi suculento com leve calda cítrica, refrescante e aromática.', preco: 23.50, img: 'img/padrao.jpg', categoria: 'Sobremesas Individuais Maravilhosas'},
-  {id: 90, nome: 'Pudim Golden', desc: 'Pudim dourado e cremoso, de sabor suave e textura aveludada que derrete na boca.', preco: 34.90, img: 'img/padrao.jpg', categoria: 'Sobremesas Individuais Maravilhosas'},
-  {id: 91, nome: 'Cheesecake de Goiaba com Queijo', desc: 'Base de biscoito, creme de queijo e cobertura de goiabada, equilibrando o doce e o suave.', preco: 39.90, img: 'img/padrao.jpg', categoria: 'Sobremesas Individuais Maravilhosas'}
+  {
+    id: 89,
+    nome: 'Pudim Golden',
+    desc: 'Pudim dourado e cremoso, de sabor suave e textura aveludada que derrete na boca.',
+    preco: 34.90,
+    img: 'img/padrao.jpg',
+    video: 'videos/pudim.mp4',
+    categoria: 'Sobremesas Individuais Maravilhosas'
+  },
+  {
+    id: 91,
+    nome: 'Cheesecake de Goiaba com Queijo',
+    desc: 'Base de biscoito, creme de queijo e cobertura de goiabada, equilibrando o doce e o suave.',
+    preco: 39.90,
+    img: 'img/padrao.jpg',
+    video: '',
+    categoria: 'Sobremesas Individuais Maravilhosas'
+  }
 ];
 
 // 🧠 VARIÁVEIS
@@ -756,42 +932,92 @@ function buscarItem(){
  renderizar(produtos.filter(p=>p.nome.toLowerCase().includes(termo)||p.desc.toLowerCase().includes(termo)));
 }
 
-// 🔹 RENDERIZAÇÃO
-function renderizar(lista){
- menuDiv.innerHTML='';
- lista.forEach(p=>{
-  const c=document.createElement("div");
-  c.className="card";
-  c.innerHTML=`
-  <img src="${p.img}">
-  <div class="card-body">
-    <h3>${p.nome}</h3>
-    <p>${p.desc}</p>
-    <span>R$ ${p.preco.toFixed(2)}</span>
-    <button onclick="abrirPopup(${p.id})">Adicionar</button>
-  </div>`;
-  menuDiv.appendChild(c);
- });
+function abrirPopup(id) {
+  const p = produtos.find(x => x.id === id);
+  const div = document.createElement("div");
+  div.classList.add("popup");
+
+  const midias = p.midias || [p.img];
+  let midiaHTML = '';
+
+  // 🖼️ Mostra carrossel simples se tiver mais de uma mídia
+  if (midias.length > 1) {
+    midiaHTML = `
+      <div class="media-carousel">
+        ${midias.map(m =>
+          m.endsWith('.mp4')
+            ? `<video src="${m}" muted playsinline loop></video>`
+            : `<img src="${m}" alt="${p.nome}">`
+        ).join('')}
+      </div>`;
+  } else {
+    const unica = midias[0];
+    midiaHTML = unica.endsWith('.mp4')
+      ? `<video src="${unica}" autoplay muted loop playsinline></video>`
+      : `<img src="${unica}" alt="${p.nome}">`;
+  }
+
+  div.innerHTML = `
+    <div class="popup-content">
+      <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+      ${midiaHTML}
+      <div class="popup-body">
+        <h2>${p.nome}</h2>
+        <p>${p.desc}</p>
+        <label>Quantidade</label>
+        <input id="qtd" type="number" min="1" value="1">
+        <label>Observação</label>
+        <textarea id="obs" placeholder="Ex: sem cebola..."></textarea>
+        <button onclick="adicionar(${p.id})">Adicionar ao Carrinho</button>
+      </div>
+    </div>`;
+  document.body.appendChild(div);
 }
 
-// 🔹 POPUP ITEM
-function abrirPopup(id){
- const p=produtos.find(x=>x.id===id);
- const div=document.createElement("div");
- div.classList.add("popup");
- div.innerHTML=`
- <div class="popup-content">
-  <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-  <img src="${p.img}">
-  <div class="popup-body">
-    <h2>${p.nome}</h2><p>${p.desc}</p>
-    <label>Quantidade</label><input id="qtd" type="number" min="1" value="1">
-    <label>Observação</label><textarea id="obs" placeholder="Ex: sem cebola..."></textarea>
-    <button onclick="adicionar(${p.id})">Adicionar ao Carrinho</button>
-  </div>
- </div>`;
- document.body.appendChild(div);
+
+// 🔹 POPUP DE PRODUTO — compatível com imagem e vídeo
+function abrirPopup(id) {
+  const p = produtos.find(x => x.id === id);
+  if (!p) return;
+
+  const div = document.createElement("div");
+  div.classList.add("popup");
+
+  // 🧠 Decide se mostra vídeo ou imagem
+  const midiaHTML = p.video
+    ? `<video autoplay muted loop playsinline style="width:100%;height:180px;object-fit:cover;border:none;">
+         <source src="${p.video}" type="video/mp4">
+       </video>`
+    : `<img src="${p.img}" alt="${p.nome}" style="width:100%;height:180px;object-fit:cover;">`;
+
+  div.innerHTML = `
+    <div class="popup-content">
+      <button class="close-btn" onclick="fecharPopup(this)">✖</button>
+      ${midiaHTML}
+      <div class="popup-body">
+        <h2>${p.nome}</h2>
+        <p>${p.desc}</p>
+        <label>Quantidade</label>
+        <input id="qtd" type="number" min="1" value="1">
+        <label>Observação</label>
+        <textarea id="obs" placeholder="Ex: sem cebola..."></textarea>
+        <button onclick="adicionar(${p.id})">Adicionar ao Carrinho</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(div);
+  document.body.classList.add('popup-ativo'); // bloqueia fundo
 }
+
+function fecharPopup(btn) {
+  const popup = btn.closest('.popup');
+  if (popup) popup.remove();
+  if (!document.querySelector('.popup')) {
+    document.body.classList.remove('popup-ativo');
+  }
+}
+
 
 // 🔹 ADICIONAR AO CARRINHO
 function adicionar(id){
