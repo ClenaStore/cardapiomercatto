@@ -24,7 +24,7 @@ const FILES_TO_CACHE = [
   "/paste/Captura de tela 2025-10-24 104030.png",
   "/paste/Captura de tela 2025-10-24 104231.png",
   "/paste/Captura de tela 2025-10-27 155128.png",
-  "/paste/Captura de tela 2025-10-27 162118.png",
+  "/paste/Hot Roll.png",
   "/paste/polvo braseado.png"
 ];
 
