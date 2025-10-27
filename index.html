@@ -378,25 +378,50 @@ categorias.forEach((c,i)=>{
 });
 filtrar(categorias[0]);
 
-// 🔹 ROLAGEM CATEGORIAS
-let isDragging=false,startX=0,scrollStart=0;
-catDiv.addEventListener("touchstart",e=>{isDragging=true;startX=e.touches[0].pageX;scrollStart=catDiv.scrollLeft;catDiv.style.scrollBehavior="auto";},{passive:true});
-catDiv.addEventListener("touchmove",e=>{if(!isDragging)return;catDiv.scrollLeft=scrollStart-(e.touches[0].pageX-startX);},{passive:true});
-catDiv.addEventListener("touchend",()=>{isDragging=false;},{passive:true});
-// 🐢 Rolagem automática mais lenta e suave
+// 🧭 Controle da rolagem automática das categorias
+let isDragging = false;
+let isAutoScrolling = true;
+let startX = 0;
+let scrollStart = 0;
 let scrollOffset = 0;
-setInterval(()=>{
-  if(isDragging)return;
-  scrollOffset += 1; // velocidade menor (1px por passo)
-  catDiv.scrollTo({
-    left: scrollOffset,
-    behavior: "smooth"
-  });
-  if(catDiv.scrollLeft + catDiv.clientWidth >= catDiv.scrollWidth - 5) {
+
+// 🖐️ Gestos manuais
+catDiv.addEventListener("touchstart", e => {
+  isDragging = true;
+  isAutoScrolling = false; // 🔴 Para a rolagem automática ao tocar
+  startX = e.touches[0].pageX;
+  scrollStart = catDiv.scrollLeft;
+  catDiv.style.scrollBehavior = "auto";
+}, { passive: true });
+
+catDiv.addEventListener("touchmove", e => {
+  if (!isDragging) return;
+  const walk = e.touches[0].pageX - startX;
+  catDiv.scrollLeft = scrollStart - walk;
+}, { passive: true });
+
+catDiv.addEventListener("touchend", () => {
+  isDragging = false;
+}, { passive: true });
+
+// 🕹️ Clique em categoria também pausa a rolagem
+function filtrar(cat) {
+  isAutoScrolling = false; // 🔴 Parar ao clicar
+  document.querySelectorAll('.categorias button').forEach(b => b.classList.remove('active'));
+  [...catDiv.children].find(b => b.textContent === cat).classList.add('active');
+  renderizar(produtos.filter(p => p.categoria === cat));
+}
+
+// 🐢 Rolagem automática lenta e suave
+setInterval(() => {
+  if (!isAutoScrolling || isDragging) return;
+  scrollOffset += 1; // velocidade de deslocamento
+  catDiv.scrollTo({ left: scrollOffset, behavior: "smooth" });
+  if (catDiv.scrollLeft + catDiv.clientWidth >= catDiv.scrollWidth - 5) {
     scrollOffset = 0;
     catDiv.scrollTo({ left: 0, behavior: "smooth" });
   }
-}, 120); // intervalo maior = rolagem mais lenta
+}, 120);
 
 
 // 🔹 FILTROS
