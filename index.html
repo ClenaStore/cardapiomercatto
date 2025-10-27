@@ -183,26 +183,89 @@ header{
 
 
 
-.card{
-  background:var(--card);border-radius:var(--radius);
-  overflow:hidden;box-shadow:var(--shadow);
-  border:1px solid rgba(255,255,255,.06);transition:.25s;
+/* 🧱 Cards com mídia fixa e conteúdo alinhado */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255,255,255,.06);
+  transition: .25s;
+  display: flex;
+  flex-direction: column;
+  height: 280px; /* altura total uniforme */
 }
-.card:hover{transform:scale(1.03);border-color:var(--accent2);}
-.card img{width:100%;height:130px;object-fit:cover;}
-.card-body{padding:10px 12px;}
-.card-body h3{
-  font-size:15px;color:var(--accent2);
-  font-family:'Playfair Display',serif;margin-bottom:4px;
+
+.card:hover {
+  transform: scale(1.03);
+  border-color: var(--accent2);
 }
-.card-body p{color:var(--muted);font-size:13px;min-height:36px;}
-.card-body span{display:block;margin-top:5px;color:var(--accent);font-weight:600;}
-.card-body button{
-  width:100%;background:var(--accent);color:#000;border:none;
-  padding:8px;margin-top:8px;border-radius:var(--radius);
-  font-weight:600;cursor:pointer;transition:.2s;
+
+/* Área da imagem/vídeo sempre com altura fixa */
+.card-media {
+  width: 100%;
+  height: 140px;
+  background: #0e1623;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
-.card-body button:hover{background:var(--accent2);}
+
+.card-media img,
+.card-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+}
+
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 10px 12px;
+}
+
+.card-body h3 {
+  font-size: 15px;
+  color: var(--accent2);
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 4px;
+}
+
+.card-body p {
+  color: var(--muted);
+  font-size: 13px;
+  min-height: 36px;
+  margin-bottom: 4px;
+}
+
+.card-body span {
+  display: block;
+  margin-top: 5px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.card-body button {
+  width: 100%;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  padding: 8px;
+  margin-top: auto;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.card-body button:hover {
+  background: var(--accent2);
+}
+
 .popup{
   position:fixed;inset:0;background:rgba(0,0,0,.9);
   display:flex;align-items:center;justify-content:center;
@@ -868,14 +931,17 @@ function renderizar(lista) {
       : `<img src="${p.img}" alt="${p.nome}">`;
 
     card.innerHTML = `
-      ${midia}
-      <div class="card-body">
-        <h3>${p.nome}</h3>
-        <p>${p.desc}</p>
-        <span>R$ ${p.preco.toFixed(2)}</span>
-        <button onclick="abrirPopup(${p.id})">Adicionar</button>
-      </div>
-    `;
+  <div class="card-media">
+    ${midia}
+  </div>
+  <div class="card-body">
+    <h3>${p.nome}</h3>
+    <p>${p.desc}</p>
+    <span>R$ ${p.preco.toFixed(2)}</span>
+    <button onclick="abrirPopup(${p.id})">Adicionar</button>
+  </div>
+`;
+
 
     menu.appendChild(card);
   });
