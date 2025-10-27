@@ -1,31 +1,29 @@
 /*******************************************************
 🍝 MERCATTO DELIVERY - SERVICE WORKER
-Versão: 2.1
+Versão: 2.2 (corrigido)
 ********************************************************/
 
-const CACHE_NAME = "mercatto-v2.1";
+const CACHE_NAME = "mercatto-v2.2";
 
 const FILES_TO_CACHE = [
-  "/",
-  "/index.html",
-  "/manifest.json",
+  "./",
+  "./index.html",
+  "./manifest.json",
 
   // Ícones
-  "/icons/logo-192.png",
-  "/icons/logo-512.png",
+  "./icons/logo-192.png",
+  "./icons/logo-512.png",
 
   // 🍽️ Imagens do banner e cardápio (pasta /paste)
-  "/paste/CAPA MERCATTO.png",
-  "/paste/Captura de tela 2025-10-24 100412.png",
-  "/paste/Captura de tela 2025-10-24 101231.png",
-  "/paste/Captura de tela 2025-10-24 101406.png",
-  "/paste/Captura de tela 2025-10-24 103740.png",
-  "/paste/Captura de tela 2025-10-24 103901.png",
-  "/paste/Captura de tela 2025-10-24 104030.png",
-  "/paste/Captura de tela 2025-10-24 104231.png",
-  "/paste/Captura de tela 2025-10-27 155128.png",
-  "/paste/Hot Roll.png",
-  "/paste/polvo braseado.png"
+  "./paste/CAPA-MERCATTO.png",
+  "./paste/captura-2025-10-24-100412.png",
+  "./paste/captura-2025-10-24-101231.png",
+  "./paste/captura-2025-10-24-101406.png",
+  "./paste/captura-2025-10-24-103740.png",
+  "./paste/captura-2025-10-24-103901.png",
+  "./paste/hot-roll.png",
+  "./paste/polvo-braseado.png",
+  "./paste/captura-2025-10-27-162118.png"
 ];
 
 /********************************************************
@@ -43,12 +41,10 @@ self.addEventListener("install", (event) => {
 ⚡ ATIVAÇÃO (limpa versões antigas)
 ********************************************************/
 self.addEventListener("activate", (event) => {
-  console.log("⚡ Ativando nova versão e limpando caches antigos...");
+  console.log("⚡ Limpando caches antigos...");
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(
-        keys.map((key) => key !== CACHE_NAME && caches.delete(key))
-      )
+      Promise.all(keys.map((key) => key !== CACHE_NAME && caches.delete(key)))
     )
   );
   self.clients.claim();
@@ -61,6 +57,7 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) return cachedResponse;
+
       return fetch(event.request)
         .then((networkResponse) => {
           if (!networkResponse || networkResponse.status !== 200) {
@@ -74,7 +71,7 @@ self.addEventListener("fetch", (event) => {
         })
         .catch(() => {
           if (event.request.destination === "image") {
-            return caches.match("/paste/CAPA MERCATTO.png");
+            return caches.match("./paste/CAPA-MERCATTO.png");
           }
         });
     })
@@ -87,13 +84,10 @@ self.addEventListener("fetch", (event) => {
 self.addEventListener("push", (event) => {
   const data = event.data?.json() || {};
   event.waitUntil(
-    self.registration.showNotification(
-      data.title || "Atualização Mercatto",
-      {
-        body: data.body || "Seu pedido mudou de status!",
-        icon: "/icons/logo-192.png",
-        badge: "/icons/logo-192.png",
-      }
-    )
+    self.registration.showNotification(data.title || "Atualização Mercatto", {
+      body: data.body || "Seu pedido mudou de status!",
+      icon: "./icons/logo-192.png",
+      badge: "./icons/logo-192.png",
+    })
   );
 });
