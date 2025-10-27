@@ -1,14 +1,9 @@
 /*******************************************************
 🍝 MERCATTO DELIVERY - SERVICE WORKER
-Versão: 2.0
-Funções:
-✅ Cache de todas as páginas e imagens locais (/paste e /icons)
-✅ Suporte offline total (index, manifest, imagens)
-✅ Atualização automática
-✅ Push notifications (para atualizações de pedido)
+Versão: 2.1
 ********************************************************/
 
-const CACHE_NAME = "mercatto-v2";
+const CACHE_NAME = "mercatto-v2.1";
 
 const FILES_TO_CACHE = [
   "/",
@@ -19,7 +14,7 @@ const FILES_TO_CACHE = [
   "/icons/logo-192.png",
   "/icons/logo-512.png",
 
-  // 🍽️ Imagens do cardápio (todas da pasta /paste)
+  // 🍽️ Imagens do banner e cardápio (pasta /paste)
   "/paste/CAPA MERCATTO.png",
   "/paste/Captura de tela 2025-10-24 100412.png",
   "/paste/Captura de tela 2025-10-24 101231.png",
@@ -37,7 +32,7 @@ const FILES_TO_CACHE = [
 📦 INSTALAÇÃO DO SERVICE WORKER
 ********************************************************/
 self.addEventListener("install", (event) => {
-  console.log("📦 Instalando Service Worker e armazenando cache inicial...");
+  console.log("📦 Instalando cache inicial Mercatto...");
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
   );
@@ -45,19 +40,14 @@ self.addEventListener("install", (event) => {
 });
 
 /********************************************************
-⚡ ATIVAÇÃO (LIMPEZA DE CACHES ANTIGOS)
+⚡ ATIVAÇÃO (limpa versões antigas)
 ********************************************************/
 self.addEventListener("activate", (event) => {
   console.log("⚡ Ativando nova versão e limpando caches antigos...");
   event.waitUntil(
-    caches.keys().then((keyList) =>
+    caches.keys().then((keys) =>
       Promise.all(
-        keyList.map((key) => {
-          if (key !== CACHE_NAME) {
-            console.log("🧹 Deletando cache antigo:", key);
-            return caches.delete(key);
-          }
-        })
+        keys.map((key) => key !== CACHE_NAME && caches.delete(key))
       )
     )
   );
@@ -65,31 +55,24 @@ self.addEventListener("activate", (event) => {
 });
 
 /********************************************************
-🌐 INTERCEPTADOR DE REQUISIÇÕES
+🌐 FETCH - busca no cache primeiro
 ********************************************************/
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) return cachedResponse;
-
-      // Busca online e adiciona ao cache (estratégia network-first)
       return fetch(event.request)
         .then((networkResponse) => {
-          if (
-            !networkResponse ||
-            networkResponse.status !== 200 ||
-            networkResponse.type !== "basic"
-          ) {
+          if (!networkResponse || networkResponse.status !== 200) {
             return networkResponse;
           }
-          const responseToCache = networkResponse.clone();
+          const clone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
+            cache.put(event.request, clone);
           });
           return networkResponse;
         })
         .catch(() => {
-          // 🔴 Caso offline e sem cache: retorna imagem padrão
           if (event.request.destination === "image") {
             return caches.match("/paste/CAPA MERCATTO.png");
           }
@@ -105,11 +88,11 @@ self.addEventListener("push", (event) => {
   const data = event.data?.json() || {};
   event.waitUntil(
     self.registration.showNotification(
-      data.title || "Atualização do Pedido Mercatto",
+      data.title || "Atualização Mercatto",
       {
         body: data.body || "Seu pedido mudou de status!",
-        icon: "icons/logo-192.png",
-        badge: "icons/logo-192.png",
+        icon: "/icons/logo-192.png",
+        badge: "/icons/logo-192.png",
       }
     )
   );
