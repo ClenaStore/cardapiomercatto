@@ -728,17 +728,20 @@ function abrirSugestao(id, btn){
 function pedirJunto(id,btn){btn.closest('.popup').remove();abrirPopup(id);}
 function atualizarCarrinho(){document.getElementById('cart-count').textContent=carrinho.reduce((s,i)=>s+i.qtd,0);}
 
-// 🛒 Carrinho com layout melhorado e rolagem suave
+// 🛒 Carrinho com rodapé fixo real e independente do conteúdo
 function abrirCarrinho() {
   if (!carrinho.length) return alert("Carrinho vazio!");
 
   const total = carrinho.reduce((s, i) => s + i.qtd * i.preco, 0);
   const div = document.createElement("div");
   div.classList.add("popup");
+
   div.innerHTML = `
-  <div class="popup-content">
+  <div class="popup-content" style="display:flex;flex-direction:column;max-height:90vh;">
     <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-    <div class="popup-body">
+
+    <!-- Corpo rolável -->
+    <div class="popup-body" style="flex:1;overflow-y:auto;padding-right:8px;">
       <h2>🛒 Seu Pedido</h2>
       ${carrinho.map((i, ix) => `
         <div class="sug-card-horizontal">
@@ -753,14 +756,19 @@ function abrirCarrinho() {
           <button onclick="removerItem(${ix}); this.closest('.popup').remove(); abrirCarrinho();">❌ Remover</button>
         </div>
       `).join('')}
-      <div class="carrinho-footer">
-        <h3>Total: R$ ${total.toFixed(2)}</h3>
-        <button onclick="finalizarPedido()">📦 Finalizar Pedido</button>
-      </div>
+    </div>
+
+    <!-- Rodapé sempre visível -->
+    <div class="carrinho-footer" style="flex-shrink:0;">
+      <h3>Total: R$ ${total.toFixed(2)}</h3>
+      <button onclick="finalizarPedido()">📦 Finalizar Pedido</button>
     </div>
   </div>`;
+
   document.body.appendChild(div);
 }
+
+
 
 
 function removerItem(ix){carrinho.splice(ix,1);atualizarCarrinho();abrirCarrinho();}
