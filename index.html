@@ -246,6 +246,11 @@ header{
   cursor: pointer;
 }
 
+/* 🚫 Bloquear fundo ao abrir pop-up */
+body.popup-ativo {
+  overflow: hidden;
+  touch-action: none;
+}
 
 
   
@@ -590,6 +595,22 @@ async function enviarPedido(){
  overlay.style.display='none';
  carrinho=[];atualizarCarrinho();
 }
+
+// 🔒 Impede interação no fundo quando há pop-up
+function bloquearFundo(){
+  document.body.classList.add('popup-ativo');
+}
+function liberarFundo(){
+  document.body.classList.remove('popup-ativo');
+}
+
+// Garante que qualquer pop-up ativa o bloqueio
+const observer = new MutationObserver(()=>{
+  const temPopup = document.querySelector('.popup, .sugestoes-popup');
+  if(temPopup) bloquearFundo(); else liberarFundo();
+});
+observer.observe(document.body,{childList:true});
+
 </script>
 </body>
 </html>
