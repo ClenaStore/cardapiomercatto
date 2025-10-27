@@ -284,18 +284,33 @@ const taxas={"Vila Brasil":8,"São Caetano":7,"Primavera":9,"Jardim Europa":10,"
 
   
 
-// 🔗 RELACIONAMENTOS ENTRE ITENS (sugestões inteligentes)
-const sugestoesRelacionadas = {
-  // 🍕 Pizzas e calzones → bebidas e sobremesas
-  "Calzone Especiais": ["Refrigerantes Gelados", "Sobremesas Individuais Maravilhosas", "Calzones Doces Deliciosos"],
-  "Calzones Doces Deliciosos": ["Refrigerantes Gelados"],
-  "Pratos de Carnes Saborosas": ["Vinhos Especiais", "Sobremesas Individuais Maravilhosas"],
-  "Pratos Individuais Deliciosos": ["Sobremesas Individuais Maravilhosas", "Refrigerantes Gelados"],
-  "Burgues Saborosos": ["Refrigerantes Gelados", "Sobremesas Individuais Maravilhosas"],
-  "Sushis Deliciosos": ["Combinados de Sushi Irresistíveis", "Sobremesas Individuais Maravilhosas"],
-  "Combinados de Sushi Irresistíveis": ["Sushis Deliciosos", "Sobremesas Individuais Maravilhosas"],
-  "Pratos de Peixes Especiais": ["Vinhos Especiais", "Sobremesas Individuais Maravilhosas"]
+// 🔗 RELAÇÕES DIRETAS ENTRE PRODUTOS (por ID)
+const relacoesPorId = {
+  // 🍕 Calzones e pizzas sugerem bebidas e sobremesas
+  85: [200, 201, 90], // Calzone Calabresa → Coca, Guaraná, Pudim
+  86: [200, 201, 90],
+  87: [200, 201, 84],
+  88: [200, 202, 82],
+
+  // 🍣 Sushis e combinados → vinho e sobremesa
+  73: [90, 201],
+  74: [77, 90],
+  76: [74, 90],
+  77: [74, 90],
+  78: [74, 90],
+
+  // 🍖 Pratos principais → vinho e sobremesa
+  60: [90],
+  61: [90],
+  64: [90],
+  65: [90],
+
+  // 🍔 Burgers → refrigerante e sobremesa
+  69: [200, 201, 90],
+  70: [200, 201, 82],
+  72: [200, 202, 83]
 };
+
 
 
 
@@ -500,29 +515,31 @@ function adicionar(id){
  carrinho.push({...p,qtd,obs});
  document.querySelector('.popup')?.remove();
  atualizarCarrinho();
- mostrarSugestoes(p.categoria);
+ mostrarSugestoes(p.id);
 }
 
-// 💡 Sugestões inteligentes: baseadas no item adicionado e no carrinho
-function mostrarSugestoes(cat) {
-  // busca quais categorias complementam o item atual
-  const categoriasRelacionadas = sugestoesRelacionadas[cat] || [];
+// 💡 Sugestões por ID do item (inteligente)
+function mostrarSugestoes(idProduto) {
+  const produtoBase = produtos.find(p => p.id === idProduto);
+  if (!produtoBase) return;
 
-  // pega todos os produtos que pertencem às categorias complementares
-  let candidatos = produtos.filter(p => categoriasRelacionadas.includes(p.categoria));
+  // busca IDs relacionados
+  const idsRelacionados = relacoesPorId[idProduto] || [];
 
-  // remove os que já estão no carrinho
+  // encontra produtos correspondentes
+  let candidatos = produtos.filter(p => idsRelacionados.includes(p.id));
+
+  // remove itens que já estão no carrinho
   const idsCarrinho = carrinho.map(i => i.id);
   candidatos = candidatos.filter(c => !idsCarrinho.includes(c.id));
 
-  // se não houver sugestão direta, mostra apenas itens diferentes
+  // fallback: se não tiver sugestões, pega 3 produtos aleatórios que não estejam no carrinho
   if (candidatos.length === 0) {
-    candidatos = produtos.filter(p => p.categoria !== cat && !idsCarrinho.includes(p.id)).slice(0, 3);
-  } else {
-    candidatos = candidatos.slice(0, 3);
+    candidatos = produtos.filter(p => !idsCarrinho.includes(p.id) && p.id !== idProduto).slice(0, 3);
   }
 
-  if (candidatos.length === 0) return; // nada pra sugerir
+  // se mesmo assim não houver, sai
+  if (candidatos.length === 0) return;
 
   const div = document.createElement("div");
   div.classList.add("popup");
@@ -530,7 +547,7 @@ function mostrarSugestoes(cat) {
   <div class="popup-content">
     <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
     <div class="popup-body">
-      <h2>🍷 Sugestões que combinam</h2>
+      <h2>🍷 Sugestões que combinam com ${produtoBase.nome}</h2>
       ${candidatos.map(s => `
       <div class="sug-card">
         <img src="${s.img}" alt="${s.nome}">
@@ -544,6 +561,7 @@ function mostrarSugestoes(cat) {
   </div>`;
   document.body.appendChild(div);
 }
+
 
 function abrirSugestao(id, btn){
   // Fecha o pop-up de sugestões antes de abrir o novo
