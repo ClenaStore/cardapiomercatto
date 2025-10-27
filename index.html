@@ -72,37 +72,49 @@ header{
 .container{padding:12px 15px;max-width:960px;margin:auto;}
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(5, 1fr); /* sempre 5 colunas */
   gap: 14px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 12px;
+  box-sizing: border-box;
 }
 
-/* 🖥️ Em telas grandes (computadores) – 5 cards fixos por linha */
-@media (min-width: 1200px) {
-  .grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
+/* 🧩 Os cards se adaptam perfeitamente à largura total da tela */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255,255,255,.06);
+  transition: .25s;
 }
 
-/* 💻 Em telas médias (notebooks) – 4 cards por linha */
-@media (min-width: 992px) and (max-width: 1199px) {
+/* 📱 Ajuste automático em telas menores */
+@media (max-width: 1200px) {
   .grid {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-/* 📱 Em tablets – 2 a 3 cards */
-@media (min-width: 600px) and (max-width: 991px) {
+@media (max-width: 992px) {
   .grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-/* 📲 Em celulares – 2 cards */
-@media (max-width: 599px) {
+@media (max-width: 768px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 .card{
   background:var(--card);border-radius:var(--radius);
