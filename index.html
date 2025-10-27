@@ -251,6 +251,81 @@ body.popup-ativo {
   overflow: hidden;
   touch-action: none;
 }
+/* 💡 Novo layout horizontal de sugestões refinado */
+.sug-card-horizontal {
+  background: #1e2538;
+  border-radius: 14px;
+  padding: 10px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transition: .3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.sug-card-horizontal:hover {
+  transform: scale(1.02);
+}
+
+.sug-topo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sug-card-horizontal img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.sug-card-horizontal .sug-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+}
+
+.sug-card-horizontal strong {
+  font-family: 'Playfair Display', serif;
+  color: var(--accent2);
+  font-size: 15px;
+}
+
+.sug-card-horizontal small {
+  color: #a3a3a3;
+  font-size: 13px;
+  line-height: 1.2;
+  max-height: 35px;
+  overflow: hidden;
+}
+
+.sug-card-horizontal span {
+  color: var(--accent);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.sug-card-horizontal button {
+  width: 100%;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  margin-top: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.sug-card-horizontal button:hover {
+  background: var(--accent2);
+}
+
 
 
   
@@ -518,27 +593,20 @@ function adicionar(id){
  mostrarSugestoes(p.id);
 }
 
-// 💡 Sugestões por ID do item (inteligente)
 function mostrarSugestoes(idProduto) {
   const produtoBase = produtos.find(p => p.id === idProduto);
   if (!produtoBase) return;
 
-  // busca IDs relacionados
   const idsRelacionados = relacoesPorId[idProduto] || [];
-
-  // encontra produtos correspondentes
   let candidatos = produtos.filter(p => idsRelacionados.includes(p.id));
 
-  // remove itens que já estão no carrinho
   const idsCarrinho = carrinho.map(i => i.id);
   candidatos = candidatos.filter(c => !idsCarrinho.includes(c.id));
 
-  // fallback: se não tiver sugestões, pega 3 produtos aleatórios que não estejam no carrinho
   if (candidatos.length === 0) {
     candidatos = produtos.filter(p => !idsCarrinho.includes(p.id) && p.id !== idProduto).slice(0, 3);
   }
 
-  // se mesmo assim não houver, sai
   if (candidatos.length === 0) return;
 
   const div = document.createElement("div");
@@ -549,18 +617,26 @@ function mostrarSugestoes(idProduto) {
     <div class="popup-body">
       <h2>🍷 Sugestões que combinam com ${produtoBase.nome}</h2>
       ${candidatos.map(s => `
-      <div class="sug-card">
-        <img src="${s.img}" alt="${s.nome}">
-        <strong>${s.nome}</strong>
-        <small>${s.desc}</small>
-        <span>R$ ${s.preco.toFixed(2)}</span>
-        <button onclick="abrirPopup(${s.id}); this.closest('.popup').remove();">Pedir junto</button>
-      </div>`).join('')}
+        <div class="sug-card-horizontal">
+          <div class="sug-topo">
+            <img src="${s.img}" alt="${s.nome}">
+            <div class="sug-info">
+              <strong>${s.nome}</strong>
+              <small>${s.desc}</small>
+              <span>R$ ${s.preco.toFixed(2)}</span>
+            </div>
+          </div>
+          <button onclick="abrirPopup(${s.id}); this.closest('.popup').remove();">Pedir junto</button>
+        </div>
+      `).join('')}
       <button onclick="abrirCarrinho()">🛒 Ver Carrinho</button>
     </div>
   </div>`;
   document.body.appendChild(div);
 }
+
+
+
 
 
 function abrirSugestao(id, btn){
