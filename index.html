@@ -150,6 +150,105 @@ header{
   position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;
 }
 .overlay img{width:90px;margin-bottom:20px;}
+
+/* ✨ POP-UP DE SUGESTÕES ELEGANTE */
+.sugestoes-popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn .3s ease;
+}
+.sugestoes-content {
+  background: linear-gradient(160deg,#151d2f,#1e293b);
+  border-radius: 22px;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 0 25px rgba(0,0,0,0.4);
+  padding: 20px;
+  color: #fff;
+  text-align: center;
+  position: relative;
+  overflow-y: auto;
+  max-height: 85vh;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.sugestoes-content h2 {
+  font-family: 'Playfair Display', serif;
+  color: var(--accent2);
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+.sugestoes-item {
+  background: rgba(255,255,255,0.05);
+  border-radius: 14px;
+  padding: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,.3);
+  transition: .3s;
+}
+.sugestoes-item:hover {
+  transform: scale(1.03);
+  background: rgba(255,255,255,0.08);
+}
+.sugestoes-item img {
+  width: 100%;
+  border-radius: 12px;
+  height: 150px;
+  object-fit: cover;
+}
+.sugestoes-item strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--accent2);
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+}
+.sugestoes-item small {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin: 6px 0;
+  min-height: 36px;
+}
+.sugestoes-item span {
+  display: block;
+  color: var(--accent);
+  font-weight: 600;
+}
+.sugestoes-item button {
+  margin-top: 8px;
+  width: 100%;
+  border: none;
+  padding: 10px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #000;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .3s;
+}
+.sugestoes-item button:hover {
+  background: var(--accent2);
+}
+.close-popup {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: var(--accent2);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+
+
+  
 </style>
 </head>
 
@@ -346,29 +445,27 @@ function adicionar(id){
  mostrarSugestoes(p.categoria);
 }
 
-// 🔹 SUGESTÕES
 function mostrarSugestoes(cat){
- const sugs=produtos.filter(p=>p.categoria!==cat).slice(0,3);
- const div=document.createElement("div");
- div.classList.add("popup");
- div.innerHTML=`
- <div class="popup-content">
-   <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-   <div class="popup-body">
-     <h2>🍷 Sugestões que combinam</h2>
-     ${sugs.map(s=>`
-     <div class="sug-card">
-       <img src="${s.img}" alt="${s.nome}">
-       <strong>${s.nome}</strong>
-       <small>${s.desc}</small>
-       <span>R$ ${s.preco.toFixed(2)}</span>
-       <button onclick="pedirJunto(${s.id},this)">Pedir junto</button>
-     </div>`).join('')}
-     <button onclick="abrirCarrinho()">🛒 Ver Carrinho</button>
-   </div>
- </div>`;
- document.body.appendChild(div);
+  const sugs = produtos.filter(p=>p.categoria!==cat).slice(0,3);
+  const div = document.createElement("div");
+  div.className = "sugestoes-popup";
+  div.innerHTML = `
+    <div class="sugestoes-content">
+      <button class="close-popup" onclick="this.closest('.sugestoes-popup').remove()">✖</button>
+      <h2>🍷 Sugestões que combinam</h2>
+      ${sugs.map(s=>`
+        <div class="sugestoes-item">
+          <img src="${s.img}" alt="${s.nome}">
+          <strong>${s.nome}</strong>
+          <small>${s.desc}</small>
+          <span>R$ ${s.preco.toFixed(2)}</span>
+          <button onclick="pedirJunto(${s.id},this)">Pedir junto</button>
+        </div>`).join('')}
+      <button onclick="abrirCarrinho()" style="margin-top:10px;background:#25D366;color:#fff;font-weight:700;">🛒 Ver Carrinho</button>
+    </div>`;
+  document.body.appendChild(div);
 }
+
 function pedirJunto(id,btn){btn.closest('.popup').remove();abrirPopup(id);}
 function atualizarCarrinho(){document.getElementById('cart-count').textContent=carrinho.reduce((s,i)=>s+i.qtd,0);}
 
