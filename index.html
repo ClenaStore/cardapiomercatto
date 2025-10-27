@@ -383,12 +383,21 @@ let isDragging=false,startX=0,scrollStart=0;
 catDiv.addEventListener("touchstart",e=>{isDragging=true;startX=e.touches[0].pageX;scrollStart=catDiv.scrollLeft;catDiv.style.scrollBehavior="auto";},{passive:true});
 catDiv.addEventListener("touchmove",e=>{if(!isDragging)return;catDiv.scrollLeft=scrollStart-(e.touches[0].pageX-startX);},{passive:true});
 catDiv.addEventListener("touchend",()=>{isDragging=false;},{passive:true});
+// 🐢 Rolagem automática mais lenta e suave
+let scrollOffset = 0;
 setInterval(()=>{
   if(isDragging)return;
-  catDiv.scrollBy({left:3,behavior:"auto"});
-  if(catDiv.scrollLeft+catDiv.clientWidth>=catDiv.scrollWidth)
-    catDiv.scrollTo({left:0,behavior:"smooth"});
-},60);
+  scrollOffset += 1; // velocidade menor (1px por passo)
+  catDiv.scrollTo({
+    left: scrollOffset,
+    behavior: "smooth"
+  });
+  if(catDiv.scrollLeft + catDiv.clientWidth >= catDiv.scrollWidth - 5) {
+    scrollOffset = 0;
+    catDiv.scrollTo({ left: 0, behavior: "smooth" });
+  }
+}, 120); // intervalo maior = rolagem mais lenta
+
 
 // 🔹 FILTROS
 function filtrar(cat){
