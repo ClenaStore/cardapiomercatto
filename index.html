@@ -92,20 +92,42 @@ header{
 
 /* 📱 Ajuste automático em telas menores */
 @media (max-width: 1200px) {
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  width: 100vw;            /* ocupa toda a largura da tela */
+  margin: 0;
+  padding: 0 0 40px 0;     /* sem margem lateral */
+  box-sizing: border-box;
+}
+
+/* Os cards vão se esticar exatamente até as bordas */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255,255,255,.06);
+  transition: .25s;
+}
+
+/* 🧩 Responsividade */
+@media (max-width: 1400px) {
   .grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 992px) {
   .grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 768px) {
   .grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -114,6 +136,7 @@ header{
     grid-template-columns: 1fr;
   }
 }
+
 
 
 .card{
