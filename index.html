@@ -609,24 +609,34 @@ let startX = 0;
 let scrollStart = 0;
 let scrollOffset = 0;
 
-// 🖐️ Gestos manuais
-catDiv.addEventListener("touchstart", e => {
+// 🖐️ Gestos manuais (toque ou mouse)
+function startScroll(x) {
   isDragging = true;
-  isAutoScrolling = false; // 🔴 Para a rolagem automática ao tocar
-  startX = e.touches[0].pageX;
+  isAutoScrolling = false; // 🔴 Para a rolagem automática
+  startX = x;
   scrollStart = catDiv.scrollLeft;
   catDiv.style.scrollBehavior = "auto";
-}, { passive: true });
-
-catDiv.addEventListener("touchmove", e => {
+}
+function moveScroll(x) {
   if (!isDragging) return;
-  const walk = e.touches[0].pageX - startX;
+  const walk = x - startX;
   catDiv.scrollLeft = scrollStart - walk;
-}, { passive: true });
+}
+function endScroll() { isDragging = false; }
 
-catDiv.addEventListener("touchend", () => {
-  isDragging = false;
-}, { passive: true });
+// 🖱️ Suporte total para computador
+catDiv.addEventListener("mousedown", e => startScroll(e.pageX));
+catDiv.addEventListener("mousemove", e => moveScroll(e.pageX));
+catDiv.addEventListener("mouseup", endScroll);
+catDiv.addEventListener("mouseleave", endScroll);
+
+// 📱 Suporte para toque (celular)
+catDiv.addEventListener("touchstart", e => startScroll(e.touches[0].pageX), { passive: true });
+catDiv.addEventListener("touchmove", e => moveScroll(e.touches[0].pageX), { passive: true });
+catDiv.addEventListener("touchend", endScroll, { passive: true });
+
+// 🧭 Scroll com roda do mouse também pausa o automático
+catDiv.addEventListener("wheel", () => { isAutoScrolling = false; }, { passive: true });
 
 // 🕹️ Clique em categoria também pausa a rolagem
 function filtrar(cat) {
@@ -636,7 +646,7 @@ function filtrar(cat) {
   renderizar(produtos.filter(p => p.categoria === cat));
 }
 
-// 🐢 Rolagem automática lenta e suave
+// 🐢 Rolagem automática lenta e suave (para desktop e mobile)
 setInterval(() => {
   if (!isAutoScrolling || isDragging) return;
   scrollOffset += 1; // velocidade de deslocamento
