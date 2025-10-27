@@ -1,87 +1,114 @@
-// ============================
-// 📦 SERVICE WORKER MERCATTO
-// ============================
+/*******************************************************
+🍝 MERCATTO DELIVERY - SERVICE WORKER
+Versão: 1.3
+Funções:
+✅ Cache de páginas e imagens locais
+✅ Suporte offline total (index, manifest e mídias)
+✅ Push notifications (atualizações de pedido)
+********************************************************/
 
-const CACHE_NAME = "mercatto-v2";
-
-// 🧩 Todos os arquivos importantes do app
+const CACHE_NAME = "mercatto-v1";
 const FILES_TO_CACHE = [
-  "/", 
+  "/",
   "/index.html",
   "/manifest.json",
 
-  // 🖼️ Imagens principais
-  "/img/padrao.jpg",
+  // Ícones
   "/icons/logo-192.png",
   "/icons/logo-512.png",
 
-  // 📸 Fotos do cardápio
+  // 🍽️ Imagens da pasta /paste (adicione todas aqui)
   "/paste/CAPA MERCATTO.png",
-  "/paste/Captura de tela 2025-10-24 101406.png",
+  "/paste/Captura de tela 2025-10-24 100412.png",
   "/paste/Captura de tela 2025-10-24 101231.png",
-  "/paste/Captura de tela 2025-10-24 101004.png",
+  "/paste/Captura de tela 2025-10-24 101406.png",
   "/paste/Captura de tela 2025-10-24 103740.png",
+  "/paste/Captura de tela 2025-10-24 103901.png",
   "/paste/Captura de tela 2025-10-24 104030.png",
-  "/paste/Captura de tela 2025-10-24 104412.png",
-
-  // 🎥 Vídeos do cardápio
-  "/videos/risoto-camarao.mp4",
-  "/videos/talharim-camarao.mp4",
-  "/videos/polvo-braseado.mp4",
-  "/videos/salmao-crocante.mp4",
-  "/videos/new-york.mp4",
-  "/videos/galak-oreo.mp4",
-  "/videos/pudim.mp4"
+  "/paste/Captura de tela 2025-10-24 104231.png",
+  "/paste/Captura de tela 2025-10-27 155128.png",
+  "/paste/Captura de tela 2025-10-27 162118.png",
+  "/paste/polvo braseado.png",
 ];
 
-// 🏗️ Instalação: adiciona arquivos ao cache
-self.addEventListener("install", e => {
+/********************************************************
+🧩 INSTALAÇÃO DO SERVICE WORKER
+********************************************************/
+self.addEventListener("install", (e) => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(FILES_TO_CACHE))
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log("🟡 Instalando cache inicial...");
+      return cache.addAll(FILES_TO_CACHE);
+    })
   );
   self.skipWaiting();
 });
 
-// 🚀 Ativação: remove caches antigos
-self.addEventListener("activate", e => {
+/********************************************************
+⚡ ATIVAÇÃO (LIMPEZA DE CACHES ANTIGOS)
+********************************************************/
+self.addEventListener("activate", (e) => {
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(k => k !== CACHE_NAME)
-          .map(k => caches.delete(k))
-      )
-    )
+    caches.keys().then((keyList) => {
+      return Promise.all(
+        keyList.map((key) => {
+          if (key !== CACHE_NAME) {
+            console.log("🧹 Limpando cache antigo:", key);
+            return caches.delete(key);
+          }
+        })
+      );
+    })
   );
   self.clients.claim();
 });
 
-// 🌐 Intercepta requisições e serve do cache se disponível
-self.addEventListener("fetch", e => {
+/********************************************************
+🌐 INTERCEPTADOR DE REQUISIÇÕES
+********************************************************/
+self.addEventListener("fetch", (e) => {
   e.respondWith(
-    caches.match(e.request).then(response =>
-      response ||
-      fetch(e.request)
-        .then(fetchRes => {
-          // 🔄 Atualiza o cache automaticamente com novos arquivos
-          return caches.open(CACHE_NAME).then(cache => {
-            cache.put(e.request, fetchRes.clone());
-            return fetchRes;
+    caches.match(e.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        // 🟢 Retorna do cache se já estiver salvo
+        return cachedResponse;
+      }
+      // 🔵 Caso contrário, faz a requisição e salva no cache dinamicamente
+      return fetch(e.request)
+        .then((networkResponse) => {
+          if (!networkResponse || networkResponse.status !== 200) {
+            return networkResponse;
+          }
+          const clonedResponse = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(e.request, clonedResponse);
           });
+          return networkResponse;
         })
-        .catch(() => caches.match("/img/padrao.jpg")) // fallback se offline
-    )
+        .catch(() => {
+          // 🔴 Offline e não encontrado no cache
+          if (e.request.destination === "image") {
+            // Retorna uma imagem padrão se desejar
+            return caches.match("/paste/CAPA MERCATTO.png");
+          }
+        });
+    })
   );
 });
 
-// 🔔 Notificações push
-self.addEventListener("push", event => {
+/********************************************************
+🔔 PUSH NOTIFICATIONS (opcional)
+********************************************************/
+self.addEventListener("push", (event) => {
   const data = event.data?.json() || {};
   event.waitUntil(
-    self.registration.showNotification(data.title || "Atualização do Pedido", {
-      body: data.body || "Seu pedido mudou de status!",
-      icon: "icons/logo-192.png",
-      badge: "icons/logo-192.png"
-    })
+    self.registration.showNotification(
+      data.title || "Atualização do Pedido Mercatto",
+      {
+        body: data.body || "Seu pedido mudou de status!",
+        icon: "icons/logo-192.png",
+        badge: "icons/logo-192.png",
+      }
+    )
   );
 });
