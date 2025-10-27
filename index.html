@@ -430,6 +430,41 @@ body.popup-ativo {
 </div>
 
 <script>
+
+// 🧩 GERENCIADOR DE LOCALSTORAGE - Mantém apenas dados importantes
+const STORAGE_KEYS = {
+  cliente: 'mercatto_cliente',
+  carrinho: 'mercatto_carrinho'
+};
+
+function salvarClienteLocal(cliente) {
+  try { localStorage.setItem(STORAGE_KEYS.cliente, JSON.stringify(cliente)); }
+  catch (e) { console.warn('⚠️ Erro ao salvar cliente:', e); }
+}
+
+function carregarClienteLocal() {
+  try {
+    const c = JSON.parse(localStorage.getItem(STORAGE_KEYS.cliente));
+    return c && typeof c === 'object' ? c : {};
+  } catch {
+    return {};
+  }
+}
+
+function salvarCarrinhoLocal(carrinho) {
+  try { localStorage.setItem(STORAGE_KEYS.carrinho, JSON.stringify(carrinho)); }
+  catch (e) { console.warn('⚠️ Erro ao salvar carrinho:', e); }
+}
+
+function carregarCarrinhoLocal() {
+  try {
+    const c = JSON.parse(localStorage.getItem(STORAGE_KEYS.carrinho));
+    return Array.isArray(c) ? c : [];
+  } catch {
+    return [];
+  }
+}
+
 // 🔗 CONFIG
 const ENDPOINT="URL_DO_SEU_GAS";
 const taxas={"Vila Brasil":8,"São Caetano":7,"Primavera":9,"Jardim Europa":10,"Piatã":12};
@@ -553,7 +588,9 @@ const relacoesPorId = {
 ];
 
 // 🧠 VARIÁVEIS
-let carrinho=[];
+let carrinho = carregarCarrinhoLocal();
+let cliente = carregarClienteLocal();
+
 const categorias=[...new Set(produtos.map(p=>p.categoria))];
 const catDiv=document.getElementById("categorias"),menuDiv=document.getElementById("menu");
 
@@ -666,6 +703,7 @@ function adicionar(id){
  const obs=document.getElementById('obs').value||'';
  const p=produtos.find(x=>x.id===id);
  carrinho.push({...p,qtd,obs});
+salvarCarrinhoLocal(carrinho);
  document.querySelector('.popup')?.remove();
  atualizarCarrinho();
  mostrarSugestoes(p.id);
@@ -771,7 +809,9 @@ function abrirCarrinho() {
 
 
 
-function removerItem(ix){carrinho.splice(ix,1);atualizarCarrinho();abrirCarrinho();}
+function removerItem(ix){carrinho.splice(ix,1);
+salvarCarrinhoLocal(carrinho);
+atualizarCarrinho();abrirCarrinho();}
 
 // 🔹 FINALIZAR PEDIDO
 function finalizarPedido(){
@@ -877,6 +917,34 @@ const observer = new MutationObserver(()=>{
   if(temPopup) bloquearFundo(); else liberarFundo();
 });
 observer.observe(document.body,{childList:true});
+/* ==========================================================
+🧩 AUTO REFRESH INTELIGENTE – MERCATTO DELIVERY
+Mantém apenas os dados do cliente e recarrega todo o app
+========================================================== */
+(function autoRefreshInteligente(){
+  try {
+    // 🔹 Pega o cliente salvo (se existir)
+    const clienteSalvo = localStorage.getItem('mercatto_cliente');
+
+    // 🔹 Limpa todo o localStorage
+    localStorage.clear();
+
+    // 🔹 Restaura apenas o cliente
+    if (clienteSalvo) localStorage.setItem('mercatto_cliente', clienteSalvo);
+
+    // 🔹 Evita loop infinito — só recarrega se ainda não fez isso nesta sessão
+    if (!sessionStorage.getItem('mercatto_recarregado')) {
+      sessionStorage.setItem('mercatto_recarregado', '1');
+      // 🔄 Força atualização total (limpa cache do navegador/PWA)
+      caches.keys().then(keys => keys.forEach(k => caches.delete(k))).finally(()=>{
+        window.location.reload(true);
+      });
+    }
+  } catch(e) {
+    console.warn("⚠️ Falha ao executar auto refresh:", e);
+  }
+})();
+
 
 </script>
 </body>
