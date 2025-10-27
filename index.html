@@ -849,6 +849,38 @@ const produtos = [
   }
 ];
 
+  // 🔹 FUNÇÃO PARA RENDERIZAR PRODUTOS NA TELA
+function renderizar(lista) {
+  const menu = document.getElementById("menu");
+  menu.innerHTML = "";
+
+  if (!lista || lista.length === 0) {
+    menu.innerHTML = `<p style="text-align:center;color:#ccc;padding:20px;">Nenhum item encontrado.</p>`;
+    return;
+  }
+
+  lista.forEach(p => {
+    const card = document.createElement("div");
+    card.classList.add("card");
+
+    const midia = p.video
+      ? `<video src="${p.video}" autoplay muted loop playsinline></video>`
+      : `<img src="${p.img}" alt="${p.nome}">`;
+
+    card.innerHTML = `
+      ${midia}
+      <div class="card-body">
+        <h3>${p.nome}</h3>
+        <p>${p.desc}</p>
+        <span>R$ ${p.preco.toFixed(2)}</span>
+        <button onclick="abrirPopup(${p.id})">Adicionar</button>
+      </div>
+    `;
+
+    menu.appendChild(card);
+  });
+}
+
 // 🧠 VARIÁVEIS
 let carrinho = carregarCarrinhoLocal();
 let cliente = carregarClienteLocal();
@@ -1193,64 +1225,6 @@ const observer = new MutationObserver(()=>{
   if(temPopup) bloquearFundo(); else liberarFundo();
 });
 observer.observe(document.body,{childList:true});
-/* ==========================================================
-🧩 AUTO REFRESH INTELIGENTE – MERCATTO DELIVERY
-Mantém apenas os dados do cliente e recarrega todo o app
-========================================================== */
-(function autoRefreshInteligente(){
-  try {
-    // 🔹 Pega o cliente salvo (se existir)
-    const clienteSalvo = localStorage.getItem('mercatto_cliente');
-
-    // 🔹 Limpa todo o localStorage
-    localStorage.clear();
-
-    // 🔹 Restaura apenas o cliente
-    if (clienteSalvo) localStorage.setItem('mercatto_cliente', clienteSalvo);
-
-    // 🔹 Evita loop infinito — só recarrega se ainda não fez isso nesta sessão
-    if (!sessionStorage.getItem('mercatto_recarregado')) {
-      sessionStorage.setItem('mercatto_recarregado', '1');
-      // 🔄 Força atualização total (limpa cache do navegador/PWA)
-      caches.keys().then(keys => keys.forEach(k => caches.delete(k))).finally(()=>{
-        window.location.reload(true);
-      });
-    }
-  } catch(e) {
-    console.warn("⚠️ Falha ao executar auto refresh:", e);
-  }
-})();
-// 🔹 FUNÇÃO PARA RENDERIZAR PRODUTOS NA TELA
-function renderizar(lista) {
-  const menu = document.getElementById("menu");
-  menu.innerHTML = "";
-
-  if (!lista || lista.length === 0) {
-    menu.innerHTML = `<p style="text-align:center;color:#ccc;padding:20px;">Nenhum item encontrado.</p>`;
-    return;
-  }
-
-  lista.forEach(p => {
-    const card = document.createElement("div");
-    card.classList.add("card");
-
-    const midia = p.video
-      ? `<video src="${p.video}" autoplay muted loop playsinline></video>`
-      : `<img src="${p.img}" alt="${p.nome}">`;
-
-    card.innerHTML = `
-      ${midia}
-      <div class="card-body">
-        <h3>${p.nome}</h3>
-        <p>${p.desc}</p>
-        <span>R$ ${p.preco.toFixed(2)}</span>
-        <button onclick="abrirPopup(${p.id})">Adicionar</button>
-      </div>
-    `;
-
-    menu.appendChild(card);
-  });
-}
 
 
 </script>
