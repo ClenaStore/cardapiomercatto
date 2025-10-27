@@ -459,12 +459,19 @@ function mostrarSugestoes(cat){
           <strong>${s.nome}</strong>
           <small>${s.desc}</small>
           <span>R$ ${s.preco.toFixed(2)}</span>
-          <button onclick="pedirJunto(${s.id},this)">Pedir junto</button>
+          <button onclick="abrirSugestao(${s.id}, this)">Pedir junto</button>
         </div>`).join('')}
       <button onclick="abrirCarrinho()" style="margin-top:10px;background:#25D366;color:#fff;font-weight:700;">🛒 Ver Carrinho</button>
     </div>`;
   document.body.appendChild(div);
 }
+function abrirSugestao(id, btn){
+  // Fecha o pop-up de sugestões antes de abrir o novo
+  btn.closest('.sugestoes-popup')?.remove();
+  // Reaproveita a mesma função que abre o pop-up de adicionar item
+  abrirPopup(id);
+}
+
 
 function pedirJunto(id,btn){btn.closest('.popup').remove();abrirPopup(id);}
 function atualizarCarrinho(){document.getElementById('cart-count').textContent=carrinho.reduce((s,i)=>s+i.qtd,0);}
