@@ -353,6 +353,56 @@ body.popup-ativo {
 .sug-card-horizontal button:hover {
   background: var(--accent2);
 }
+/* 💎 Rolagem interna do carrinho */
+.popup-body {
+  max-height: 70vh;           /* limita altura visível do conteúdo */
+  overflow-y: auto;           /* ativa rolagem interna */
+  padding-bottom: 80px;       /* espaço extra p/ botão fixo */
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) #1e2538;
+}
+
+/* Scrollbar estilizada (Chrome, Edge, Safari) */
+.popup-body::-webkit-scrollbar {
+  width: 6px;
+}
+.popup-body::-webkit-scrollbar-thumb {
+  background-color: var(--accent);
+  border-radius: 10px;
+}
+.popup-body::-webkit-scrollbar-track {
+  background: #1e2538;
+}
+
+/* 🧱 Rodapé fixo no carrinho */
+.carrinho-footer {
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(21,29,47,0.95) 0%, rgba(21,29,47,1) 100%);
+  padding: 10px 15px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  text-align: right;
+  backdrop-filter: blur(6px);
+}
+.carrinho-footer h3 {
+  margin: 0;
+  color: var(--accent2);
+}
+.carrinho-footer button {
+  width: 100%;
+  margin-top: 10px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #000;
+  padding: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.carrinho-footer button:hover {
+  background: var(--accent2);
+}
 
 
 
@@ -678,7 +728,7 @@ function abrirSugestao(id, btn){
 function pedirJunto(id,btn){btn.closest('.popup').remove();abrirPopup(id);}
 function atualizarCarrinho(){document.getElementById('cart-count').textContent=carrinho.reduce((s,i)=>s+i.qtd,0);}
 
-// 🛒 Carrinho com layout igual às sugestões
+// 🛒 Carrinho com layout melhorado e rolagem suave
 function abrirCarrinho() {
   if (!carrinho.length) return alert("Carrinho vazio!");
 
@@ -703,12 +753,15 @@ function abrirCarrinho() {
           <button onclick="removerItem(${ix}); this.closest('.popup').remove(); abrirCarrinho();">❌ Remover</button>
         </div>
       `).join('')}
-      <h3 style="margin-top:10px;color:var(--accent2);">Total: R$ ${total.toFixed(2)}</h3>
-      <button style="margin-top:15px;" onclick="finalizarPedido()">📦 Finalizar Pedido</button>
+      <div class="carrinho-footer">
+        <h3>Total: R$ ${total.toFixed(2)}</h3>
+        <button onclick="finalizarPedido()">📦 Finalizar Pedido</button>
+      </div>
     </div>
   </div>`;
   document.body.appendChild(div);
 }
+
 
 function removerItem(ix){carrinho.splice(ix,1);atualizarCarrinho();abrirCarrinho();}
 
