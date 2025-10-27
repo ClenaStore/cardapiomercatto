@@ -70,7 +70,40 @@ header{
   background:var(--accent);color:#000;transform:scale(1.05);
 }
 .container{padding:12px 15px;max-width:960px;margin:auto;}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+/* 🖥️ Em telas grandes (computadores) – 5 cards fixos por linha */
+@media (min-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* 💻 Em telas médias (notebooks) – 4 cards por linha */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* 📱 Em tablets – 2 a 3 cards */
+@media (min-width: 600px) and (max-width: 991px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 📲 Em celulares – 2 cards */
+@media (max-width: 599px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 .card{
   background:var(--card);border-radius:var(--radius);
   overflow:hidden;box-shadow:var(--shadow);
