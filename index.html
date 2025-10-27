@@ -325,6 +325,34 @@ body.popup-ativo {
 .sug-card-horizontal button:hover {
   background: var(--accent2);
 }
+/* 💎 Ajustes visuais para o carrinho */
+.popup-body h3 {
+  text-align: right;
+  margin-top: 12px;
+  color: var(--accent);
+  font-family: 'Playfair Display', serif;
+}
+
+.popup-body h2 {
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.sug-card-horizontal button {
+  background: #b8860b;
+  color: #000;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  margin-top: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.sug-card-horizontal button:hover {
+  background: var(--accent2);
+}
 
 
 
@@ -650,29 +678,38 @@ function abrirSugestao(id, btn){
 function pedirJunto(id,btn){btn.closest('.popup').remove();abrirPopup(id);}
 function atualizarCarrinho(){document.getElementById('cart-count').textContent=carrinho.reduce((s,i)=>s+i.qtd,0);}
 
-// 🔹 CARRINHO
-function abrirCarrinho(){
- if(!carrinho.length)return alert("Carrinho vazio!");
- const total=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
- const div=document.createElement("div");
- div.classList.add("popup");
- div.innerHTML=`
- <div class="popup-content">
-  <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-  <div class="popup-body">
-    <h2>Seu pedido</h2>
-    ${carrinho.map((i,ix)=>`
-      <div class="sug-card">
-        <img src="${i.img}">
-        <div><strong>${i.nome}</strong><small>${i.qtd}x ${i.obs||''}</small><span>R$ ${(i.qtd*i.preco).toFixed(2)}</span></div>
-        <button onclick="removerItem(${ix});this.closest('.popup').remove()">❌</button>
-      </div>`).join('')}
-    <h3>Total: R$ ${total.toFixed(2)}</h3>
-    <button onclick="finalizarPedido()">Finalizar Pedido</button>
-  </div>
- </div>`;
- document.body.appendChild(div);
+// 🛒 Carrinho com layout igual às sugestões
+function abrirCarrinho() {
+  if (!carrinho.length) return alert("Carrinho vazio!");
+
+  const total = carrinho.reduce((s, i) => s + i.qtd * i.preco, 0);
+  const div = document.createElement("div");
+  div.classList.add("popup");
+  div.innerHTML = `
+  <div class="popup-content">
+    <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+    <div class="popup-body">
+      <h2>🛒 Seu Pedido</h2>
+      ${carrinho.map((i, ix) => `
+        <div class="sug-card-horizontal">
+          <div class="sug-topo">
+            <img src="${i.img}" alt="${i.nome}">
+            <div class="sug-info">
+              <strong>${i.nome}</strong>
+              <small>${i.obs || 'Sem observações'}</small>
+              <span>${i.qtd}x • R$ ${(i.qtd * i.preco).toFixed(2)}</span>
+            </div>
+          </div>
+          <button onclick="removerItem(${ix}); this.closest('.popup').remove(); abrirCarrinho();">❌ Remover</button>
+        </div>
+      `).join('')}
+      <h3 style="margin-top:10px;color:var(--accent2);">Total: R$ ${total.toFixed(2)}</h3>
+      <button style="margin-top:15px;" onclick="finalizarPedido()">📦 Finalizar Pedido</button>
+    </div>
+  </div>`;
+  document.body.appendChild(div);
 }
+
 function removerItem(ix){carrinho.splice(ix,1);atualizarCarrinho();abrirCarrinho();}
 
 // 🔹 FINALIZAR PEDIDO
