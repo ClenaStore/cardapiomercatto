@@ -1234,7 +1234,79 @@ async function registrarUsuario() {
 // 🔹 SAIR
 // ===========================================================
 function sair(){localStorage.removeItem("mercatto_cliente");alert("Você saiu da conta.");document.querySelector(".popup")?.remove();abrirCadastroLogin();}
-function abrirUser(){const cliente=JSON.parse(localStorage.getItem("mercatto_cliente")||"null");if(cliente){const div=document.createElement("div");div.classList.add("popup");div.innerHTML=`<div class="popup-content"><button class="close-btn" onclick="this.closest('.popup').remove()">✖</button><div class="popup-body" style="text-align:center"><h2>👤 ${cliente.nome}</h2><p>${cliente.email}</p><p>${cliente.endereco||''}</p><button onclick="sair()">🚪 Sair</button></div></div>`;document.body.appendChild(div);}else abrirCadastroLogin();}
+function abrirUser() {
+  const cliente = JSON.parse(localStorage.getItem("mercatto_cliente") || "null");
+
+  if (cliente) {
+    const div = document.createElement("div");
+    div.classList.add("popup");
+    div.innerHTML = `
+      <div class="popup-content">
+        <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+        <div class="popup-body" style="text-align:left;">
+          <h2 style="text-align:center; color:var(--accent2); font-family:'Playfair Display',serif;">
+            👤 ${cliente.nome || ''}
+          </h2>
+          <p><strong>Email:</strong> ${cliente.email || '-'}</p>
+          <p><strong>WhatsApp:</strong> ${cliente.whats || '-'}</p>
+          <p><strong>CEP:</strong> ${cliente.cep || '-'}</p>
+          <p><strong>Endereço:</strong> ${cliente.endereco || '-'}</p>
+          <p><strong>Bairro:</strong> ${cliente.bairro || '-'}</p>
+          <p><strong>Número:</strong> ${cliente.numero || '-'}</p>
+          <p><strong>Complemento:</strong> ${cliente.complemento || '-'}</p>
+          <br>
+          <button style="background:var(--accent2); color:#000; font-weight:600;" onclick="editarDados()">✏️ Editar Dados</button>
+          <button style="margin-top:10px;" onclick="sair()">🚪 Sair</button>
+        </div>
+      </div>`;
+    document.body.appendChild(div);
+  } else {
+    abrirCadastroLogin();
+  }
+}
+function editarDados() {
+  const cliente = JSON.parse(localStorage.getItem("mercatto_cliente") || "null");
+  if (!cliente) return abrirCadastroLogin();
+  document.querySelector(".popup")?.remove();
+
+  const div = document.createElement("div");
+  div.classList.add("popup");
+  div.innerHTML = `
+    <div class="popup-content">
+      <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+      <div class="popup-body">
+        <h2>✏️ Editar Meus Dados</h2>
+        <label>Nome</label><input id="nome" value="${cliente.nome || ''}">
+        <label>Email</label><input id="email" value="${cliente.email || ''}">
+        <label>WhatsApp</label><input id="whats" value="${cliente.whats || ''}" oninput="aplicarMascaraWhats(this)">
+        <label>CEP</label><input id="cep" value="${cliente.cep || ''}" oninput="aplicarMascaraCEP(this)" onblur="buscarEndereco()">
+        <label>Endereço</label><input id="endereco" value="${cliente.endereco || ''}">
+        <label>Bairro</label><input id="bairro" value="${cliente.bairro || ''}">
+        <label>Número</label><input id="numero" value="${cliente.numero || ''}">
+        <label>Complemento</label><input id="complemento" value="${cliente.complemento || ''}">
+        <button onclick="salvarEdicao()">💾 Salvar Alterações</button>
+      </div>
+    </div>`;
+  document.body.appendChild(div);
+}
+
+function salvarEdicao() {
+  const atualizado = {
+    nome: nome.value.trim(),
+    email: email.value.trim(),
+    whats: whats.value.trim(),
+    cep: cep.value.trim(),
+    endereco: endereco.value.trim(),
+    bairro: bairro.value.trim(),
+    numero: numero.value.trim(),
+    complemento: complemento.value.trim(),
+  };
+  localStorage.setItem("mercatto_cliente", JSON.stringify(atualizado));
+  alert("✅ Dados atualizados com sucesso!");
+  document.querySelector(".popup")?.remove();
+  abrirUser(); // reabre com os dados atualizados
+}
+
 
 </script>
 
