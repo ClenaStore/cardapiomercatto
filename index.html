@@ -605,90 +605,28 @@ body.popup-ativo {
 </div>
 
 <script>
+/************************************************************
+🍝 MERCATTO DELIVERY - CARDÁPIO COMPLETO (FINAL)
+Versão: 3.0 - Login no checkout + sugestões + CEP automático
+Autor: Grupo DV
+************************************************************/
 
+// 🔗 CONFIG GERAL
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbz2W_0Kua876QduJkKeNef_bCRuMUITNkatqLn-oBDBZDkiT5hBJvXcEulEyxEPGgJk/exec";
+const taxas = {"Vila Brasil":8,"São Caetano":7,"Primavera":9,"Jardim Europa":10,"Piatã":12};
+const STORAGE_KEYS = {cliente:'mercatto_cliente', carrinho:'mercatto_carrinho'};
 
+// ===========================================================
+// 🔹 LOCALSTORAGE
+// ===========================================================
+function salvarClienteLocal(c){try{localStorage.setItem(STORAGE_KEYS.cliente,JSON.stringify(c));}catch(e){console.warn(e);}}
+function carregarClienteLocal(){try{const c=JSON.parse(localStorage.getItem(STORAGE_KEYS.cliente));return c&&typeof c==='object'?c:{};}catch{return {};}}
+function salvarCarrinhoLocal(c){try{localStorage.setItem(STORAGE_KEYS.carrinho,JSON.stringify(c));}catch(e){console.warn(e);}}
+function carregarCarrinhoLocal(){try{const c=JSON.parse(localStorage.getItem(STORAGE_KEYS.carrinho));return Array.isArray(c)?c:[];}catch{return [];}}
 
-  } catch (e) {
-    console.warn("Erro ao ler cliente:", e);
-    localStorage.removeItem("mercatto_cliente");
-    window.location.href = "user.html";
-  }
-})();
-
-
-
-// 🧩 GERENCIADOR DE LOCALSTORAGE - Mantém apenas dados importantes
-const STORAGE_KEYS = {
-  cliente: 'mercatto_cliente',
-  carrinho: 'mercatto_carrinho'
-};
-
-function salvarClienteLocal(cliente) {
-  try { localStorage.setItem(STORAGE_KEYS.cliente, JSON.stringify(cliente)); }
-  catch (e) { console.warn('⚠️ Erro ao salvar cliente:', e); }
-}
-
-function carregarClienteLocal() {
-  try {
-    const c = JSON.parse(localStorage.getItem(STORAGE_KEYS.cliente));
-    return c && typeof c === 'object' ? c : {};
-  } catch {
-    return {};
-  }
-}
-
-function salvarCarrinhoLocal(carrinho) {
-  try { localStorage.setItem(STORAGE_KEYS.carrinho, JSON.stringify(carrinho)); }
-  catch (e) { console.warn('⚠️ Erro ao salvar carrinho:', e); }
-}
-
-function carregarCarrinhoLocal() {
-  try {
-    const c = JSON.parse(localStorage.getItem(STORAGE_KEYS.carrinho));
-    return Array.isArray(c) ? c : [];
-  } catch {
-    return [];
-  }
-}
-
-// 🔗 CONFIG
-const ENDPOINT="https://script.google.com/macros/s/AKfycbz2W_0Kua876QduJkKeNef_bCRuMUITNkatqLn-oBDBZDkiT5hBJvXcEulEyxEPGgJk/exec";
-const taxas={"Vila Brasil":8,"São Caetano":7,"Primavera":9,"Jardim Europa":10,"Piatã":12};
-
-
-  
-
-// 🔗 RELAÇÕES DIRETAS ENTRE PRODUTOS (por ID)
-const relacoesPorId = {
-  // 🍕 Calzones e pizzas sugerem bebidas e sobremesas
-  85: [200, 201, 90], // Calzone Calabresa → Coca, Guaraná, Pudim
-  86: [200, 201, 90],
-  87: [200, 201, 84],
-  88: [200, 202, 82],
-
-  // 🍣 Sushis e combinados → vinho e sobremesa
-  73: [90, 201],
-  74: [77, 90],
-  76: [74, 90],
-  77: [74, 90],
-  78: [74, 90],
-
-  // 🍖 Pratos principais → vinho e sobremesa
-  60: [90],
-  61: [90],
-  64: [90],
-  65: [90],
-
-  // 🍔 Burgers → refrigerante e sobremesa
-  69: [200, 201, 90],
-  70: [200, 201, 82],
-  72: [200, 202, 83]
-};
-
-
-
-
-  
+// ===========================================================
+// 🔹 PRODUTOS (EXEMPLO - ADICIONE SEUS PRODUTOS AQUI)
+// ===========================================================
 const produtos = [
   // 🍽️ PRATOS INDIVIDUAIS DELICIOSOS
   {
@@ -922,326 +860,179 @@ const produtos = [
     categoria: 'Sobremesas Individuais Maravilhosas'
   }
 ];
+// 🔗 RELAÇÕES DIRETAS ENTRE PRODUTOS (por ID)
+const relacoesPorId = {
+  // 🍕 Calzones e pizzas sugerem bebidas e sobremesas
+  85: [200, 201, 90], // Calzone Calabresa → Coca, Guaraná, Pudim
+  86: [200, 201, 90],
+  87: [200, 201, 84],
+  88: [200, 202, 82],
 
-  // 🔹 FUNÇÃO PARA RENDERIZAR PRODUTOS NA TELA
-function renderizar(lista) {
-  const menu = document.getElementById("menu");
-  menu.innerHTML = "";
+  // 🍣 Sushis e combinados → vinho e sobremesa
+  73: [90, 201],
+  74: [77, 90],
+  76: [74, 90],
+  77: [74, 90],
+  78: [74, 90],
 
-  if (!lista || lista.length === 0) {
-    menu.innerHTML = `<p style="text-align:center;color:#ccc;padding:20px;">Nenhum item encontrado.</p>`;
-    return;
-  }
+  // 🍖 Pratos principais → vinho e sobremesa
+  60: [90],
+  61: [90],
+  64: [90],
+  65: [90],
 
-  lista.forEach(p => {
-    const card = document.createElement("div");
-    card.classList.add("card");
+  // 🍔 Burgers → refrigerante e sobremesa
+  69: [200, 201, 90],
+  70: [200, 201, 82],
+  72: [200, 202, 83]
+};
 
-    const midia = p.video
-      ? `<video src="${p.video}" autoplay muted loop playsinline></video>`
-      : `<img src="${p.img}" alt="${p.nome}">`;
 
-    card.innerHTML = `
-  <div class="card-media">
-    ${midia}
-  </div>
+
+// ===========================================================
+// 🔹 VARIÁVEIS
+// ===========================================================
+let carrinho = carregarCarrinhoLocal();
+let cliente = carregarClienteLocal();
+
+// ===========================================================
+// 🔹 CATEGORIAS
+// ===========================================================
+const categorias=[...new Set(produtos.map(p=>p.categoria))];
+const catDiv=document.getElementById("categorias");
+categorias.forEach((c,i)=>{const b=document.createElement("button");b.textContent=c;if(i===0)b.classList.add("active");b.onclick=()=>filtrar(c);catDiv.appendChild(b);});
+function filtrar(cat){document.querySelectorAll('.categorias button').forEach(b=>b.classList.remove('active'));[...catDiv.children].find(b=>b.textContent===cat).classList.add('active');renderizar(produtos.filter(p=>p.categoria===cat));}
+filtrar(categorias[0]);
+
+// ===========================================================
+// 🔹 BUSCA
+// ===========================================================
+function buscarItem(){const t=document.getElementById("busca").value.toLowerCase();if(!t)return filtrar(document.querySelector(".categorias button.active").textContent);renderizar(produtos.filter(p=>p.nome.toLowerCase().includes(t)||p.desc.toLowerCase().includes(t)));}
+
+// ===========================================================
+// 🔹 RENDERIZAÇÃO DE PRODUTOS
+// ===========================================================
+function renderizar(lista){
+ const menu=document.getElementById("menu");menu.innerHTML="";
+ if(!lista||lista.length===0){menu.innerHTML=`<p style="text-align:center;color:#ccc;">Nenhum item encontrado.</p>`;return;}
+ lista.forEach(p=>{
+  const card=document.createElement("div");card.classList.add("card");
+  const midia=p.video?`<video autoplay muted loop playsinline><source src="${p.video}" type="video/mp4"></video>`:`<img src="${p.img}" alt="${p.nome}">`;
+  card.innerHTML=`
+  <div class="card-media">${midia}</div>
   <div class="card-body">
     <h3>${p.nome}</h3>
     <p>${p.desc}</p>
     <span>R$ ${p.preco.toFixed(2)}</span>
     <button onclick="abrirPopup(${p.id})">Adicionar</button>
-  </div>
-`;
-
-
-    menu.appendChild(card);
-  });
+  </div>`;
+  menu.appendChild(card);
+ });
 }
 
-// 🧠 VARIÁVEIS
-let carrinho = carregarCarrinhoLocal();
-let cliente = carregarClienteLocal();
-
-const categorias=[...new Set(produtos.map(p=>p.categoria))];
-const catDiv=document.getElementById("categorias"),menuDiv=document.getElementById("menu");
-
-// 🔹 GERA CATEGORIAS
-categorias.forEach((c,i)=>{
- const b=document.createElement("button");
- b.textContent=c;if(i===0)b.classList.add("active");
- b.onclick=()=>filtrar(c);catDiv.appendChild(b);
-});
-
-// 🧭 Controle da rolagem automática das categorias
-let isDragging = false;
-let isAutoScrolling = true;
-let startX = 0;
-let scrollStart = 0;
-let scrollOffset = 0;
-
-// 🖐️ Gestos manuais (toque ou mouse)
-function startScroll(x) {
-  isDragging = true;
-  isAutoScrolling = false; // 🔴 Para a rolagem automática
-  startX = x;
-  scrollStart = catDiv.scrollLeft;
-  catDiv.style.scrollBehavior = "auto";
-}
-function moveScroll(x) {
-  if (!isDragging) return;
-  const walk = x - startX;
-  catDiv.scrollLeft = scrollStart - walk;
-}
-function endScroll() { isDragging = false; }
-
-// 🖱️ Suporte total para computador
-catDiv.addEventListener("mousedown", e => startScroll(e.pageX));
-catDiv.addEventListener("mousemove", e => moveScroll(e.pageX));
-catDiv.addEventListener("mouseup", endScroll);
-catDiv.addEventListener("mouseleave", endScroll);
-
-// 📱 Suporte para toque (celular)
-catDiv.addEventListener("touchstart", e => startScroll(e.touches[0].pageX), { passive: true });
-catDiv.addEventListener("touchmove", e => moveScroll(e.touches[0].pageX), { passive: true });
-catDiv.addEventListener("touchend", endScroll, { passive: true });
-
-// 🧭 Scroll com roda do mouse também pausa o automático
-catDiv.addEventListener("wheel", () => { isAutoScrolling = false; }, { passive: true });
-
-// 🕹️ Clique em categoria também pausa a rolagem
-function filtrar(cat) {
-  isAutoScrolling = false; // 🔴 Parar ao clicar
-  document.querySelectorAll('.categorias button').forEach(b => b.classList.remove('active'));
-  [...catDiv.children].find(b => b.textContent === cat).classList.add('active');
-  renderizar(produtos.filter(p => p.categoria === cat));
+// ===========================================================
+// 🔹 POPUP DE PRODUTO
+// ===========================================================
+function abrirPopup(id){
+ const p=produtos.find(x=>x.id===id);
+ const div=document.createElement("div");
+ div.classList.add("popup");
+ div.innerHTML=`
+ <div class="popup-content">
+   <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+   <div class="popup-body">
+     <h2>${p.nome}</h2>
+     <p>${p.desc}</p>
+     <label>Quantidade</label><input id="qtd" type="number" min="1" value="1">
+     <label>Observação</label><textarea id="obs" placeholder="Ex: sem cebola..."></textarea>
+     <button onclick="adicionar(${p.id})">Adicionar ao Carrinho</button>
+   </div>
+ </div>`;
+ document.body.appendChild(div);
 }
 
-// 🐢 Rolagem automática lenta e suave (para desktop e mobile)
-setInterval(() => {
-  if (!isAutoScrolling || isDragging) return;
-  scrollOffset += 1; // velocidade de deslocamento
-  catDiv.scrollTo({ left: scrollOffset, behavior: "smooth" });
-  if (catDiv.scrollLeft + catDiv.clientWidth >= catDiv.scrollWidth - 5) {
-    scrollOffset = 0;
-    catDiv.scrollTo({ left: 0, behavior: "smooth" });
-  }
-}, 120);
-
-
-function buscarItem(){
- const termo=document.getElementById("busca").value.toLowerCase();
- if(!termo)return filtrar(document.querySelector(".categorias button.active").textContent);
- renderizar(produtos.filter(p=>p.nome.toLowerCase().includes(termo)||p.desc.toLowerCase().includes(termo)));
-}
-
-
-
-
-// 🔹 POPUP DE PRODUTO — compatível com imagem e vídeo
-function abrirPopup(id) {
-  const p = produtos.find(x => x.id === id);
-  if (!p) return;
-
-  const div = document.createElement("div");
-  div.classList.add("popup");
-
-  // 🧠 Decide se mostra vídeo ou imagem
-  const midiaHTML = p.video
-    ? `<video autoplay muted loop playsinline style="width:100%;height:180px;object-fit:cover;border:none;">
-         <source src="${p.video}" type="video/mp4">
-       </video>`
-    : `<img src="${p.img}" alt="${p.nome}" style="width:100%;height:180px;object-fit:cover;">`;
-
-  div.innerHTML = `
-    <div class="popup-content">
-      <button class="close-btn" onclick="fecharPopup(this)">✖</button>
-      ${midiaHTML}
-      <div class="popup-body">
-        <h2>${p.nome}</h2>
-        <p>${p.desc}</p>
-        <label>Quantidade</label>
-        <input id="qtd" type="number" min="1" value="1">
-        <label>Observação</label>
-        <textarea id="obs" placeholder="Ex: sem cebola..."></textarea>
-        <button onclick="adicionar(${p.id})">Adicionar ao Carrinho</button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(div);
-  document.body.classList.add('popup-ativo'); // bloqueia fundo
-}
-
-function fecharPopup(btn) {
-  const popup = btn.closest('.popup');
-  if (popup) popup.remove();
-  if (!document.querySelector('.popup')) {
-    document.body.classList.remove('popup-ativo');
-  }
-}
-
-
-// 🔹 ADICIONAR AO CARRINHO
+// ===========================================================
+// 🔹 CARRINHO
+// ===========================================================
 function adicionar(id){
  const qtd=parseInt(document.getElementById('qtd').value)||1;
  const obs=document.getElementById('obs').value||'';
  const p=produtos.find(x=>x.id===id);
  carrinho.push({...p,qtd,obs});
-salvarCarrinhoLocal(carrinho);
+ salvarCarrinhoLocal(carrinho);
  document.querySelector('.popup')?.remove();
  atualizarCarrinho();
  mostrarSugestoes(p.id);
 }
-
-function mostrarSugestoes(idProduto) {
-  const produtoBase = produtos.find(p => p.id === idProduto);
-  if (!produtoBase) return;
-
-  const idsRelacionados = relacoesPorId[idProduto] || [];
-  let candidatos = produtos.filter(p => idsRelacionados.includes(p.id));
-
-  const idsCarrinho = carrinho.map(i => i.id);
-  candidatos = candidatos.filter(c => !idsCarrinho.includes(c.id));
-
-  if (candidatos.length === 0) {
-    candidatos = produtos.filter(p => !idsCarrinho.includes(p.id) && p.id !== idProduto).slice(0, 3);
-  }
-
-  if (candidatos.length === 0) return;
-
-  const div = document.createElement("div");
-  div.classList.add("popup");
-  div.innerHTML = `
-  <div class="popup-content">
-    <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-    <div class="popup-body">
-      <h2>🍷 Sugestões que combinam com ${produtoBase.nome}</h2>
-      ${candidatos.map(s => `
-        <div class="sug-card-horizontal">
-          <div class="sug-topo">
-            <img src="${s.img}" alt="${s.nome}">
-            <div class="sug-info">
-              <strong>${s.nome}</strong>
-              <small>${s.desc}</small>
-              <span>R$ ${s.preco.toFixed(2)}</span>
-            </div>
-          </div>
-          <button onclick="abrirPopup(${s.id}); this.closest('.popup').remove();">Pedir junto</button>
-        </div>
-      `).join('')}
-      <button onclick="abrirCarrinho()">🛒 Ver Carrinho</button>
-    </div>
-  </div>`;
-  document.body.appendChild(div);
-}
-
-
-
-
-
-function abrirSugestao(id, btn){
-  // Fecha o pop-up de sugestões antes de abrir o novo
-  btn.closest('.sugestoes-popup')?.remove();
-  // Reaproveita a mesma função que abre o pop-up de adicionar item
-  abrirPopup(id);
-}
-
-
-function pedirJunto(id,btn){btn.closest('.popup').remove();abrirPopup(id);}
+function removerItem(ix){carrinho.splice(ix,1);salvarCarrinhoLocal(carrinho);atualizarCarrinho();document.querySelector('.popup')?.remove();abrirCarrinho();}
 function atualizarCarrinho(){document.getElementById('cart-count').textContent=carrinho.reduce((s,i)=>s+i.qtd,0);}
 
-// 🛒 Carrinho com rodapé fixo real e independente do conteúdo
-function abrirCarrinho() {
-  if (!carrinho.length) return alert("Carrinho vazio!");
-
-  const total = carrinho.reduce((s, i) => s + i.qtd * i.preco, 0);
-  const div = document.createElement("div");
-  div.classList.add("popup");
-
-  div.innerHTML = `
-  <div class="popup-content" style="display:flex;flex-direction:column;max-height:90vh;">
-    <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-
-    <!-- Corpo rolável -->
-    <div class="popup-body" style="flex:1;overflow-y:auto;padding-right:8px;">
-      <h2>🛒 Seu Pedido</h2>
-      ${carrinho.map((i, ix) => `
-        <div class="sug-card-horizontal">
-          <div class="sug-topo">
-            <img src="${i.img}" alt="${i.nome}">
-            <div class="sug-info">
-              <strong>${i.nome}</strong>
-              <small>${i.obs || 'Sem observações'}</small>
-              <span>${i.qtd}x • R$ ${(i.qtd * i.preco).toFixed(2)}</span>
-            </div>
-          </div>
-          <button onclick="removerItem(${ix}); this.closest('.popup').remove(); abrirCarrinho();">❌ Remover</button>
-        </div>
-      `).join('')}
-    </div>
-
-    <!-- Rodapé sempre visível -->
-    <div class="carrinho-footer" style="flex-shrink:0;">
-      <h3>Total: R$ ${total.toFixed(2)}</h3>
-      <button onclick="finalizarPedido()">📦 Finalizar Pedido</button>
-    </div>
-  </div>`;
-
-  document.body.appendChild(div);
+// ===========================================================
+// 🔹 SUGESTÕES
+// ===========================================================
+function mostrarSugestoes(idProduto){
+ const produtoBase=produtos.find(p=>p.id===idProduto);if(!produtoBase)return;
+ const idsRelacionados=relacoesPorId[idProduto]||[];
+ let candidatos=produtos.filter(p=>idsRelacionados.includes(p.id));
+ const idsCarrinho=carrinho.map(i=>i.id);
+ candidatos=candidatos.filter(c=>!idsCarrinho.includes(c.id));
+ if(candidatos.length===0){candidatos=produtos.filter(p=>!idsCarrinho.includes(p.id)&&p.id!==idProduto).slice(0,3);}
+ if(candidatos.length===0)return;
+ const div=document.createElement("div");
+ div.classList.add("popup");
+ div.innerHTML=`
+ <div class="popup-content">
+   <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+   <div class="popup-body">
+     <h2>🍷 Sugestões que combinam com ${produtoBase.nome}</h2>
+     ${candidatos.map(s=>`
+       <div class="sug-card-horizontal">
+         <div class="sug-topo"><img src="${s.img}" alt="${s.nome}">
+         <div class="sug-info"><strong>${s.nome}</strong><small>${s.desc}</small><span>R$ ${s.preco.toFixed(2)}</span></div></div>
+         <button onclick="abrirPopup(${s.id}); this.closest('.popup').remove();">Pedir junto</button>
+       </div>`).join('')}
+     <button onclick="abrirCarrinho()">🛒 Ver Carrinho</button>
+   </div>
+ </div>`;
+ document.body.appendChild(div);
 }
 
-
-
-
-function removerItem(ix){carrinho.splice(ix,1);
-salvarCarrinhoLocal(carrinho);
-atualizarCarrinho();abrirCarrinho();}
-
-// 🔹 FINALIZAR PEDIDO
-async function finalizarPedido() {
-  // ✅ Verifica se o usuário está logado antes de continuar
-  const cliente = JSON.parse(localStorage.getItem("mercatto_cliente") || "null");
-  if (!cliente) {
-    alert("🔒 Faça login ou cadastro antes de finalizar o pedido!");
-    abrirCadastroLogin(); // abre o popup de login dentro do cardápio
-    return; // interrompe aqui
-  }
-
-  // 👇 continua normalmente se já estiver logado
-  document.querySelectorAll('.popup').forEach(p => p.remove());
-  const c = cliente;
-  const div = document.createElement("div");
-  div.classList.add("popup");
-  div.innerHTML = `
-  <div class="popup-content">
-    <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-    <div class="popup-body">
-      <h2>📦 Dados de Entrega</h2>
-      <label>Nome</label><input id="nome" value="${c.nome || ''}">
-      <label>Email</label><input id="email" value="${c.email || ''}">
-      <label>WhatsApp</label><input id="whats" value="${c.whats || ''}">
-      <label>CEP</label><input id="cep" value="${c.cep || ''}" onblur="buscarEndereco()">
-      <label>Endereço</label><input id="endereco" value="${c.endereco || ''}">
-      <label>Bairro</label><input id="bairro" value="${c.bairro || ''}" onblur="mostrarResumo()">
-      <label>Número</label><input id="numero" value="${c.numero || ''}">
-      <label>Complemento</label><input id="complemento" value="${c.complemento || ''}">
-      <label>Forma de pagamento</label>
-      <select id="pagamento"><option>Pix</option><option>Cartão</option><option>Dinheiro</option></select>
-      <label id="lTroco" style="display:none;">Troco para:</label>
-      <input id="troco" style="display:none;" placeholder="Ex: R$ 100,00">
-      <div id="resumo-total"></div>
-      <button onclick="enviarPedido()">Enviar Pedido</button>
-    </div>
-  </div>`;
-  document.body.appendChild(div);
-  document.getElementById('pagamento').onchange = () => {
-    const v = document.getElementById('pagamento').value;
-    document.getElementById('lTroco').style.display = v === 'Dinheiro' ? 'block' : 'none';
-    document.getElementById('troco').style.display = v === 'Dinheiro' ? 'block' : 'none';
-  };
+// ===========================================================
+// 🔹 ABRIR CARRINHO
+// ===========================================================
+function abrirCarrinho(){
+ if(!carrinho.length)return alert("Carrinho vazio!");
+ const total=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
+ const div=document.createElement("div");
+ div.classList.add("popup");
+ div.innerHTML=`
+ <div class="popup-content" style="display:flex;flex-direction:column;max-height:90vh;">
+   <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+   <div class="popup-body" style="flex:1;overflow-y:auto;padding-right:8px;">
+     <h2>🛒 Seu Pedido</h2>
+     ${carrinho.map((i,ix)=>`
+       <div class="sug-card-horizontal">
+         <div class="sug-topo"><img src="${i.img}" alt="${i.nome}">
+         <div class="sug-info"><strong>${i.nome}</strong><small>${i.obs||'Sem observações'}</small><span>${i.qtd}x • R$ ${(i.qtd*i.preco).toFixed(2)}</span></div></div>
+         <button onclick="removerItem(${ix})">❌ Remover</button>
+       </div>`).join('')}
+   </div>
+   <div class="carrinho-footer"><h3>Total: R$ ${total.toFixed(2)}</h3><button onclick="finalizarPedido()">📦 Finalizar Pedido</button></div>
+ </div>`;
+ document.body.appendChild(div);
 }
 
-
+// ===========================================================
+// 🔹 FINALIZAR PEDIDO (LOGIN EXIGIDO)
+// ===========================================================
+async function finalizarPedido(){
+ const cliente=JSON.parse(localStorage.getItem("mercatto_cliente")||"null");
+ if(!cliente){alert("🔒 Faça login ou cadastro antes de finalizar o pedido!");abrirCadastroLogin();return;}
+ document.querySelectorAll('.popup').forEach(p=>p.remove());
+ const c=cliente;
+ const div=document.createElement("div");
+ div.classList.add("popup");
+ div.innerHTML=`
  <div class="popup-content">
   <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
   <div class="popup-body">
@@ -1270,205 +1061,28 @@ async function finalizarPedido() {
  };
 }
 
-// 🔹 CEP
-async function buscarEndereco(){
- const cep=document.getElementById('cep').value.replace(/\D/g,'');
- if(cep.length!==8)return;
- const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);
- const d=await r.json();
- if(!d.erro){endereco.value=d.logradouro||'';bairro.value=d.bairro||'';}
-}
+// ===========================================================
+// 🔹 CEP + RESUMO + ENVIAR PEDIDO
+// ===========================================================
+async function buscarEndereco(){const cep=document.getElementById('cep').value.replace(/\D/g,'');if(cep.length!==8)return;const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);const d=await r.json();if(!d.erro){endereco.value=d.logradouro||'';bairro.value=d.bairro||'';}}
+function mostrarResumo(){const bairro=document.getElementById('bairro').value.trim();const resumoDiv=document.getElementById('resumo-total');const botaoEnviar=document.querySelector("#resumo-total + button");resumoDiv.innerHTML='';if(!bairro){botaoEnviar.disabled=true;botaoEnviar.style.opacity=".5";return;}if(!(bairro in taxas)){resumoDiv.innerHTML=`<div style="background:#3f1d1d;padding:10px;border-radius:10px;color:#fca5a5;">🚫 Não entregamos neste bairro.<br>Entre em contato via WhatsApp.</div>`;botaoEnviar.disabled=true;botaoEnviar.style.opacity=".5";return;}const taxa=taxas[bairro];const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);const total=subtotal+taxa;resumoDiv.innerHTML=`<strong>Resumo:</strong><br>Subtotal: R$ ${subtotal.toFixed(2)}<br>Entrega (${bairro}): R$ ${taxa.toFixed(2)}<br><strong>Total: R$ ${total.toFixed(2)}</strong>`;botaoEnviar.disabled=false;botaoEnviar.style.opacity="1";}
+async function enviarPedido(){const bairro=document.getElementById('bairro').value.trim();if(!(bairro in taxas)){alert("⚠️ Bairro sem entrega. Contate via WhatsApp.");return;}const c={nome:nome.value,email:email.value,whats:whats.value,cep:cep.value,endereco:endereco.value,bairro,numero:numero.value,complemento:complemento.value,pagamento:pagamento.value,troco:troco.value};localStorage.setItem("mercatto_cliente",JSON.stringify(c));const taxa=taxas[bairro];const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);const total=subtotal+taxa;const payload={acao:"pedido",cliente:c,itens:carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),obs:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),subtotal,taxa,total};await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});alert(`✅ Pedido enviado!\nTotal: R$ ${total.toFixed(2)}`);carrinho=[];salvarCarrinhoLocal(carrinho);atualizarCarrinho();}
 
-// 🔹 RESUMO + TAXA
-function mostrarResumo(){
- const bairro=document.getElementById('bairro').value.trim();
- const resumoDiv=document.getElementById('resumo-total');
- const botaoEnviar=document.querySelector("#resumo-total + button");
- resumoDiv.innerHTML='';
- if(!bairro){botaoEnviar.disabled=true;botaoEnviar.style.opacity=".5";return;}
- if(!(bairro in taxas)){
-   resumoDiv.innerHTML=`
-   <div style="background:#3f1d1d;padding:10px;border-radius:10px;color:#fca5a5;">
-     🚫 Não entregamos neste bairro.<br>Entre em contato pelo WhatsApp para verificar disponibilidade.
-   </div>
-   <a href="https://wa.me/557736135148?text=Olá! Gostaria de saber se fazem entregas no bairro ${bairro}." target="_blank"
-   style="display:inline-block;margin-top:10px;background:#25D366;color:#fff;padding:10px 16px;border-radius:10px;text-decoration:none;font-weight:600;">💬 Falar no WhatsApp</a>`;
-   botaoEnviar.disabled=true;botaoEnviar.style.opacity=".5";return;
- }
- const taxa=taxas[bairro];
- const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
- const total=subtotal+taxa;
- resumoDiv.innerHTML=`<strong>Resumo:</strong><br>Subtotal: R$ ${subtotal.toFixed(2)}<br>Entrega (${bairro}): R$ ${taxa.toFixed(2)}<br><strong>Total: R$ ${total.toFixed(2)}</strong>`;
- botaoEnviar.disabled=false;botaoEnviar.style.opacity="1";
-}
+// ===========================================================
+// 🔹 LOGIN / CADASTRO
+// ===========================================================
+function abrirCadastroLogin(){const div=document.createElement("div");div.classList.add("popup");div.innerHTML=`<div class="popup-content"><button class="close-btn" onclick="this.closest('.popup').remove()">✖</button><div class="popup-body"><h2>👤 Bem-vindo ao Mercatto Delivery</h2><label>Email</label><input id="loginEmail" type="email"><label>Senha</label><input id="loginSenha" type="password"><button onclick="fazerLogin()">Entrar</button><hr><h3 style="color:var(--accent2)">Primeiro acesso?</h3><button onclick="abrirCadastroRapido()">Criar Conta</button></div></div>`;document.body.appendChild(div);}
+async function fazerLogin(){const email=document.getElementById("loginEmail").value;const senha=document.getElementById("loginSenha").value;const res=await fetch(`${ENDPOINT}?acao=loginUsuario&email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`);const data=await res.json();if(data.sucesso){localStorage.setItem("mercatto_cliente",JSON.stringify(data.usuario));alert("✅ Login realizado!");document.querySelector(".popup")?.remove();}else{alert("❌ Email ou senha incorretos.");}}
+function abrirCadastroRapido(){document.querySelector(".popup")?.remove();const div=document.createElement("div");div.classList.add("popup");div.innerHTML=`<div class="popup-content"><button class="close-btn" onclick="this.closest('.popup').remove()">✖</button><div class="popup-body"><h2>📋 Criar Conta</h2><input id="nome" placeholder="Nome completo"><input id="email" type="email" placeholder="Email"><input id="senha" type="password" placeholder="Senha"><input id="whats" placeholder="WhatsApp"><input id="cep" placeholder="CEP" onblur="buscarEndereco()"><input id="endereco" placeholder="Endereço"><input id="bairro" placeholder="Bairro"><input id="numero" placeholder="Número"><input id="complemento" placeholder="Complemento"><button onclick="registrarUsuario()">Salvar e Continuar</button></div></div>`;document.body.appendChild(div);}
+async function registrarUsuario(){const d={acao:"registrarUsuario",nome:nome.value,email:email.value,senha:senha.value,whats:whats.value,cep:cep.value,endereco:endereco.value,bairro:bairro.value,numero:numero.value,complemento:complemento.value};const r=await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(d)});const txt=await r.text();if(txt.toLowerCase().includes("sucesso")){localStorage.setItem("mercatto_cliente",JSON.stringify(d));alert("✅ Cadastro realizado com sucesso!");document.querySelector(".popup")?.remove();}else{alert("⚠️ Erro ao cadastrar: "+txt);}}
 
-// 🔹 ENVIAR PEDIDO
-async function enviarPedido(){
- const bairro=document.getElementById('bairro').value.trim();
- if(!(bairro in taxas)){
-   alert("⚠️ Este bairro ainda não possui entrega. Contate-nos via WhatsApp.");
-   window.open(`https://wa.me/557736135148?text=Olá! Gostaria de saber se fazem entregas no bairro ${bairro}.`);
-   return;
- }
- const c={nome:nome.value,email:email.value,whats:whats.value,cep:cep.value,endereco:endereco.value,bairro,numero:numero.value,complemento:complemento.value,pagamento:pagamento.value,troco:troco.value};
- localStorage.setItem("mercatto_cliente",JSON.stringify(c));
- const taxa=taxas[bairro];
- const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
- const total=subtotal+taxa;
- const payload={acao:"pedido",cliente:c,itens:carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),obs:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),subtotal,taxa,total};
- overlay.style.display='flex';
- try{
-   await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
-   alert(`✅ Pedido enviado!\nTotal: R$ ${total.toFixed(2)}`);
- }catch(e){alert("⚠️ Erro ao enviar pedido.");}
- overlay.style.display='none';
- carrinho=[];atualizarCarrinho();
-}
-
-// 🔒 Impede interação no fundo quando há pop-up
-function bloquearFundo(){
-  document.body.classList.add('popup-ativo');
-}
-function liberarFundo(){
-  document.body.classList.remove('popup-ativo');
-}
-
-// Garante que qualquer pop-up ativa o bloqueio
-const observer = new MutationObserver(()=>{
-  const temPopup = document.querySelector('.popup, .sugestoes-popup');
-  if(temPopup) bloquearFundo(); else liberarFundo();
-});
-observer.observe(document.body,{childList:true});
-filtrar(categorias[0]);
-
-
-// 👤 BOTÃO DE USUÁRIO
-function abrirUser() {
-  const cliente = JSON.parse(localStorage.getItem("mercatto_cliente") || "null");
-
-  if (cliente) {
-    // Usuário logado -> menu rápido
-    const div = document.createElement("div");
-    div.classList.add("popup");
-    div.innerHTML = `
-      <div class="popup-content">
-        <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-        <div class="popup-body" style="text-align:center">
-          <h2>👤 ${cliente.nome}</h2>
-          <p>${cliente.email}</p>
-          <p><b>${cliente.endereco}, ${cliente.numero}</b></p>
-          <button onclick="sair()">🚪 Sair</button>
-        </div>
-      </div>`;
-    document.body.appendChild(div);
-  } else {
-    // Primeira vez -> pede cadastro/login
-    abrirCadastroLogin();
-  }
-}
-
-// 📥 Pop-up de cadastro / login
-function abrirCadastroLogin() {
-  const div = document.createElement("div");
-  div.classList.add("popup");
-  div.innerHTML = `
-  <div class="popup-content">
-    <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-    <div class="popup-body">
-      <h2>👤 Bem-vindo ao Mercatto Delivery</h2>
-      <label>Email</label><input id="loginEmail" type="email" placeholder="Seu email">
-      <label>Senha</label><input id="loginSenha" type="password" placeholder="Sua senha">
-      <button onclick="fazerLogin()">Entrar</button>
-      <hr style="margin:15px 0;border-color:#333;">
-      <h3 style="color:var(--accent2);">Primeiro acesso?</h3>
-      <button onclick="abrirCadastroRapido()">Criar Conta</button>
-    </div>
-  </div>`;
-  document.body.appendChild(div);
-}
-
-// 🧾 Cadastro rápido
-function abrirCadastroRapido() {
-  document.querySelector(".popup")?.remove();
-  const div = document.createElement("div");
-  div.classList.add("popup");
-  div.innerHTML = `
-  <div class="popup-content">
-    <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-    <div class="popup-body">
-      <h2>📋 Criar Conta</h2>
-      <input id="nome" placeholder="Nome completo">
-      <input id="email" type="email" placeholder="Email">
-      <input id="senha" type="password" placeholder="Senha">
-      <input id="whats" placeholder="WhatsApp">
-      <input id="cep" placeholder="CEP" onblur="buscarEndereco()">
-      <input id="endereco" placeholder="Endereço">
-      <input id="bairro" placeholder="Bairro">
-      <input id="numero" placeholder="Número">
-      <input id="complemento" placeholder="Complemento">
-      <button onclick="registrarUsuario()">Salvar e Continuar</button>
-    </div>
-  </div>`;
-  document.body.appendChild(div);
-}
-
-// 🔐 Login existente
-async function fazerLogin() {
-  const email = document.getElementById("loginEmail").value;
-  const senha = document.getElementById("loginSenha").value;
-
-  const res = await fetch(`${ENDPOINT}?acao=loginUsuario&email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`);
-  const data = await res.json();
-
-  if (data.sucesso) {
-    localStorage.setItem("mercatto_cliente", JSON.stringify(data.usuario));
-    alert("✅ Login realizado!");
-    document.querySelector(".popup")?.remove();
-    window.location.href = "index.html"; // 🔹 volta pro cardápio
-  } else {
-    alert("❌ Email ou senha incorretos.");
-  }
-}
-
-// 🧾 Registrar novo usuário
-async function registrarUsuario() {
-  const d = {
-    acao: "registrarUsuario",
-    nome: nome.value,
-    email: email.value,
-    senha: senha.value,
-    whats: whats.value,
-    cep: cep.value,
-    endereco: endereco.value,
-    bairro: bairro.value,
-    numero: numero.value,
-    complemento: complemento.value
-  };
-
-  const r = await fetch(ENDPOINT, { method: "POST", body: JSON.stringify(d) });
-  const txt = await r.text();
-
-  if (txt.toLowerCase().includes("sucesso")) {
-    localStorage.setItem("mercatto_cliente", JSON.stringify(d));
-    alert("✅ Cadastro realizado com sucesso!");
-    document.querySelector(".popup")?.remove();
-    window.location.href = "index.html"; // 🔹 redireciona ao cardápio
-  } else {
-    alert("⚠️ Erro ao cadastrar: " + txt);
-  }
-}
-
-// 🚪 Sair da conta
-function sair() {
-  localStorage.removeItem("mercatto_cliente");
-  alert("Você saiu da conta.");
-  document.querySelector(".popup")?.remove();
-  abrirCadastroLogin();
-}
-
-
-
+// ===========================================================
+// 🔹 SAIR
+// ===========================================================
+function sair(){localStorage.removeItem("mercatto_cliente");alert("Você saiu da conta.");document.querySelector(".popup")?.remove();abrirCadastroLogin();}
+function abrirUser(){const cliente=JSON.parse(localStorage.getItem("mercatto_cliente")||"null");if(cliente){const div=document.createElement("div");div.classList.add("popup");div.innerHTML=`<div class="popup-content"><button class="close-btn" onclick="this.closest('.popup').remove()">✖</button><div class="popup-body" style="text-align:center"><h2>👤 ${cliente.nome}</h2><p>${cliente.email}</p><p>${cliente.endereco||''}</p><button onclick="sair()">🚪 Sair</button></div></div>`;document.body.appendChild(div);}else abrirCadastroLogin();}
 
 </script>
+
 </body>
 </html>
