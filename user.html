@@ -58,8 +58,16 @@ button {
   cursor:pointer;
   margin-top:10px;
   transition:.3s;
+  position:relative;
+  overflow:hidden;
 }
 button:hover { background:var(--accent2); }
+button.loading { pointer-events:none; opacity:.8; }
+button.loading::after {
+  content:"";
+  position:absolute; inset:0;
+  background:rgba(0,0,0,.3) url('https://www.w3schools.com/howto/img_spinner.gif') center/30px no-repeat;
+}
 p {
   margin-top:10px;
   color:var(--muted);
@@ -71,9 +79,7 @@ a {
   text-decoration:none;
 }
 .hidden { display:none; }
-.logo {
-  width:100px; height:auto; margin-bottom:10px;
-}
+.logo { width:100px; height:auto; margin-bottom:10px; }
 </style>
 </head>
 
@@ -86,7 +92,7 @@ a {
   <div id="login-box">
     <input type="email" id="loginEmail" placeholder="Email" required>
     <input type="password" id="loginSenha" placeholder="Senha" required>
-    <button onclick="fazerLogin()">Entrar</button>
+    <button id="btnLogin" onclick="fazerLogin()">Entrar</button>
     <p><a onclick="mostrarBox('forgot')">Esqueci minha senha</a></p>
     <p>Não tem conta? <a onclick="mostrarBox('cadastro')">Criar conta</a></p>
   </div>
@@ -94,22 +100,22 @@ a {
   <!-- Cadastro -->
   <div id="cadastro-box" class="hidden">
     <input id="nome" placeholder="Nome completo">
-    <input id="email" placeholder="Email">
+    <input id="email" placeholder="Email" type="email">
     <input id="senha" type="password" placeholder="Senha">
-    <input id="whats" placeholder="WhatsApp (com DDD)">
-    <input id="cep" placeholder="CEP" onblur="buscarEndereco()">
+    <input id="whats" placeholder="WhatsApp (com DDD)" inputmode="numeric">
+    <input id="cep" placeholder="CEP" inputmode="numeric" onblur="buscarEndereco()">
     <input id="endereco" placeholder="Endereço">
     <input id="bairro" placeholder="Bairro">
-    <input id="numero" placeholder="Número">
+    <input id="numero" placeholder="Número" inputmode="numeric">
     <input id="complemento" placeholder="Complemento">
-    <button onclick="registrarUsuario()">Criar Conta</button>
+    <button id="btnCadastro" onclick="registrarUsuario()">Criar Conta</button>
     <p>Já tem conta? <a onclick="mostrarBox('login')">Entrar</a></p>
   </div>
 
   <!-- Recuperar senha -->
   <div id="forgot-box" class="hidden">
     <input type="email" id="recEmail" placeholder="Seu email cadastrado">
-    <button onclick="recuperarSenha()">Enviar senha por email</button>
+    <button id="btnRecuperar" onclick="recuperarSenha()">Enviar senha por email</button>
     <p><a onclick="mostrarBox('login')">Voltar</a></p>
   </div>
 </div>
@@ -117,21 +123,38 @@ a {
 <script>
 const ENDPOINT = "https://script.google.com/macros/s/AKfycbyktEMMbpunfpohnED5HdGGdRpHyaYCIp0ovbPjZw9hfCw6Uk7gQwyLsizxRg_tYCex/exec";
 
-// Se já estiver logado, pula para o cardápio
+// 🔸 Se já estiver logado, volta pro cardápio
 if (localStorage.getItem('mercatto_cliente')) {
   window.location.href = 'index.html';
 }
 
-// Alterna entre telas
+// 🔸 Alternar telas
 function mostrarBox(box) {
-  document.getElementById('login-box').classList.add('hidden');
-  document.getElementById('cadastro-box').classList.add('hidden');
-  document.getElementById('forgot-box').classList.add('hidden');
+  ['login','cadastro','forgot'].forEach(id => document.getElementById(`${id}-box`).classList.add('hidden'));
   document.getElementById(`${box}-box`).classList.remove('hidden');
 }
 
-// Cadastro de usuário
+// 🔸 Overlay interno dos botões
+function toggleLoading(btn, state) {
+  if (!btn) return;
+  if (state) btn.classList.add("loading");
+  else btn.classList.remove("loading");
+}
+
+// 🔸 Máscara de WhatsApp
+document.getElementById("whats").addEventListener("input", e=>{
+  let v = e.target.value.replace(/\D/g,"").slice(0,11);
+  if (v.length>2 && v.length<=6) v = `(${v.slice(0,2)}) ${v.slice(2)}`;
+  else if (v.length>6 && v.length<=10) v = `(${v.slice(0,2)}) ${v.slice(2,6)}-${v.slice(6)}`;
+  else if (v.length>10) v = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7,11)}`;
+  e.target.value = v;
+});
+
+// 🔹 Cadastro
 async function registrarUsuario() {
+  const btn = document.getElementById("btnCadastro");
+  toggleLoading(btn, true);
+
   const data = {
     acao: "registrarUsuario",
     nome: nome.value,
@@ -144,41 +167,53 @@ async function registrarUsuario() {
     numero: numero.value,
     complemento: complemento.value
   };
-  const res = await fetch(ENDPOINT, {
-    method: "POST",
-    body: JSON.stringify(data)
-  });
+
+  const res = await fetch(ENDPOINT, { method:"POST", body: JSON.stringify(data) });
   const txt = await res.text();
+  toggleLoading(btn, false);
   alert(txt);
+
   if (txt.includes("sucesso")) {
     localStorage.setItem("mercatto_cliente", JSON.stringify(data));
     window.location.href = "index.html";
   }
 }
 
-// Login
+// 🔹 Login
 async function fazerLogin() {
-  const email = document.getElementById("loginEmail").value;
-  const senha = document.getElementById("loginSenha").value;
+  const btn = document.getElementById("btnLogin");
+  toggleLoading(btn, true);
+
+  const email = loginEmail.value.trim();
+  const senha = loginSenha.value.trim();
   const res = await fetch(`${ENDPOINT}?acao=loginUsuario&email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`);
   const data = await res.json();
+
+  toggleLoading(btn, false);
+
   if (data.sucesso) {
     localStorage.setItem("mercatto_cliente", JSON.stringify(data.usuario));
+    alert("✅ Login realizado com sucesso!");
     window.location.href = "index.html";
   } else {
-    alert(data.mensagem);
+    alert("❌ " + data.mensagem);
   }
 }
 
-// Recuperar senha
+// 🔹 Recuperar senha
 async function recuperarSenha() {
-  const email = document.getElementById("recEmail").value;
+  const btn = document.getElementById("btnRecuperar");
+  toggleLoading(btn, true);
+
+  const email = recEmail.value.trim();
   const res = await fetch(`${ENDPOINT}?acao=recuperarSenha&email=${encodeURIComponent(email)}`);
   const txt = await res.text();
+
+  toggleLoading(btn, false);
   alert(txt);
 }
 
-// Busca CEP automático
+// 🔹 CEP automático
 async function buscarEndereco() {
   const cepNum = cep.value.replace(/\D/g, '');
   if (cepNum.length !== 8) return;
