@@ -1185,119 +1185,39 @@ function removerItem(ix){carrinho.splice(ix,1);
 salvarCarrinhoLocal(carrinho);
 atualizarCarrinho();abrirCarrinho();}
 
-// 🔹 FINALIZAR PEDIDO (com modo inteligente)
-function finalizarPedido() {
-  document.querySelectorAll('.popup').forEach(p => p.remove());
-  const c = carregarClienteLocal(); // carrega localStorage
-  const subtotal = carrinho.reduce((s, i) => s + i.qtd * i.preco, 0);
-
-  const div = document.createElement("div");
-  div.classList.add("popup");
-
-  // 🧠 Se já tiver endereço salvo, mostra resumo com botão "Editar"
-  if (c && c.endereco && c.bairro) {
-    const taxa = taxas[c.bairro] || 0;
-    const total = subtotal + taxa;
-
-    div.innerHTML = `
-      <div class="popup-content">
-        <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-        <div class="popup-body">
-          <h2>📍 Endereço de Entrega</h2>
-          <p><strong>${c.nome}</strong></p>
-          <p>${c.endereco}, ${c.numero || ""} - ${c.bairro}</p>
-          <p>${c.cep} ${c.complemento ? " - " + c.complemento : ""}</p>
-          <p>📞 ${c.whats || "sem telefone"}</p>
-          
-          <div style="margin-top:10px;background:#1e2538;padding:10px;border-radius:10px;">
-            <p><strong>Forma de Pagamento:</strong> ${c.pagamento || "Pix"}</p>
-            <p><strong>Subtotal:</strong> R$ ${subtotal.toFixed(2)}</p>
-            <p><strong>Entrega:</strong> R$ ${taxa.toFixed(2)}</p>
-            <h3 style="margin-top:5px;color:var(--accent2);">Total: R$ ${total.toFixed(2)}</h3>
-          </div>
-
-          <button style="margin-top:15px;" onclick="editarEndereco()">✏️ Editar Endereço</button>
-          <button style="margin-top:10px;background:var(--accent);" onclick="confirmarPedido()">✅ Confirmar Pedido</button>
-        </div>
-      </div>`;
-  } 
-  else {
-    // 🧱 Se ainda não houver endereço salvo, mostra formulário completo
-    div.innerHTML = `
-      <div class="popup-content">
-        <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-        <div class="popup-body">
-          <h2>📦 Dados de Entrega</h2>
-          <label>Nome</label><input id="nome" value="${c.nome||''}">
-          <label>Email</label><input id="email" value="${c.email||''}">
-          <label>WhatsApp</label><input id="whats" value="${c.whats||''}">
-          <label>CEP</label><input id="cep" value="${c.cep||''}" onblur="buscarEndereco()">
-          <label>Endereço</label><input id="endereco" value="${c.endereco||''}">
-          <label>Bairro</label><input id="bairro" value="${c.bairro||''}" onblur="mostrarResumo()">
-          <label>Número</label><input id="numero" value="${c.numero||''}">
-          <label>Complemento</label><input id="complemento" value="${c.complemento||''}">
-          <label>Forma de pagamento</label>
-          <select id="pagamento" onchange="toggleTroco()">
-            <option ${c.pagamento==='Pix'?'selected':''}>Pix</option>
-            <option ${c.pagamento==='Cartão'?'selected':''}>Cartão</option>
-            <option ${c.pagamento==='Dinheiro'?'selected':''}>Dinheiro</option>
-          </select>
-          <label id="lTroco" style="display:none;">Troco para:</label>
-          <input id="troco" style="display:none;" placeholder="Ex: R$ 100,00">
-          <div id="resumo-total"></div>
-          <button onclick="enviarPedido()">Enviar Pedido</button>
-        </div>
-      </div>`;
-  }
-
-  document.body.appendChild(div);
-  document.body.classList.add('popup-ativo');
-}
-
-// 🔹 Mostrar ou esconder campo de troco
-function toggleTroco() {
-  const v = document.getElementById('pagamento').value;
-  document.getElementById('lTroco').style.display = v === 'Dinheiro' ? 'block' : 'none';
-  document.getElementById('troco').style.display = v === 'Dinheiro' ? 'block' : 'none';
-}
-
-// 🔹 Função para editar endereço (apaga localStorage e reabre formulário)
-function editarEndereco() {
-  localStorage.removeItem(STORAGE_KEYS.cliente);
-  document.querySelector('.popup')?.remove();
-  finalizarPedido();
-}
-
-// 🔹 Confirmar pedido (usando dados salvos)
-async function confirmarPedido() {
-  const c = carregarClienteLocal();
-  const taxa = taxas[c.bairro] || 0;
-  const subtotal = carrinho.reduce((s, i) => s + i.qtd * i.preco, 0);
-  const total = subtotal + taxa;
-
-  const payload = {
-    acao: "pedido",
-    cliente: c,
-    itens: carrinho.map(i => `${i.nome} x${i.qtd}`).join(", "),
-    obs: carrinho.map(i => `${i.nome}: ${i.obs}`).join("; "),
-    subtotal,
-    taxa,
-    total
-  };
-
-  overlay.style.display = 'flex';
-  try {
-    const r = await fetch(ENDPOINT, { method: "POST", body: JSON.stringify(payload) });
-    const d = await r.json();
-    alert(d.mensagem || "✅ Pedido confirmado!");
-    carrinho = [];
-    salvarCarrinhoLocal(carrinho);
-    atualizarCarrinho();
-  } catch (e) {
-    alert("⚠️ Erro ao enviar pedido.");
-  }
-  overlay.style.display = 'none';
-  document.querySelector('.popup')?.remove();
+// 🔹 FINALIZAR PEDIDO
+function finalizarPedido(){
+ document.querySelectorAll('.popup').forEach(p=>p.remove());
+ const c=JSON.parse(localStorage.getItem('cliente')||'{}');
+ const div=document.createElement("div");
+ div.classList.add("popup");
+ div.innerHTML=`
+ <div class="popup-content">
+  <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+  <div class="popup-body">
+    <h2>📦 Dados de Entrega</h2>
+    <label>Nome</label><input id="nome" value="${c.nome||''}">
+    <label>Email</label><input id="email" value="${c.email||''}">
+    <label>WhatsApp</label><input id="whats" value="${c.whats||''}">
+    <label>CEP</label><input id="cep" value="${c.cep||''}" onblur="buscarEndereco()">
+    <label>Endereço</label><input id="endereco" value="${c.endereco||''}">
+    <label>Bairro</label><input id="bairro" value="${c.bairro||''}" onblur="mostrarResumo()">
+    <label>Número</label><input id="numero" value="${c.numero||''}">
+    <label>Complemento</label><input id="complemento" value="${c.complemento||''}">
+    <label>Forma de pagamento</label>
+    <select id="pagamento"><option>Pix</option><option>Cartão</option><option>Dinheiro</option></select>
+    <label id="lTroco" style="display:none;">Troco para:</label>
+    <input id="troco" style="display:none;" placeholder="Ex: R$ 100,00">
+    <div id="resumo-total"></div>
+    <button onclick="enviarPedido()">Enviar Pedido</button>
+  </div>
+ </div>`;
+ document.body.appendChild(div);
+ document.getElementById('pagamento').onchange=()=>{
+   const v=document.getElementById('pagamento').value;
+   document.getElementById('lTroco').style.display=v==='Dinheiro'?'block':'none';
+   document.getElementById('troco').style.display=v==='Dinheiro'?'block':'none';
+ };
 }
 
 // 🔹 CEP
