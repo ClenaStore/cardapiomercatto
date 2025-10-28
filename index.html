@@ -1128,7 +1128,11 @@ async function fazerLogin() {
   const email = document.getElementById("loginEmail").value.trim();
   const senha = document.getElementById("loginSenha").value.trim();
 
-  if (!email || !senha) return alert("⚠️ Preencha email e senha.");
+  if (!email || !senha) {
+    alert("⚠️ Preencha email e senha.");
+    return;
+  }
+
   const overlay = mostrarOverlay("Entrando...");
 
   try {
@@ -1137,8 +1141,19 @@ async function fazerLogin() {
 
     if (data.sucesso) {
       localStorage.setItem("mercatto_cliente", JSON.stringify(data.usuario));
+
+      // Fecha o popup com efeito e recarrega a tela
+      const popup = document.querySelector(".popup");
+      if (popup) {
+        popup.style.transition = "opacity 0.4s ease";
+        popup.style.opacity = "0";
+        setTimeout(() => popup.remove(), 400);
+      }
+
       alert("✅ Login realizado com sucesso!");
-      document.querySelector(".popup")?.remove();
+      // Atualiza a interface do botão do usuário (👤)
+      setTimeout(() => location.reload(), 300);
+
     } else {
       alert("❌ Email ou senha incorretos.");
     }
@@ -1149,6 +1164,7 @@ async function fazerLogin() {
     overlay.remove();
   }
 }
+
 
 // 🔹 CADASTRO
 function abrirCadastroRapido() {
