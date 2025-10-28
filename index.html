@@ -1293,6 +1293,134 @@ observer.observe(document.body,{childList:true});
 filtrar(categorias[0]);
 
 
+// 👤 BOTÃO DE USUÁRIO
+function abrirUser() {
+  const cliente = JSON.parse(localStorage.getItem("cliente") || "null");
+
+  if (cliente) {
+    // Usuário logado -> menu rápido
+    const div = document.createElement("div");
+    div.classList.add("popup");
+    div.innerHTML = `
+      <div class="popup-content">
+        <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+        <div class="popup-body" style="text-align:center">
+          <h2>👤 ${cliente.nome}</h2>
+          <p>${cliente.email}</p>
+          <p><b>${cliente.endereco}, ${cliente.numero}</b></p>
+          <button onclick="sair()">🚪 Sair</button>
+        </div>
+      </div>`;
+    document.body.appendChild(div);
+  } else {
+    // Primeira vez -> pede cadastro/login
+    abrirCadastroLogin();
+  }
+}
+
+// 📥 Pop-up de cadastro / login
+function abrirCadastroLogin() {
+  const div = document.createElement("div");
+  div.classList.add("popup");
+  div.innerHTML = `
+  <div class="popup-content">
+    <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+    <div class="popup-body">
+      <h2>👤 Bem-vindo ao Mercatto Delivery</h2>
+      <label>Email</label><input id="loginEmail" type="email" placeholder="Seu email">
+      <label>Senha</label><input id="loginSenha" type="password" placeholder="Sua senha">
+      <button onclick="fazerLogin()">Entrar</button>
+      <hr style="margin:15px 0;border-color:#333;">
+      <h3 style="color:var(--accent2);">Primeiro acesso?</h3>
+      <button onclick="abrirCadastroRapido()">Criar Conta</button>
+    </div>
+  </div>`;
+  document.body.appendChild(div);
+}
+
+// 🧾 Cadastro rápido
+function abrirCadastroRapido() {
+  document.querySelector(".popup")?.remove();
+  const div = document.createElement("div");
+  div.classList.add("popup");
+  div.innerHTML = `
+  <div class="popup-content">
+    <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+    <div class="popup-body">
+      <h2>📋 Criar Conta</h2>
+      <input id="nome" placeholder="Nome completo">
+      <input id="email" type="email" placeholder="Email">
+      <input id="senha" type="password" placeholder="Senha">
+      <input id="whats" placeholder="WhatsApp">
+      <input id="cep" placeholder="CEP" onblur="buscarEndereco()">
+      <input id="endereco" placeholder="Endereço">
+      <input id="bairro" placeholder="Bairro">
+      <input id="numero" placeholder="Número">
+      <input id="complemento" placeholder="Complemento">
+      <button onclick="registrarUsuario()">Salvar e Continuar</button>
+    </div>
+  </div>`;
+  document.body.appendChild(div);
+}
+
+// 🔐 Login existente
+async function fazerLogin() {
+  const email = document.getElementById("loginEmail").value;
+  const senha = document.getElementById("loginSenha").value;
+
+  const res = await fetch(`${ENDPOINT}?acao=loginUsuario&email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`);
+  const data = await res.json();
+
+  if (data.sucesso) {
+    localStorage.setItem("cliente", JSON.stringify(data.usuario));
+    alert("✅ Login realizado!");
+    document.querySelector(".popup")?.remove();
+  } else {
+    alert("❌ Email ou senha incorretos.");
+  }
+}
+
+// 🧾 Registrar novo usuário
+async function registrarUsuario() {
+  const d = {
+    acao: "registrarUsuario",
+    nome: nome.value,
+    email: email.value,
+    senha: senha.value,
+    whats: whats.value,
+    cep: cep.value,
+    endereco: endereco.value,
+    bairro: bairro.value,
+    numero: numero.value,
+    complemento: complemento.value
+  };
+
+  const r = await fetch(ENDPOINT, { method: "POST", body: JSON.stringify(d) });
+  const txt = await r.text();
+  alert(txt);
+
+  if (txt.includes("sucesso")) {
+    localStorage.setItem("cliente", JSON.stringify(d));
+    document.querySelector(".popup")?.remove();
+  }
+}
+
+// 🚪 Sair da conta
+function sair() {
+  localStorage.removeItem("cliente");
+  alert("Você saiu da conta.");
+  document.querySelector(".popup")?.remove();
+  abrirCadastroLogin();
+}
+
+// 🧩 Executa ao carregar
+window.addEventListener("DOMContentLoaded", () => {
+  const cliente = JSON.parse(localStorage.getItem("cliente") || "null");
+  if (!cliente) abrirCadastroLogin();
+});
+
+
+
 </script>
 </body>
 </html>
