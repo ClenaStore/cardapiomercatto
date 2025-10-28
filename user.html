@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Mercatto Delivery - Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#b8860b">
+
+<style>
+:root {
+  --bg:#0b0f19; --card:#151d2f; --text:#f8fafc;
+  --muted:#94a3b8; --accent:#b8860b; --accent2:#ffcc70;
+  --radius:16px; --shadow:0 6px 18px rgba(0,0,0,.4);
+}
+* { box-sizing:border-box; margin:0; padding:0; font-family:'Inter',sans-serif; }
+body {
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+  overflow:hidden;
+}
+.container {
+  background:var(--card);
+  padding:30px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  width:90%;
+  max-width:380px;
+  text-align:center;
+}
+h1 {
+  font-family:'Playfair Display',serif;
+  color:var(--accent2);
+  margin-bottom:20px;
+}
+input {
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border-radius:10px;
+  border:1px solid #334155;
+  background:#1e293b;
+  color:#fff;
+  font-size:14px;
+}
+button {
+  width:100%;
+  padding:12px;
+  background:var(--accent);
+  border:none;
+  border-radius:10px;
+  color:#000;
+  font-weight:600;
+  cursor:pointer;
+  margin-top:10px;
+  transition:.3s;
+}
+button:hover { background:var(--accent2); }
+p {
+  margin-top:10px;
+  color:var(--muted);
+  font-size:13px;
+}
+a {
+  color:var(--accent2);
+  cursor:pointer;
+  text-decoration:none;
+}
+.hidden { display:none; }
+.logo {
+  width:100px; height:auto; margin-bottom:10px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <img src="https://github.com/ClenaStore/cardapiomercatto/blob/main/icons/logo.png?raw=true" class="logo" alt="Mercatto Delivery">
+  <h1>Mercatto Delivery</h1>
+
+  <!-- Login -->
+  <div id="login-box">
+    <input type="email" id="loginEmail" placeholder="Email" required>
+    <input type="password" id="loginSenha" placeholder="Senha" required>
+    <button onclick="fazerLogin()">Entrar</button>
+    <p><a onclick="mostrarBox('forgot')">Esqueci minha senha</a></p>
+    <p>Não tem conta? <a onclick="mostrarBox('cadastro')">Criar conta</a></p>
+  </div>
+
+  <!-- Cadastro -->
+  <div id="cadastro-box" class="hidden">
+    <input id="nome" placeholder="Nome completo">
+    <input id="email" placeholder="Email">
+    <input id="senha" type="password" placeholder="Senha">
+    <input id="whats" placeholder="WhatsApp (com DDD)">
+    <input id="cep" placeholder="CEP" onblur="buscarEndereco()">
+    <input id="endereco" placeholder="Endereço">
+    <input id="bairro" placeholder="Bairro">
+    <input id="numero" placeholder="Número">
+    <input id="complemento" placeholder="Complemento">
+    <button onclick="registrarUsuario()">Criar Conta</button>
+    <p>Já tem conta? <a onclick="mostrarBox('login')">Entrar</a></p>
+  </div>
+
+  <!-- Recuperar senha -->
+  <div id="forgot-box" class="hidden">
+    <input type="email" id="recEmail" placeholder="Seu email cadastrado">
+    <button onclick="recuperarSenha()">Enviar senha por email</button>
+    <p><a onclick="mostrarBox('login')">Voltar</a></p>
+  </div>
+</div>
+
+<script>
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbwnG9DCUOAQoKWdowIHnXp8MW_VqAZKdM9e1I4HHmVQlUU5hNzcdFkxy7n-3sSuLiU/exec";
+
+// Se já estiver logado, pula para o cardápio
+if (localStorage.getItem('mercatto_cliente')) {
+  window.location.href = 'index.html';
+}
+
+// Alterna entre telas
+function mostrarBox(box) {
+  document.getElementById('login-box').classList.add('hidden');
+  document.getElementById('cadastro-box').classList.add('hidden');
+  document.getElementById('forgot-box').classList.add('hidden');
+  document.getElementById(`${box}-box`).classList.remove('hidden');
+}
+
+// Cadastro de usuário
+async function registrarUsuario() {
+  const data = {
+    acao: "registrarUsuario",
+    nome: nome.value,
+    email: email.value,
+    senha: senha.value,
+    whats: whats.value,
+    cep: cep.value,
+    endereco: endereco.value,
+    bairro: bairro.value,
+    numero: numero.value,
+    complemento: complemento.value
+  };
+  const res = await fetch(ENDPOINT, {
+    method: "POST",
+    body: JSON.stringify(data)
+  });
+  const txt = await res.text();
+  alert(txt);
+  if (txt.includes("sucesso")) {
+    localStorage.setItem("mercatto_cliente", JSON.stringify(data));
+    window.location.href = "index.html";
+  }
+}
+
+// Login
+async function fazerLogin() {
+  const email = document.getElementById("loginEmail").value;
+  const senha = document.getElementById("loginSenha").value;
+  const res = await fetch(`${ENDPOINT}?acao=loginUsuario&email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`);
+  const data = await res.json();
+  if (data.sucesso) {
+    localStorage.setItem("mercatto_cliente", JSON.stringify(data.usuario));
+    window.location.href = "index.html";
+  } else {
+    alert(data.mensagem);
+  }
+}
+
+// Recuperar senha
+async function recuperarSenha() {
+  const email = document.getElementById("recEmail").value;
+  const res = await fetch(`${ENDPOINT}?acao=recuperarSenha&email=${encodeURIComponent(email)}`);
+  const txt = await res.text();
+  alert(txt);
+}
+
+// Busca CEP automático
+async function buscarEndereco() {
+  const cepNum = cep.value.replace(/\D/g, '');
+  if (cepNum.length !== 8) return;
+  const r = await fetch(`https://viacep.com.br/ws/${cepNum}/json/`);
+  const d = await r.json();
+  if (!d.erro) {
+    endereco.value = d.logradouro || '';
+    bairro.value = d.bairro || '';
+  }
+}
+</script>
+</body>
+</html>
