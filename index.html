@@ -1198,7 +1198,6 @@ salvarCarrinhoLocal(carrinho);
 atualizarCarrinho();abrirCarrinho();}
 
 // 🔹 FINALIZAR PEDIDO
-// 🔹 FINALIZAR PEDIDO
 async function finalizarPedido() {
   // ✅ Verifica se o usuário está logado antes de continuar
   const cliente = JSON.parse(localStorage.getItem("mercatto_cliente") || "null");
@@ -1241,6 +1240,7 @@ async function finalizarPedido() {
     document.getElementById('troco').style.display = v === 'Dinheiro' ? 'block' : 'none';
   };
 }
+
 
  <div class="popup-content">
   <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
