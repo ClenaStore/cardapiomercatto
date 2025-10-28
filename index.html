@@ -1335,24 +1335,6 @@ async function salvarEdicao() {
 }
 
 
-function salvarEdicao() {
-  const atualizado = {
-    nome: nome.value.trim(),
-    email: email.value.trim(),
-    whats: whats.value.trim(),
-    cep: cep.value.trim(),
-    endereco: endereco.value.trim(),
-    bairro: bairro.value.trim(),
-    numero: numero.value.trim(),
-    complemento: complemento.value.trim(),
-  };
-  localStorage.setItem("mercatto_cliente", JSON.stringify(atualizado));
-  alert("✅ Dados atualizados com sucesso!");
-  document.querySelector(".popup")?.remove();
-  abrirUser(); // reabre com os dados atualizados
-}
-
-
 </script>
 
 </body>
