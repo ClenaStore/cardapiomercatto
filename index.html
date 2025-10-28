@@ -606,13 +606,21 @@ body.popup-ativo {
 
 <script>
 
-// 🔐 VERIFICA LOGIN AUTOMATICAMENTE
+// 🔐 VERIFICA LOGIN AUTOMÁTICO (corrigido)
 (function verificarLogin() {
-  const cliente = JSON.parse(localStorage.getItem("cliente") || "null");
-  if (!cliente || !cliente.email) {
-    window.location.href = "user.html"; // 👉 Redireciona para tela de login/cadastro
+  try {
+const cliente = JSON.parse(localStorage.getItem("mercatto_cliente") || "{}");
+if (!cliente?.email || cliente.email.trim() === "") {
+  window.location.href = "user.html";
+}
+
+  } catch (e) {
+    console.warn("Erro ao ler cliente:", e);
+    localStorage.removeItem("mercatto_cliente");
+    window.location.href = "user.html";
   }
 })();
+
 
 
 // 🧩 GERENCIADOR DE LOCALSTORAGE - Mantém apenas dados importantes
@@ -1198,7 +1206,7 @@ atualizarCarrinho();abrirCarrinho();}
 // 🔹 FINALIZAR PEDIDO
 function finalizarPedido(){
  document.querySelectorAll('.popup').forEach(p=>p.remove());
- const c=JSON.parse(localStorage.getItem('cliente')||'{}');
+ const c = JSON.parse(localStorage.getItem('mercatto_cliente') || '{}');
  const div=document.createElement("div");
  div.classList.add("popup");
  div.innerHTML=`
@@ -1271,7 +1279,7 @@ async function enviarPedido(){
    return;
  }
  const c={nome:nome.value,email:email.value,whats:whats.value,cep:cep.value,endereco:endereco.value,bairro,numero:numero.value,complemento:complemento.value,pagamento:pagamento.value,troco:troco.value};
- localStorage.setItem("cliente",JSON.stringify(c));
+ localStorage.setItem("mercatto_cliente",JSON.stringify(c));
  const taxa=taxas[bairro];
  const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
  const total=subtotal+taxa;
@@ -1304,7 +1312,7 @@ filtrar(categorias[0]);
 
 // 👤 BOTÃO DE USUÁRIO
 function abrirUser() {
-  const cliente = JSON.parse(localStorage.getItem("cliente") || "null");
+  const cliente = JSON.parse(localStorage.getItem("mercatto_cliente") || "null");
 
   if (cliente) {
     // Usuário logado -> menu rápido
@@ -1381,9 +1389,10 @@ async function fazerLogin() {
   const data = await res.json();
 
   if (data.sucesso) {
-    localStorage.setItem("cliente", JSON.stringify(data.usuario));
+    localStorage.setItem("mercatto_cliente", JSON.stringify(data.usuario));
     alert("✅ Login realizado!");
     document.querySelector(".popup")?.remove();
+    window.location.href = "index.html"; // 🔹 volta pro cardápio
   } else {
     alert("❌ Email ou senha incorretos.");
   }
@@ -1406,27 +1415,25 @@ async function registrarUsuario() {
 
   const r = await fetch(ENDPOINT, { method: "POST", body: JSON.stringify(d) });
   const txt = await r.text();
-  alert(txt);
 
-  if (txt.includes("sucesso")) {
-    localStorage.setItem("cliente", JSON.stringify(d));
+  if (txt.toLowerCase().includes("sucesso")) {
+    localStorage.setItem("mercatto_cliente", JSON.stringify(d));
+    alert("✅ Cadastro realizado com sucesso!");
     document.querySelector(".popup")?.remove();
+    window.location.href = "index.html"; // 🔹 redireciona ao cardápio
+  } else {
+    alert("⚠️ Erro ao cadastrar: " + txt);
   }
 }
 
 // 🚪 Sair da conta
 function sair() {
-  localStorage.removeItem("cliente");
+  localStorage.removeItem("mercatto_cliente");
   alert("Você saiu da conta.");
   document.querySelector(".popup")?.remove();
   abrirCadastroLogin();
 }
 
-// 🧩 Executa ao carregar
-window.addEventListener("DOMContentLoaded", () => {
-  const cliente = JSON.parse(localStorage.getItem("cliente") || "null");
-  if (!cliente) abrirCadastroLogin();
-});
 
 
 
