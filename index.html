@@ -606,6 +606,15 @@ body.popup-ativo {
 
 <script>
 
+// 🔐 VERIFICA LOGIN AUTOMATICAMENTE
+(function verificarLogin() {
+  const cliente = JSON.parse(localStorage.getItem("cliente") || "null");
+  if (!cliente || !cliente.email) {
+    window.location.href = "user.html"; // 👉 Redireciona para tela de login/cadastro
+  }
+})();
+
+
 // 🧩 GERENCIADOR DE LOCALSTORAGE - Mantém apenas dados importantes
 const STORAGE_KEYS = {
   cliente: 'mercatto_cliente',
