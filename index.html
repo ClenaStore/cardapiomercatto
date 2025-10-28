@@ -606,13 +606,7 @@ body.popup-ativo {
 
 <script>
 
-// 🔐 VERIFICA LOGIN AUTOMÁTICO (corrigido)
-(function verificarLogin() {
-  try {
-const cliente = JSON.parse(localStorage.getItem("mercatto_cliente") || "{}");
-if (!cliente?.email || cliente.email.trim() === "") {
-  window.location.href = "user.html";
-}
+
 
   } catch (e) {
     console.warn("Erro ao ler cliente:", e);
@@ -1204,12 +1198,50 @@ salvarCarrinhoLocal(carrinho);
 atualizarCarrinho();abrirCarrinho();}
 
 // 🔹 FINALIZAR PEDIDO
-function finalizarPedido(){
- document.querySelectorAll('.popup').forEach(p=>p.remove());
- const c = JSON.parse(localStorage.getItem('mercatto_cliente') || '{}');
- const div=document.createElement("div");
- div.classList.add("popup");
- div.innerHTML=`
+// 🔹 FINALIZAR PEDIDO
+async function finalizarPedido() {
+  // ✅ Verifica se o usuário está logado antes de continuar
+  const cliente = JSON.parse(localStorage.getItem("mercatto_cliente") || "null");
+  if (!cliente) {
+    alert("🔒 Faça login ou cadastro antes de finalizar o pedido!");
+    abrirCadastroLogin(); // abre o popup de login dentro do cardápio
+    return; // interrompe aqui
+  }
+
+  // 👇 continua normalmente se já estiver logado
+  document.querySelectorAll('.popup').forEach(p => p.remove());
+  const c = cliente;
+  const div = document.createElement("div");
+  div.classList.add("popup");
+  div.innerHTML = `
+  <div class="popup-content">
+    <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+    <div class="popup-body">
+      <h2>📦 Dados de Entrega</h2>
+      <label>Nome</label><input id="nome" value="${c.nome || ''}">
+      <label>Email</label><input id="email" value="${c.email || ''}">
+      <label>WhatsApp</label><input id="whats" value="${c.whats || ''}">
+      <label>CEP</label><input id="cep" value="${c.cep || ''}" onblur="buscarEndereco()">
+      <label>Endereço</label><input id="endereco" value="${c.endereco || ''}">
+      <label>Bairro</label><input id="bairro" value="${c.bairro || ''}" onblur="mostrarResumo()">
+      <label>Número</label><input id="numero" value="${c.numero || ''}">
+      <label>Complemento</label><input id="complemento" value="${c.complemento || ''}">
+      <label>Forma de pagamento</label>
+      <select id="pagamento"><option>Pix</option><option>Cartão</option><option>Dinheiro</option></select>
+      <label id="lTroco" style="display:none;">Troco para:</label>
+      <input id="troco" style="display:none;" placeholder="Ex: R$ 100,00">
+      <div id="resumo-total"></div>
+      <button onclick="enviarPedido()">Enviar Pedido</button>
+    </div>
+  </div>`;
+  document.body.appendChild(div);
+  document.getElementById('pagamento').onchange = () => {
+    const v = document.getElementById('pagamento').value;
+    document.getElementById('lTroco').style.display = v === 'Dinheiro' ? 'block' : 'none';
+    document.getElementById('troco').style.display = v === 'Dinheiro' ? 'block' : 'none';
+  };
+}
+
  <div class="popup-content">
   <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
   <div class="popup-body">
