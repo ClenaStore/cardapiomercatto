@@ -1068,13 +1068,151 @@ async function buscarEndereco(){const cep=document.getElementById('cep').value.r
 function mostrarResumo(){const bairro=document.getElementById('bairro').value.trim();const resumoDiv=document.getElementById('resumo-total');const botaoEnviar=document.querySelector("#resumo-total + button");resumoDiv.innerHTML='';if(!bairro){botaoEnviar.disabled=true;botaoEnviar.style.opacity=".5";return;}if(!(bairro in taxas)){resumoDiv.innerHTML=`<div style="background:#3f1d1d;padding:10px;border-radius:10px;color:#fca5a5;">🚫 Não entregamos neste bairro.<br>Entre em contato via WhatsApp.</div>`;botaoEnviar.disabled=true;botaoEnviar.style.opacity=".5";return;}const taxa=taxas[bairro];const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);const total=subtotal+taxa;resumoDiv.innerHTML=`<strong>Resumo:</strong><br>Subtotal: R$ ${subtotal.toFixed(2)}<br>Entrega (${bairro}): R$ ${taxa.toFixed(2)}<br><strong>Total: R$ ${total.toFixed(2)}</strong>`;botaoEnviar.disabled=false;botaoEnviar.style.opacity="1";}
 async function enviarPedido(){const bairro=document.getElementById('bairro').value.trim();if(!(bairro in taxas)){alert("⚠️ Bairro sem entrega. Contate via WhatsApp.");return;}const c={nome:nome.value,email:email.value,whats:whats.value,cep:cep.value,endereco:endereco.value,bairro,numero:numero.value,complemento:complemento.value,pagamento:pagamento.value,troco:troco.value};localStorage.setItem("mercatto_cliente",JSON.stringify(c));const taxa=taxas[bairro];const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);const total=subtotal+taxa;const payload={acao:"pedido",cliente:c,itens:carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),obs:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),subtotal,taxa,total};await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});alert(`✅ Pedido enviado!\nTotal: R$ ${total.toFixed(2)}`);carrinho=[];salvarCarrinhoLocal(carrinho);atualizarCarrinho();}
 
-// ===========================================================
-// 🔹 LOGIN / CADASTRO
-// ===========================================================
-function abrirCadastroLogin(){const div=document.createElement("div");div.classList.add("popup");div.innerHTML=`<div class="popup-content"><button class="close-btn" onclick="this.closest('.popup').remove()">✖</button><div class="popup-body"><h2>👤 Bem-vindo ao Mercatto Delivery</h2><label>Email</label><input id="loginEmail" type="email"><label>Senha</label><input id="loginSenha" type="password"><button onclick="fazerLogin()">Entrar</button><hr><h3 style="color:var(--accent2)">Primeiro acesso?</h3><button onclick="abrirCadastroRapido()">Criar Conta</button></div></div>`;document.body.appendChild(div);}
-async function fazerLogin(){const email=document.getElementById("loginEmail").value;const senha=document.getElementById("loginSenha").value;const res=await fetch(`${ENDPOINT}?acao=loginUsuario&email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`);const data=await res.json();if(data.sucesso){localStorage.setItem("mercatto_cliente",JSON.stringify(data.usuario));alert("✅ Login realizado!");document.querySelector(".popup")?.remove();}else{alert("❌ Email ou senha incorretos.");}}
-function abrirCadastroRapido(){document.querySelector(".popup")?.remove();const div=document.createElement("div");div.classList.add("popup");div.innerHTML=`<div class="popup-content"><button class="close-btn" onclick="this.closest('.popup').remove()">✖</button><div class="popup-body"><h2>📋 Criar Conta</h2><input id="nome" placeholder="Nome completo"><input id="email" type="email" placeholder="Email"><input id="senha" type="password" placeholder="Senha"><input id="whats" placeholder="WhatsApp"><input id="cep" placeholder="CEP" onblur="buscarEndereco()"><input id="endereco" placeholder="Endereço"><input id="bairro" placeholder="Bairro"><input id="numero" placeholder="Número"><input id="complemento" placeholder="Complemento"><button onclick="registrarUsuario()">Salvar e Continuar</button></div></div>`;document.body.appendChild(div);}
-async function registrarUsuario(){const d={acao:"registrarUsuario",nome:nome.value,email:email.value,senha:senha.value,whats:whats.value,cep:cep.value,endereco:endereco.value,bairro:bairro.value,numero:numero.value,complemento:complemento.value};const r=await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(d)});const txt=await r.text();if(txt.toLowerCase().includes("sucesso")){localStorage.setItem("mercatto_cliente",JSON.stringify(d));alert("✅ Cadastro realizado com sucesso!");document.querySelector(".popup")?.remove();}else{alert("⚠️ Erro ao cadastrar: "+txt);}}
+/************************************************************
+🔐 LOGIN / CADASTRO OTIMIZADO - MERCATTO DELIVERY
+Com:
+✅ Máscara de WhatsApp e CEP
+✅ Overlay de carregamento
+✅ Fechamento automático no sucesso
+✅ Mensagens visuais modernas
+************************************************************/
+
+// 🔹 Função de overlay de carregamento
+function mostrarOverlay(texto = "Processando...") {
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.innerHTML = `
+    <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" style="width:60px">
+    <p style="color:#fff;margin-top:10px;">${texto}</p>`;
+  document.body.appendChild(overlay);
+  overlay.style.display = "flex";
+  return overlay;
+}
+
+// 🔹 Máscaras simples
+function aplicarMascaraWhats(campo) {
+  campo.value = campo.value
+    .replace(/\D/g, "")
+    .replace(/^(\d{2})(\d)/g, "($1) $2")
+    .replace(/(\d{5})(\d{4}).*/, "$1-$2");
+}
+function aplicarMascaraCEP(campo) {
+  campo.value = campo.value
+    .replace(/\D/g, "")
+    .replace(/^(\d{5})(\d)/, "$1-$2");
+}
+
+// 🔹 LOGIN
+function abrirCadastroLogin() {
+  const div = document.createElement("div");
+  div.classList.add("popup");
+  div.innerHTML = `
+    <div class="popup-content">
+      <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+      <div class="popup-body">
+        <h2>👤 Bem-vindo ao Mercatto Delivery</h2>
+        <label>Email</label>
+        <input id="loginEmail" type="email" placeholder="Digite seu email">
+        <label>Senha</label>
+        <input id="loginSenha" type="password" placeholder="Digite sua senha">
+        <button onclick="fazerLogin()">Entrar</button>
+        <hr>
+        <h3 style="color:var(--accent2)">Primeiro acesso?</h3>
+        <button onclick="abrirCadastroRapido()">Criar Conta</button>
+      </div>
+    </div>`;
+  document.body.appendChild(div);
+}
+
+async function fazerLogin() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const senha = document.getElementById("loginSenha").value.trim();
+
+  if (!email || !senha) return alert("⚠️ Preencha email e senha.");
+  const overlay = mostrarOverlay("Entrando...");
+
+  try {
+    const res = await fetch(`${ENDPOINT}?acao=loginUsuario&email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`);
+    const data = await res.json();
+
+    if (data.sucesso) {
+      localStorage.setItem("mercatto_cliente", JSON.stringify(data.usuario));
+      alert("✅ Login realizado com sucesso!");
+      document.querySelector(".popup")?.remove();
+    } else {
+      alert("❌ Email ou senha incorretos.");
+    }
+  } catch (e) {
+    alert("⚠️ Erro de conexão. Tente novamente.");
+    console.error(e);
+  } finally {
+    overlay.remove();
+  }
+}
+
+// 🔹 CADASTRO
+function abrirCadastroRapido() {
+  document.querySelector(".popup")?.remove();
+  const div = document.createElement("div");
+  div.classList.add("popup");
+  div.innerHTML = `
+    <div class="popup-content">
+      <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+      <div class="popup-body">
+        <h2>📋 Criar Conta</h2>
+        <input id="nome" placeholder="Nome completo">
+        <input id="email" type="email" placeholder="Email">
+        <input id="senha" type="password" placeholder="Senha">
+        <input id="whats" placeholder="WhatsApp" oninput="aplicarMascaraWhats(this)">
+        <input id="cep" placeholder="CEP" oninput="aplicarMascaraCEP(this)" onblur="buscarEndereco()">
+        <input id="endereco" placeholder="Endereço">
+        <input id="bairro" placeholder="Bairro">
+        <input id="numero" placeholder="Número">
+        <input id="complemento" placeholder="Complemento">
+        <button onclick="registrarUsuario()">Salvar e Continuar</button>
+      </div>
+    </div>`;
+  document.body.appendChild(div);
+}
+
+async function registrarUsuario() {
+  const d = {
+    acao: "registrarUsuario",
+    nome: nome.value.trim(),
+    email: email.value.trim(),
+    senha: senha.value.trim(),
+    whats: whats.value.trim(),
+    cep: cep.value.trim(),
+    endereco: endereco.value.trim(),
+    bairro: bairro.value.trim(),
+    numero: numero.value.trim(),
+    complemento: complemento.value.trim(),
+  };
+
+  if (!d.nome || !d.email || !d.senha || !d.whats) {
+    return alert("⚠️ Preencha todos os campos obrigatórios.");
+  }
+
+  const overlay = mostrarOverlay("Cadastrando...");
+
+  try {
+    const r = await fetch(ENDPOINT, { method: "POST", body: JSON.stringify(d) });
+    const txt = await r.text();
+
+    if (txt.toLowerCase().includes("sucesso")) {
+      localStorage.setItem("mercatto_cliente", JSON.stringify(d));
+      alert("✅ Cadastro realizado com sucesso!");
+      document.querySelector(".popup")?.remove();
+    } else {
+      alert("⚠️ Erro ao cadastrar: " + txt);
+    }
+  } catch (e) {
+    alert("Erro de conexão. Tente novamente.");
+    console.error(e);
+  } finally {
+    overlay.remove();
+  }
+}
 
 // ===========================================================
 // 🔹 SAIR
