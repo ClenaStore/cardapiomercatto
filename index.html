@@ -612,7 +612,7 @@ Autor: Grupo DV
 ************************************************************/
 
 // 🔗 CONFIG GERAL
-const ENDPOINT = "https://script.google.com/macros/s/AKfycbxtBGWCXV8TJwlChWDnxsi0c0jUtYUWGQBqIyczDHXGjF-Jgcvv5WAg-u9vKG5Df2CJ/exec";
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbzFqgGvY3DMTN1GDbe22h9wTeZ5O8faK7wmqzqTOuHXBja9yZjkQSx9V7MgH3Cwa8XZ/exec";
 const taxas = {"Vila Brasil":8,"São Caetano":7,"Primavera":9,"Jardim Europa":10,"Piatã":12};
 const STORAGE_KEYS = {cliente:'mercatto_cliente', carrinho:'mercatto_carrinho'};
 
@@ -1264,6 +1264,7 @@ function abrirUser() {
     abrirCadastroLogin();
   }
 }
+
 function editarDados() {
   const cliente = JSON.parse(localStorage.getItem("mercatto_cliente") || "null");
   if (!cliente) return abrirCadastroLogin();
@@ -1289,6 +1290,50 @@ function editarDados() {
     </div>`;
   document.body.appendChild(div);
 }
+
+async function salvarEdicao() {
+  const atualizado = {
+    acao: "atualizarUsuario",
+    nome: nome.value.trim(),
+    email: email.value.trim(),
+    whats: whats.value.trim(),
+    cep: cep.value.trim(),
+    endereco: endereco.value.trim(),
+    bairro: bairro.value.trim(),
+    numero: numero.value.trim(),
+    complemento: complemento.value.trim(),
+  };
+
+  if (!atualizado.email) {
+    alert("⚠️ O campo Email é obrigatório.");
+    return;
+  }
+
+  const overlay = mostrarOverlay("Salvando dados...");
+
+  try {
+    const res = await fetch(ENDPOINT, {
+      method: "POST",
+      body: JSON.stringify(atualizado)
+    });
+    const txt = await res.text();
+
+    if (txt.toLowerCase().includes("sucesso")) {
+      localStorage.setItem("mercatto_cliente", JSON.stringify(atualizado));
+      alert("✅ Dados atualizados com sucesso!");
+      document.querySelector(".popup")?.remove();
+      abrirUser(); // reabre com dados atualizados
+    } else {
+      alert("⚠️ Erro ao atualizar: " + txt);
+    }
+  } catch (e) {
+    alert("⚠️ Erro de conexão. Tente novamente.");
+    console.error(e);
+  } finally {
+    overlay.remove();
+  }
+}
+
 
 function salvarEdicao() {
   const atualizado = {
