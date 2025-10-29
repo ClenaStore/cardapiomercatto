@@ -5,216 +5,400 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Mercatto Delivery</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
-<link rel="icon" href="https://github.com/ClenaStore/cardapiomercatto/blob/main/icons/logo.png?raw=true">
+<!-- 🧭 PWA -->
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#b8860b">
+<link rel="apple-touch-icon" href="https://github.com/ClenaStore/cardapiomercatto/blob/main/icons/logo.png?raw=true">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mercatto Delivery">
+
+<!-- 🖋️ FONTES -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --gold:#b8860b;
-  --dark:#0b0b0b;
-  --card:#141414;
-  --gray:#a8a8a8;
-  --white:#fff;
+  --bg:#0b0f19;--card:#151d2f;--text:#f8fafc;
+  --muted:#94a3b8;--accent:#b8860b;--accent2:#ffcc70;
+  --radius:16px;--shadow:0 6px 18px rgba(0,0,0,.4);
 }
-*{box-sizing:border-box;font-family:Inter,sans-serif;}
-body{margin:0;background:var(--dark);color:var(--white);overflow-x:hidden;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
 
-header{background:var(--card);padding:1rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:99;}
-header h1{font-family:"Playfair Display",serif;margin:0;color:var(--gold);font-size:1.5rem;}
-header button{background:var(--gold);border:none;color:#fff;padding:0.6rem 1rem;border-radius:8px;font-weight:600;cursor:pointer;}
+/* 🔹 HEADER */
+header{
+  background:linear-gradient(90deg,#000,#1c1306);
+  color:var(--accent2);text-align:center;
+  padding:15px;font-family:'Playfair Display',serif;
+  font-size:22px;letter-spacing:.5px;box-shadow:var(--shadow);
+}
 
-#loginSection,#mainSection{display:none;min-height:100vh;transition:all .3s ease;}
+/* 🔹 BANNER + BUSCA */
+.banner{width:100%;height:45vh;max-height:420px;overflow:hidden;position:relative;}
+.banner img{width:100%;height:100%;object-fit:cover;filter:brightness(.85);}
+.banner h1{
+  position:absolute;bottom:70px;left:20px;color:#fff;
+  font-family:'Playfair Display',serif;font-size:28px;
+  text-shadow:0 3px 8px rgba(0,0,0,.6);
+}
+.search-area{
+  position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+  width:90%;display:flex;align-items:center;gap:10px;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(8px);
+  border-radius:50px;padding:6px 14px;
+}
+.search-area input{
+  flex:1;background:none;border:none;outline:none;
+  color:#fff;font-size:14px;
+}
+.search-area input::placeholder{color:#ccc;}
+.search-area button{
+  background:var(--accent);border:none;border-radius:50%;
+  width:40px;height:40px;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;box-shadow:var(--shadow);
+  font-size:20px;position:relative;
+}
+#cart-count{
+  position:absolute;top:-4px;right:-4px;background:#dc2626;
+  color:#fff;font-size:12px;border-radius:50%;padding:2px 6px;
+}
 
-#loginSection{display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:2rem;}
-#loginBox{background:var(--card);padding:2rem;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.5);width:90%;max-width:380px;}
-#loginBox h2{font-family:"Playfair Display",serif;color:var(--gold);margin-bottom:1rem;}
-#loginBox input{width:100%;padding:0.8rem;border:none;border-radius:8px;margin:0.4rem 0;background:#222;color:white;}
-#loginBox button{width:100%;padding:0.8rem;background:var(--gold);border:none;border-radius:8px;color:white;font-weight:600;margin-top:0.6rem;cursor:pointer;}
+/* 🔹 CATEGORIAS */
+.categorias{
+  display:flex;overflow-x:auto;padding:12px;gap:10px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+.categorias::-webkit-scrollbar{display:none;}
+.categorias button{
+  flex-shrink:0;background:#1e293b;border:1px solid var(--accent);
+  color:var(--accent2);padding:10px 16px;border-radius:25px;
+  cursor:pointer;font-weight:600;transition:.3s;white-space:nowrap;
+}
+.categorias button.active,.categorias button:hover{
+  background:var(--accent);color:#000;transform:scale(1.05);
+}
 
-.banner{background:url('https://i.imgur.com/XF9Z7Vd.jpg') center/cover no-repeat;height:180px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--white);font-size:1.6rem;font-family:"Playfair Display",serif;text-shadow:0 3px 10px black;}
-.banner span{background:rgba(0,0,0,0.4);padding:0.4rem 1rem;border-radius:8px;}
+/* 🔹 GRADE DE PRODUTOS */
+.container{width:100vw;margin:0;padding:0;max-width:100%;overflow-x:hidden;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;width:100%;margin:0;padding:20px;box-sizing:border-box;}
+.card{
+  background:var(--card);border-radius:var(--radius);overflow:hidden;
+  box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.06);
+  transition:.25s;display:flex;flex-direction:column;height:280px;
+}
+.card:hover{transform:scale(1.03);border-color:var(--accent2);}
+.card-media{width:100%;height:140px;overflow:hidden;background:#0e1623;}
+.card-media img,.card-media video{width:100%;height:100%;object-fit:cover;}
+.card-body{flex:1;display:flex;flex-direction:column;justify-content:flex-start;padding:10px 12px;}
+.card-body h3{font-size:15px;color:var(--accent2);font-family:'Playfair Display',serif;margin-bottom:4px;}
+.card-body p{color:var(--muted);font-size:13px;min-height:36px;margin-bottom:4px;}
+.card-body span{display:block;margin-top:5px;color:var(--accent);font-weight:600;}
+.card-body button{
+  width:100%;background:var(--accent);color:#000;border:none;
+  padding:8px;margin-top:auto;border-radius:25px;font-weight:600;
+  cursor:pointer;transition:.2s;
+}
+.card-body button:hover{background:var(--accent2);}
 
-section{padding:1rem;}
-h2{font-family:"Playfair Display",serif;color:var(--gold);margin-bottom:0.5rem;}
+/* 🔹 POPUP / CARRINHO / OVERLAY */
+.popup{
+  position:fixed;inset:0;background:rgba(0,0,0,.9);
+  display:flex;align-items:center;justify-content:center;
+  z-index:999;padding:20px;animation:fadeIn .3s;
+}
+@keyframes fadeIn{from{opacity:0;transform:scale(.9);}to{opacity:1;transform:scale(1);}}
+.popup-content{
+  background:#151d2f;border-radius:var(--radius);
+  max-width:400px;width:100%;overflow:hidden;
+  box-shadow:var(--shadow);position:relative;
+}
+.popup-body{padding:15px;max-height:70vh;overflow-y:auto;}
+.popup-body h2{margin:0;font-family:'Playfair Display',serif;color:var(--accent2);}
+.popup-body p{color:var(--muted);margin:8px 0;font-size:14px;}
+.popup-body label{font-weight:600;font-size:13px;color:var(--accent2);}
+.popup-body input,textarea,select{
+  width:100%;margin-top:6px;padding:10px;background:#1e293b;
+  border:1px solid #334155;border-radius:10px;color:#fff;font-size:14px;
+}
+.popup-body button{
+  width:100%;padding:12px;margin-top:14px;border:none;border-radius:var(--radius);
+  background:var(--accent);font-weight:600;cursor:pointer;
+}
+.popup-body button:hover{background:var(--accent2);}
+.close-btn{
+  position:absolute;top:15px;right:15px;background:none;
+  border:none;color:var(--accent2);font-size:22px;cursor:pointer;
+}
 
-.categorias{display:flex;gap:10px;overflow-x:auto;padding:0.5rem 0;}
-.categoria{flex:0 0 auto;background:var(--card);color:var(--gray);padding:0.6rem 1.2rem;border-radius:20px;cursor:pointer;white-space:nowrap;transition:0.3s;}
-.categoria.active{background:var(--gold);color:#fff;}
-
-.cardapio{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:15px;}
-.item{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.3);transition:transform .2s;}
-.item:hover{transform:translateY(-3px);}
-.item img{width:100%;height:130px;object-fit:cover;}
-.item-info{padding:0.6rem;}
-.item-info h3{margin:0;color:var(--white);font-size:1rem;}
-.item-info p{margin:0.3rem 0;color:var(--gray);font-size:0.9rem;}
-.item-info button{background:var(--gold);border:none;color:white;width:100%;padding:0.6rem;border-radius:8px;font-weight:600;cursor:pointer;}
-
-.carrinho{position:fixed;bottom:0;left:0;width:100%;background:var(--card);display:flex;justify-content:space-between;align-items:center;padding:0.8rem 1rem;border-top:1px solid #333;}
-.carrinho span{font-size:1rem;}
-.carrinho button{background:var(--gold);border:none;color:white;padding:0.6rem 1.2rem;border-radius:8px;font-weight:600;}
-
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;}
-.modal-content{background:var(--card);border-radius:12px;padding:1rem;width:90%;max-width:400px;color:white;}
-.modal h3{margin-top:0;color:var(--gold);}
-.modal ul{list-style:none;padding:0;margin:0;max-height:250px;overflow-y:auto;}
-.modal li{display:flex;justify-content:space-between;border-bottom:1px solid #333;padding:5px 0;}
-.modal .total{font-weight:600;margin-top:10px;text-align:right;}
-.modal button{margin-top:15px;width:100%;background:var(--gold);color:white;border:none;padding:0.8rem;border-radius:8px;font-weight:600;}
-footer{text-align:center;padding:1rem;font-size:0.8rem;color:var(--gray);background:var(--card);margin-top:2rem;}
+/* 🔹 OVERLAY (CARREGAMENTO) */
+.overlay{
+  display:none;align-items:center;justify-content:center;flex-direction:column;
+  position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;
+}
+.overlay img{width:80px;margin-bottom:15px;}
 </style>
 </head>
+
 <body>
+<header>Mercatto Delivery</header>
 
-<!-- LOGIN -->
-<section id="loginSection">
-  <div id="loginBox">
-    <h2>🍝 Mercatto Delivery</h2>
-    <input type="email" id="email" placeholder="Seu e-mail" required>
-    <input type="password" id="senha" placeholder="Sua senha" required>
-    <button id="btnLogin">Entrar</button>
-    <p style="color:var(--gray);font-size:0.8rem;margin-top:10px;">Ainda não tem conta? <a href="#" style="color:var(--gold);text-decoration:none;">Cadastre-se</a></p>
-  </div>
-</section>
-
-<!-- PRINCIPAL -->
-<section id="mainSection">
-  <header>
-    <h1>Mercatto Delivery</h1>
-    <button id="btnCarrinho">🛒 Carrinho</button>
-  </header>
-
-  <div class="banner"><span>O melhor da cozinha Mercatto na sua casa</span></div>
-
-  <section>
-    <h2>Categorias</h2>
-    <div class="categorias" id="categorias"></div>
-  </section>
-
-  <section>
-    <h2>Cardápio</h2>
-    <div class="cardapio" id="cardapio"></div>
-  </section>
-
-  <div class="carrinho" id="carrinhoResumo">
-    <span id="itensResumo">0 itens</span>
-    <button id="finalizarPedido">Finalizar Pedido</button>
-  </div>
-
-  <footer>© 2025 Mercatto Delivery • Sabor & Elegância</footer>
-</section>
-
-<!-- MODAL CARRINHO -->
-<div class="modal" id="modalCarrinho">
-  <div class="modal-content">
-    <h3>🛒 Seu Carrinho</h3>
-    <ul id="listaCarrinho"></ul>
-    <p class="total">Total: <span id="totalCarrinho">R$ 0,00</span></p>
-    <button id="btnWhatsApp">Enviar via WhatsApp</button>
+<div class="banner">
+  <img src="https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/CAPA%20MERCATTO.png?raw=true">
+  <div class="search-area">
+    <input type="text" id="busca" placeholder="Buscar no cardápio..." oninput="buscarItem()">
+    <button onclick="abrirUser()">👤</button>
+    <button onclick="abrirCarrinho()">🛒<span id="cart-count">0</span></button>
   </div>
 </div>
 
+<div class="categorias" id="categorias"></div>
+<div class="container"><div class="grid" id="menu"></div></div>
+
+<div class="overlay" id="overlay">
+  <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png">
+  <p>Enviando seu pedido...</p>
+</div>
+
 <script>
-// ---------- LOGIN ----------
-const loginSection = document.getElementById("loginSection");
-const mainSection = document.getElementById("mainSection");
-document.getElementById("btnLogin").addEventListener("click", ()=>{
-  const email = document.getElementById("email").value.trim();
-  const senha = document.getElementById("senha").value.trim();
-  if(email && senha){
-    localStorage.setItem("usuario",email);
-    loginSection.style.display="none";
-    mainSection.style.display="block";
-  } else {
-    alert("Preencha seu e-mail e senha.");
-  }
-});
-if(localStorage.getItem("usuario")){
-  loginSection.style.display="none";
-  mainSection.style.display="block";
-}
+/***************************************************
+🍝 MERCATTO DELIVERY - CLIENTE (v4.0)
+Login, cadastro, cardápio, carrinho, checkout.
+***************************************************/
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbx3VNZMueKt97s6pgiHlO7qIvbwONtUtE4UpU2YfABUvMdfhjMOKkDFQ0IQNKn7q_E/exec";
+const taxas = {"Vila Brasil":8,"São Caetano":7,"Primavera":9,"Jardim Europa":10,"Piatã":12};
+let carrinho = JSON.parse(localStorage.getItem('mercatto_carrinho')||'[]');
+atualizarCarrinho();
 
-// ---------- CARDÁPIO ----------
-const categorias=["Entradas","Carnes","Massas","Sobremesas","Bebidas"];
+// 🔹 PRODUTOS (exemplo)
 const produtos=[
-  {nome:"Ancho Gold",preco:79.90,categoria:"Carnes",img:"https://i.imgur.com/WxvW5uE.jpg"},
-  {nome:"Prime Rib Black",preco:89.90,categoria:"Carnes",img:"https://i.imgur.com/MrKQqO9.jpg"},
-  {nome:"Camarão Mercatto",preco:69.90,categoria:"Carnes",img:"https://i.imgur.com/3cd3k9R.jpg"},
-  {nome:"Tabua de Frios",preco:59.90,categoria:"Entradas",img:"https://i.imgur.com/lDrhY2v.jpg"},
-  {nome:"Fettuccine Alfredo",preco:45.00,categoria:"Massas",img:"https://i.imgur.com/TPo3bQz.jpg"},
-  {nome:"Risotto de Funghi",preco:52.00,categoria:"Massas",img:"https://i.imgur.com/jO8tOL1.jpg"},
-  {nome:"Tiramisu Clássico",preco:22.00,categoria:"Sobremesas",img:"https://i.imgur.com/Lfw6I6g.jpg"},
-  {nome:"Cheesecake Frutas Vermelhas",preco:24.00,categoria:"Sobremesas",img:"https://i.imgur.com/ABc7IWB.jpg"},
-  {nome:"Vinho Tinto",preco:89.00,categoria:"Bebidas",img:"https://i.imgur.com/DWr2gEN.jpg"},
-  {nome:"Suco Natural",preco:8.00,categoria:"Bebidas",img:"https://i.imgur.com/VIfxxC6.jpg"},
+{id:1,nome:"Ancho Gold",desc:"Corte Angus grelhado ao ponto, com purê trufado.",preco:79.90,img:"https://i.imgur.com/WxvW5uE.jpg",video:"",categoria:"Carnes"},
+{id:2,nome:"Risoto de Camarão",desc:"Arroz arbóreo cremoso com camarões flambados.",preco:89.90,img:"https://i.imgur.com/3cd3k9R.jpg",video:"",categoria:"Massas"},
+{id:3,nome:"Tábua de Frios",desc:"Queijos, presuntos e pães artesanais.",preco:59.90,img:"https://i.imgur.com/lDrhY2v.jpg",video:"",categoria:"Entradas"},
+{id:4,nome:"Cheesecake",desc:"Cheesecake artesanal de frutas vermelhas.",preco:24.00,img:"https://i.imgur.com/ABc7IWB.jpg",video:"",categoria:"Sobremesas"},
+{id:5,nome:"Vinho Tinto",desc:"Taça de vinho selecionado.",preco:29.90,img:"https://i.imgur.com/DWr2gEN.jpg",video:"",categoria:"Bebidas"}
 ];
-let carrinho=[];
-const elCategorias=document.getElementById("categorias");
-const elCardapio=document.getElementById("cardapio");
-const elResumo=document.getElementById("itensResumo");
-const elModal=document.getElementById("modalCarrinho");
-const elLista=document.getElementById("listaCarrinho");
-const elTotal=document.getElementById("totalCarrinho");
 
-function renderCategorias(){
-  elCategorias.innerHTML="";
-  categorias.forEach(cat=>{
-    const div=document.createElement("div");
-    div.className="categoria";
-    div.textContent=cat;
-    div.onclick=()=>filtrar(cat);
-    elCategorias.appendChild(div);
-  });
+// 🔹 CATEGORIAS
+const categorias=[...new Set(produtos.map(p=>p.categoria))];
+const catDiv=document.getElementById("categorias");
+categorias.forEach((c,i)=>{
+  const b=document.createElement("button");
+  b.textContent=c;if(i===0)b.classList.add("active");
+  b.onclick=()=>filtrar(c);catDiv.appendChild(b);
+});
+function filtrar(cat){
+  document.querySelectorAll('.categorias button').forEach(b=>b.classList.remove('active'));
+  [...catDiv.children].find(b=>b.textContent===cat).classList.add('active');
+  renderizar(produtos.filter(p=>p.categoria===cat));
 }
-function renderCardapio(lista){
-  elCardapio.innerHTML="";
+filtrar(categorias[0]);
+
+// 🔹 BUSCA
+function buscarItem(){
+  const t=document.getElementById("busca").value.toLowerCase();
+  if(!t)return filtrar(document.querySelector(".categorias button.active").textContent);
+  renderizar(produtos.filter(p=>p.nome.toLowerCase().includes(t)||p.desc.toLowerCase().includes(t)));
+}
+
+// 🔹 RENDER
+function renderizar(lista){
+  const menu=document.getElementById("menu");
+  menu.innerHTML="";
+  if(!lista.length){menu.innerHTML="<p style='text-align:center;color:#ccc;'>Nenhum item encontrado.</p>";return;}
   lista.forEach(p=>{
     const card=document.createElement("div");
-    card.className="item";
+    card.classList.add("card");
+    const midia=p.video?`<video autoplay muted loop playsinline><source src="${p.video}" type="video/mp4"></video>`:`<img src="${p.img}" alt="${p.nome}">`;
     card.innerHTML=`
-      <img src="${p.img}">
-      <div class="item-info">
+      <div class="card-media">${midia}</div>
+      <div class="card-body">
         <h3>${p.nome}</h3>
-        <p>R$ ${p.preco.toFixed(2)}</p>
-        <button onclick="addCarrinho('${p.nome}')">Adicionar</button>
+        <p>${p.desc}</p>
+        <span>R$ ${p.preco.toFixed(2)}</span>
+        <button onclick="abrirPopup(${p.id})">Adicionar</button>
       </div>`;
-    elCardapio.appendChild(card);
+    menu.appendChild(card);
   });
 }
-function filtrar(cat){
-  document.querySelectorAll(".categoria").forEach(c=>c.classList.remove("active"));
-  [...elCategorias.children].find(c=>c.textContent===cat).classList.add("active");
-  renderCardapio(produtos.filter(p=>p.categoria===cat));
-}
-function addCarrinho(nome){
-  const item=produtos.find(p=>p.nome===nome);
-  carrinho.push(item);
-  elResumo.textContent=carrinho.length+" itens";
-}
-document.getElementById("btnCarrinho").onclick=()=>{
-  elLista.innerHTML="";
-  let total=0;
-  carrinho.forEach(p=>{
-    elLista.innerHTML+=`<li><span>${p.nome}</span><span>R$ ${p.preco.toFixed(2)}</span></li>`;
-    total+=p.preco;
-  });
-  elTotal.textContent="R$ "+total.toFixed(2);
-  elModal.style.display="flex";
-};
-elModal.onclick=(e)=>{if(e.target===elModal)elModal.style.display="none";};
-document.getElementById("btnWhatsApp").onclick=()=>{
-  let msg="🍝 *Pedido Mercatto Delivery*\n\n";
-  carrinho.forEach(p=>msg+=`- ${p.nome} (R$ ${p.preco.toFixed(2)})\n`);
-  let total=carrinho.reduce((t,p)=>t+p.preco,0).toFixed(2);
-  msg+=`\n💰 *Total:* R$ ${total}\n👤 Cliente: ${localStorage.getItem("usuario")}`;
-  window.open("https://wa.me/5571999999999?text="+encodeURIComponent(msg),"_blank");
-};
 
-renderCategorias();
-renderCardapio(produtos);
-filtrar("Carnes");
+// 🔹 POPUP PRODUTO
+function abrirPopup(id){
+  const p=produtos.find(x=>x.id===id);
+  const div=document.createElement("div");
+  div.classList.add("popup");
+  div.innerHTML=`
+  <div class="popup-content">
+    <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+    <div class="popup-body">
+      <h2>${p.nome}</h2>
+      <p>${p.desc}</p>
+      <label>Quantidade</label><input id="qtd" type="number" min="1" value="1">
+      <label>Observação</label><textarea id="obs" placeholder="Ex: sem cebola..."></textarea>
+      <button onclick="adicionar(${p.id})">Adicionar ao Carrinho</button>
+    </div>
+  </div>`;
+  document.body.appendChild(div);
+}
+
+// 🔹 CARRINHO
+function adicionar(id){
+  const qtd=parseInt(document.getElementById('qtd').value)||1;
+  const obs=document.getElementById('obs').value||'';
+  const p=produtos.find(x=>x.id===id);
+  carrinho.push({...p,qtd,obs});
+  localStorage.setItem('mercatto_carrinho',JSON.stringify(carrinho));
+  document.querySelector('.popup')?.remove();
+  atualizarCarrinho();
+  alert("✅ Adicionado ao carrinho!");
+}
+function atualizarCarrinho(){
+  document.getElementById('cart-count').textContent=carrinho.reduce((s,i)=>s+i.qtd,0);
+}
+function abrirCarrinho(){
+  if(!carrinho.length)return alert("Carrinho vazio!");
+  const total=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
+  const div=document.createElement("div");
+  div.classList.add("popup");
+  div.innerHTML=`
+  <div class="popup-content">
+    <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+    <div class="popup-body">
+      <h2>🛒 Seu Pedido</h2>
+      ${carrinho.map((i,ix)=>`
+      <div style="background:#1e2538;border-radius:10px;padding:8px;margin:8px 0;">
+        <strong>${i.nome}</strong><br>
+        ${i.qtd}x • R$ ${(i.qtd*i.preco).toFixed(2)}<br>
+        <small>${i.obs||'Sem observações'}</small><br>
+        <button style="margin-top:6px;background:#b91c1c;color:white;padding:4px 8px;border:none;border-radius:8px;" onclick="removerItem(${ix})">Remover</button>
+      </div>`).join('')}
+      <h3 style="text-align:right;color:var(--accent2);margin-top:10px;">Total: R$ ${total.toFixed(2)}</h3>
+      <button onclick="finalizarPedido()">📦 Finalizar Pedido</button>
+    </div>
+  </div>`;
+  document.body.appendChild(div);
+}
+function removerItem(ix){carrinho.splice(ix,1);localStorage.setItem('mercatto_carrinho',JSON.stringify(carrinho));document.querySelector('.popup')?.remove();abrirCarrinho();atualizarCarrinho();}
+
+// 🔹 FINALIZAR PEDIDO (com login)
+function finalizarPedido(){
+  const cliente=JSON.parse(localStorage.getItem('mercatto_cliente')||'null');
+  if(!cliente){abrirCadastroLogin();return;}
+  document.querySelectorAll('.popup').forEach(p=>p.remove());
+  const c=cliente;
+  const div=document.createElement("div");
+  div.classList.add("popup");
+  div.innerHTML=`
+  <div class="popup-content">
+    <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+    <div class="popup-body">
+      <h2>📍 Endereço de Entrega</h2>
+      <label>Nome</label><input id="nome" value="${c.nome||''}">
+      <label>Bairro</label><input id="bairro" value="${c.bairro||''}" onblur="mostrarResumo()">
+      <label>Endereço</label><input id="endereco" value="${c.endereco||''}">
+      <label>Pagamento</label>
+      <select id="pagamento"><option>Pix</option><option>Cartão</option><option>Dinheiro</option></select>
+      <div id="resumo-total"></div>
+      <button onclick="enviarPedido()">Enviar Pedido</button>
+    </div>
+  </div>`;
+  document.body.appendChild(div);
+}
+function mostrarResumo(){
+  const bairro=document.getElementById('bairro').value.trim();
+  const resumoDiv=document.getElementById('resumo-total');
+  if(!(bairro in taxas)){resumoDiv.innerHTML='<p style="color:#f87171;">🚫 Não entregamos neste bairro.</p>';return;}
+  const taxa=taxas[bairro];
+  const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
+  const total=subtotal+taxa;
+  resumoDiv.innerHTML=`<p>Subtotal: R$ ${subtotal.toFixed(2)}<br>Entrega: R$ ${taxa.toFixed(2)}...<br><strong>Total: R$ ${total.toFixed(2)}</strong></p>`;
+}
+
+// 🔹 ENVIAR PEDIDO
+async function enviarPedido(){
+  const bairro=document.getElementById('bairro').value.trim();
+  if(!(bairro in taxas))return alert("🚫 Bairro não atendido.");
+  const cliente=JSON.parse(localStorage.getItem('mercatto_cliente')||'{}');
+  const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
+  const taxa=taxas[bairro];const total=subtotal+taxa;
+  const payload={acao:"pedido",cliente,bairro,itens:carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),subtotal,taxa,total};
+  document.getElementById('overlay').style.display="flex";
+  await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});
+  document.getElementById('overlay').style.display="none";
+  alert(`✅ Pedido enviado!\nTotal: R$ ${total.toFixed(2)}`);
+  carrinho=[];localStorage.setItem('mercatto_carrinho','[]');atualizarCarrinho();
+}
+
+// 🔹 LOGIN / CADASTRO
+function abrirUser(){
+  const c=JSON.parse(localStorage.getItem('mercatto_cliente')||'null');
+  if(c){
+    const div=document.createElement("div");
+    div.classList.add("popup");
+    div.innerHTML=`
+    <div class="popup-content">
+      <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+      <div class="popup-body" style="text-align:left;">
+        <h2 style="text-align:center;color:var(--accent2);">${c.nome||''}</h2>
+        <p><strong>Email:</strong> ${c.email||'-'}</p>
+        <p><strong>Bairro:</strong> ${c.bairro||'-'}</p>
+        <button onclick="sair()">🚪 Sair</button>
+      </div>
+    </div>`;
+    document.body.appendChild(div);
+  } else abrirCadastroLogin();
+}
+function abrirCadastroLogin(){
+  const div=document.createElement("div");
+  div.classList.add("popup");
+  div.innerHTML=`
+  <div class="popup-content">
+    <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+    <div class="popup-body">
+      <h2>👤 Acesso ao Delivery</h2>
+      <label>Email</label><input id="email" type="email">
+      <label>Senha</label><input id="senha" type="password">
+      <button onclick="fazerLogin()">Entrar</button>
+      <hr>
+      <button onclick="abrirCadastro()">Criar Conta</button>
+    </div>
+  </div>`;
+  document.body.appendChild(div);
+}
+async function fazerLogin(){
+  const e=email.value.trim(),s=senha.value.trim();
+  if(!e||!s)return alert("Preencha email e senha.");
+  const r=await fetch(`${ENDPOINT}?acao=loginUsuario&email=${e}&senha=${s}`);
+  const d=await r.json();
+  if(d.sucesso){localStorage.setItem('mercatto_cliente',JSON.stringify(d.usuario));alert("✅ Login realizado!");location.reload();}
+  else alert("❌ Email ou senha incorretos.");
+}
+function abrirCadastro(){
+  document.querySelector('.popup')?.remove();
+  const div=document.createElement("div");
+  div.classList.add("popup");
+  div.innerHTML=`
+  <div class="popup-content">
+    <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+    <div class="popup-body">
+      <h2>📋 Criar Conta</h2>
+      <input id="nome" placeholder="Nome completo">
+      <input id="email" type="email" placeholder="Email">
+      <input id="senha" type="password" placeholder="Senha">
+      <input id="bairro" placeholder="Bairro">
+      <input id="endereco" placeholder="Endereço">
+      <button onclick="registrar()">Salvar</button>
+    </div>
+  </div>`;
+  document.body.appendChild(div);
+}
+async function registrar(){
+  const d={acao:"registrarUsuario",nome:nome.value,email:email.value,senha:senha.value,bairro:bairro.value,endereco:endereco.value};
+  const r=await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(d)});
+  const t=await r.text();
+  if(t.toLowerCase().includes("sucesso")){alert("✅ Conta criada!");localStorage.setItem('mercatto_cliente',JSON.stringify(d));document.querySelector('.popup')?.remove();}
+  else alert("Erro: "+t);
+}
+function sair(){localStorage.removeItem('mercatto_cliente');alert("Você saiu.");location.reload();}
 </script>
-
 </body>
 </html>
