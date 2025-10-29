@@ -591,9 +591,9 @@ body.popup-ativo {
 <div class="banner">
   <img src="./paste/CAPA MERCATTO.png">
   <div class="search-area">
-  <input type="text" id="busca" placeholder="Buscar no cardápio..." oninput="buscarItem()">
-  <button onclick="abrirUser()">👤</button>
-  <button onclick="abrirCarrinho()">🛒<span id="cart-count">0</span></button>
+    <input type="text" id="busca" placeholder="Buscar no cardápio..." oninput="buscarItem()">
+    <button onclick="abrirUser()">👤</button>
+    <button onclick="abrirCarrinho()">🛒<span id="cart-count">0</span></button>
   </div>
 </div>
 
@@ -606,8 +606,8 @@ body.popup-ativo {
 
 <script>
 /************************************************************
-🍝 MERCATTO DELIVERY - CARDÁPIO COMPLETO (FINAL)
-Versão: 3.0 - Login no checkout + sugestões + CEP automático
+🍝 MERCATTO DELIVERY - CARDÁPIO + SISTEMA DE PONTOS
+Versão: 5.3 - Pontos automáticos e carteira do cliente
 Autor: Grupo DV
 ************************************************************/
 
@@ -625,7 +625,7 @@ function salvarCarrinhoLocal(c){try{localStorage.setItem(STORAGE_KEYS.carrinho,J
 function carregarCarrinhoLocal(){try{const c=JSON.parse(localStorage.getItem(STORAGE_KEYS.carrinho));return Array.isArray(c)?c:[];}catch{return [];}}
 
 // ===========================================================
-// 🔹 PRODUTOS (EXEMPLO - ADICIONE SEUS PRODUTOS AQUI)
+// 🔹 PRODUTOS
 // ===========================================================
 const produtos = [
   // 🍽️ PRATOS INDIVIDUAIS DELICIOSOS
@@ -860,58 +860,17 @@ const produtos = [
     categoria: 'Sobremesas Individuais Maravilhosas'
   }
 ];
-// 🔗 RELAÇÕES DIRETAS ENTRE PRODUTOS (por ID)
-const relacoesPorId = {
-  // 🍕 Calzones e pizzas sugerem bebidas e sobremesas
-  85: [200, 201, 90], // Calzone Calabresa → Coca, Guaraná, Pudim
-  86: [200, 201, 90],
-  87: [200, 201, 84],
-  88: [200, 202, 82],
-
-  // 🍣 Sushis e combinados → vinho e sobremesa
-  73: [90, 201],
-  74: [77, 90],
-  76: [74, 90],
-  77: [74, 90],
-  78: [74, 90],
-
-  // 🍖 Pratos principais → vinho e sobremesa
-  60: [90],
-  61: [90],
-  64: [90],
-  65: [90],
-
-  // 🍔 Burgers → refrigerante e sobremesa
-  69: [200, 201, 90],
-  70: [200, 201, 82],
-  72: [200, 202, 83]
-};
-
-
 
 // ===========================================================
-// 🔹 VARIÁVEIS
+// 🔹 CATEGORIAS / BUSCA / RENDERIZAÇÃO
 // ===========================================================
-let carrinho = carregarCarrinhoLocal();
-let cliente = carregarClienteLocal();
-
-// ===========================================================
-// 🔹 CATEGORIAS
-// ===========================================================
+// (mantém seu código igual)
 const categorias=[...new Set(produtos.map(p=>p.categoria))];
 const catDiv=document.getElementById("categorias");
 categorias.forEach((c,i)=>{const b=document.createElement("button");b.textContent=c;if(i===0)b.classList.add("active");b.onclick=()=>filtrar(c);catDiv.appendChild(b);});
 function filtrar(cat){document.querySelectorAll('.categorias button').forEach(b=>b.classList.remove('active'));[...catDiv.children].find(b=>b.textContent===cat).classList.add('active');renderizar(produtos.filter(p=>p.categoria===cat));}
 filtrar(categorias[0]);
-
-// ===========================================================
-// 🔹 BUSCA
-// ===========================================================
 function buscarItem(){const t=document.getElementById("busca").value.toLowerCase();if(!t)return filtrar(document.querySelector(".categorias button.active").textContent);renderizar(produtos.filter(p=>p.nome.toLowerCase().includes(t)||p.desc.toLowerCase().includes(t)));}
-
-// ===========================================================
-// 🔹 RENDERIZAÇÃO DE PRODUTOS
-// ===========================================================
 function renderizar(lista){
  const menu=document.getElementById("menu");menu.innerHTML="";
  if(!lista||lista.length===0){menu.innerHTML=`<p style="text-align:center;color:#ccc;">Nenhum item encontrado.</p>`;return;}
@@ -930,9 +889,6 @@ function renderizar(lista){
  });
 }
 
-// ===========================================================
-// 🔹 POPUP DE PRODUTO
-// ===========================================================
 function abrirPopup(id){
  const p=produtos.find(x=>x.id===id);
  const div=document.createElement("div");
@@ -1067,47 +1023,111 @@ async function finalizarPedido(){
  };
 }
 
-// ===========================================================
-// 🔹 CEP + RESUMO + ENVIAR PEDIDO
-// ===========================================================
-async function buscarEndereco(){const cep=document.getElementById('cep').value.replace(/\D/g,'');if(cep.length!==8)return;const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);const d=await r.json();if(!d.erro){endereco.value=d.logradouro||'';bairro.value=d.bairro||'';}}
-function mostrarResumo(){const bairro=document.getElementById('bairro').value.trim();const resumoDiv=document.getElementById('resumo-total');const botaoEnviar=document.querySelector("#resumo-total + button");resumoDiv.innerHTML='';if(!bairro){botaoEnviar.disabled=true;botaoEnviar.style.opacity=".5";return;}if(!(bairro in taxas)){resumoDiv.innerHTML=`<div style="background:#3f1d1d;padding:10px;border-radius:10px;color:#fca5a5;">🚫 Não entregamos neste bairro.<br>Entre em contato via WhatsApp.</div>`;botaoEnviar.disabled=true;botaoEnviar.style.opacity=".5";return;}const taxa=taxas[bairro];const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);const total=subtotal+taxa;resumoDiv.innerHTML=`<strong>Resumo:</strong><br>Subtotal: R$ ${subtotal.toFixed(2)}<br>Entrega (${bairro}): R$ ${taxa.toFixed(2)}<br><strong>Total: R$ ${total.toFixed(2)}</strong>`;botaoEnviar.disabled=false;botaoEnviar.style.opacity="1";}
-async function enviarPedido(){const bairro=document.getElementById('bairro').value.trim();if(!(bairro in taxas)){alert("⚠️ Bairro sem entrega. Contate via WhatsApp.");return;}const c={nome:nome.value,email:email.value,whats:whats.value,cep:cep.value,endereco:endereco.value,bairro,numero:numero.value,complemento:complemento.value,pagamento:pagamento.value,troco:troco.value};localStorage.setItem("mercatto_cliente",JSON.stringify(c));const taxa = taxas[bairro];
-const subtotal = carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
-let total = subtotal + taxa;
+async function enviarPedido(){
+ const bairro=document.getElementById('bairro').value.trim();
+ if(!(bairro in taxas)){alert("⚠️ Bairro sem entrega. Contate via WhatsApp.");return;}
+ const c={nome:nome.value,email:email.value,whats:whats.value,cep:cep.value,endereco:endereco.value,bairro,numero:numero.value,complemento:complemento.value,pagamento:pagamento.value,troco:troco.value};
+ localStorage.setItem("mercatto_cliente",JSON.stringify(c));
 
-// 🪙 Aplicar desconto se usar pontos
-const pontosUsar = parseInt(document.getElementById("pontosUsar").value) || 0;
-let desconto = 0;
-if (pontosUsar > 0) {
-  const r = await fetch(ENDPOINT, {
-    method: "POST",
-    body: JSON.stringify({ acao: "usarPontos", email: c.email, pontos: pontosUsar })
-  });
-  const data = await r.json();
-  if (data.sucesso) {
-    desconto = data.desconto;
-    alert(`🎉 ${pontosUsar} pontos usados. Desconto de R$${desconto.toFixed(2)} aplicado!`);
-  } else {
-    alert("⚠️ " + data.mensagem);
+ const taxa = taxas[bairro];
+ const subtotal = carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
+ let total = subtotal + taxa;
+
+ // 🪙 Aplicar desconto se usar pontos
+ const pontosUsar = parseInt(document.getElementById("pontosUsar").value) || 0;
+ let desconto = 0;
+ if (pontosUsar > 0) {
+   const r = await fetch(ENDPOINT, {
+     method: "POST",
+     body: JSON.stringify({ acao: "usarPontos", email: c.email, pontos: pontosUsar })
+   });
+   const data = await r.json();
+   if (data.sucesso) {
+     desconto = data.desconto;
+     alert(`🎉 ${pontosUsar} pontos usados. Desconto de R$${desconto.toFixed(2)} aplicado!`);
+   } else {
+     alert("⚠️ " + data.mensagem);
+   }
+ }
+ total = total - desconto;
+
+ // 🧾 Envia o pedido
+ const payload = {
+   acao: "pedido",
+   cliente: c,
+   itens: carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),
+   obs: carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),
+   subtotal,
+   taxa,
+   total,
+   pontosUsados: pontosUsar
+ };
+ await fetch(ENDPOINT, { method: "POST", body: JSON.stringify(payload) });
+
+ // 💎 Calcular e adicionar pontos automáticos
+ const pontosGerados = Math.floor(total); // 1 ponto por real
+ if (pontosGerados > 0) {
+   await fetch(ENDPOINT, {
+     method: "POST",
+     body: JSON.stringify({ acao: "adicionarPontos", email: c.email, pontos: pontosGerados })
+   });
+   alert(`💎 Você ganhou ${pontosGerados} pontos neste pedido!`);
+ }
+
+ alert(`✅ Pedido enviado!\nTotal: R$ ${total.toFixed(2)}`);
+ carrinho=[];salvarCarrinhoLocal(carrinho);atualizarCarrinho();
+}
+
+// ===========================================================
+// 🔹 PERFIL COM CARTEIRA DE PONTOS
+// ===========================================================
+function abrirUser() {
+  const cliente = JSON.parse(localStorage.getItem("mercatto_cliente") || "null");
+  if (cliente) {
+    const div = document.createElement("div");
+    div.classList.add("popup");
+    div.innerHTML = `
+      <div class="popup-content">
+        <button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+        <div class="popup-body" style="text-align:left;">
+          <h2 style="text-align:center; color:var(--accent2); font-family:'Playfair Display',serif;">
+            👤 ${cliente.nome || ''}
+          </h2>
+          <p><strong>Email:</strong> ${cliente.email || '-'}</p>
+          <p><strong>WhatsApp:</strong> ${cliente.whats || '-'}</p>
+          <p><strong>CEP:</strong> ${cliente.cep || '-'}</p>
+          <p><strong>Endereço:</strong> ${cliente.endereco || '-'}</p>
+          <p><strong>Bairro:</strong> ${cliente.bairro || '-'}</p>
+          <p><strong>Número:</strong> ${cliente.numero || '-'}</p>
+          <p><strong>Complemento:</strong> ${cliente.complemento || '-'}</p>
+
+          <p><strong>💎 Pontos:</strong> <span id="saldoPontos">Carregando...</span></p>
+          <p><small>100 pts = R$1,00 de desconto</small></p>
+
+          <br>
+          <button style="background:var(--accent2); color:#000; font-weight:600;" onclick="editarDados()">✏️ Editar Dados</button>
+          <button style="margin-top:10px;" onclick="sair()">🚪 Sair</button>
+        </div>
+      </div>`;
+    document.body.appendChild(div);
+    carregarPontos(cliente.email);
+  } else abrirCadastroLogin();
+}
+
+// 🔹 Buscar saldo de pontos do servidor
+async function carregarPontos(email) {
+  try {
+    const res = await fetch(`${ENDPOINT}?acao=getUsuario&email=${encodeURIComponent(email)}`);
+    const data = await res.json();
+    if (data.sucesso && data.usuario) {
+      document.getElementById("saldoPontos").textContent = data.usuario.pontos + " pts";
+    } else {
+      document.getElementById("saldoPontos").textContent = "0 pts";
+    }
+  } catch {
+    document.getElementById("saldoPontos").textContent = "erro";
   }
 }
-total = total - desconto;
-
-// Envia pedido já com desconto
-const payload = {
-  acao: "pedido",
-  cliente: c,
-  itens: carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),
-  obs: carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),
-  subtotal,
-  taxa,
-  total,
-  pontosUsados: pontosUsar
-};
-await fetch(ENDPOINT, { method: "POST", body: JSON.stringify(payload) });
-alert(`✅ Pedido enviado!\nTotal: R$ ${total.toFixed(2)}`);
-carrinho=[];salvarCarrinhoLocal(carrinho);atualizarCarrinho();}
 
 /************************************************************
 🔐 LOGIN / CADASTRO OTIMIZADO - MERCATTO DELIVERY
