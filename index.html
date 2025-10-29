@@ -14,7 +14,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 
 <style>
-/* 🎨 TODO O SEU CSS ORIGINAL INTACTO */
 :root{
   --bg:#0b0f19;--card:#151d2f;--text:#f8fafc;
   --muted:#94a3b8;--accent:#b8860b;--accent2:#ffcc70;
@@ -25,23 +24,18 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overf
 header{background:linear-gradient(90deg,#000,#1c1306);color:var(--accent2);text-align:center;padding:15px;font-family:'Playfair Display',serif;font-size:22px;letter-spacing:.5px;box-shadow:var(--shadow);}
 .banner{width:100%;height:45vh;max-height:430px;overflow:hidden;position:relative;}
 .banner img{width:100%;height:100%;object-fit:cover;filter:brightness(.85);}
-.banner h1{position:absolute;bottom:70px;left:20px;color:#fff;font-family:'Playfair Display',serif;font-size:28px;text-shadow:0 3px 8px rgba(0,0,0,.6);}
 .search-area{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:90%;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);border-radius:50px;padding:6px 14px;}
 .search-area input{flex:1;background:none;border:none;outline:none;color:#fff;font-size:14px;}
 .search-area input::placeholder{color:#ccc;}
 .search-area button{background:var(--accent);border:none;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow);font-size:20px;position:relative;}
 #cart-count{position:absolute;top:-4px;right:-4px;background:#dc2626;color:#fff;font-size:12px;border-radius:50%;padding:2px 6px;}
-.categorias{display:flex;overflow-x:auto;padding:12px;gap:10px;scrollbar-width:none;user-select:none;-webkit-overflow-scrolling:touch;touch-action:pan-x;}
+.categorias{display:flex;overflow-x:auto;padding:12px;gap:10px;scrollbar-width:none;user-select:none;-webkit-overflow-scrolling:touch;}
 .categorias::-webkit-scrollbar{display:none;}
 .categorias button{flex-shrink:0;background:#1e293b;border:1px solid var(--accent);color:var(--accent2);padding:10px 16px;border-radius:25px;cursor:pointer;font-weight:600;transition:.3s;white-space:nowrap;}
 .categorias button.active,.categorias button:hover{background:var(--accent);color:#000;transform:scale(1.05);}
 .container{width:100vw;margin:0;padding:0;max-width:100%;overflow-x:hidden;}
-.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;width:100%;margin:0;padding:20px;box-sizing:border-box;}
-@media (max-width:1400px){.grid{grid-template-columns:repeat(4,1fr);}}
-@media (max-width:992px){.grid{grid-template-columns:repeat(3,1fr);}}
-@media (max-width:768px){.grid{grid-template-columns:repeat(2,1fr);gap:12px;padding:10px;}.card img{height:90px;}}
-@media (max-width:480px){.grid{grid-template-columns:1fr 1fr;gap:8px;}}
-.card{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.06);transition:.25s;display:flex;flex-direction:column;height:280px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;width:100%;padding:20px;}
+.card{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.06);transition:.25s;display:flex;flex-direction:column;height:290px;}
 .card:hover{transform:scale(1.03);border-color:var(--accent2);}
 .card-media{width:100%;height:140px;background:#0e1623;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .card-media img,.card-media video{width:100%;height:100%;object-fit:cover;border:none;}
@@ -51,24 +45,17 @@ header{background:linear-gradient(90deg,#000,#1c1306);color:var(--accent2);text-
 .card-body span{display:block;margin-top:5px;color:var(--accent);font-weight:600;}
 .card-body button{width:100%;background:var(--accent);color:#000;border:none;padding:8px;margin-top:auto;border-radius:25px;font-weight:600;cursor:pointer;transition:.2s;}
 .card-body button:hover{background:var(--accent2);}
-.popup{position:fixed;inset:0;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;z-index:999;padding:20px;animation:fadeIn .3s;}
-@keyframes fadeIn{from{opacity:0;transform:scale(.9);}to{opacity:1;transform:scale(1);}}
+.popup{position:fixed;inset:0;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;z-index:999;padding:20px;}
 .popup-content{background:#151d2f;border-radius:var(--radius);max-width:400px;width:100%;overflow:hidden;box-shadow:var(--shadow);position:relative;}
 .popup-content img{width:100%;height:180px;object-fit:cover;}
 .popup-body{padding:15px;}
 .popup-body h2{margin:0;font-family:'Playfair Display',serif;color:var(--accent2);}
-.popup-body p{color:var(--muted);margin:8px 0;font-size:14px;}
-.popup-body input,textarea,select{width:100%;margin-top:6px;padding:10px;background:#1e293b;border:1px solid #334155;border-radius:10px;color:#fff;font-size:14px;}
-.popup-body label{font-weight:600;font-size:13px;color:var(--accent2);}
+.popup-body input,textarea{width:100%;margin-top:6px;padding:10px;background:#1e293b;border:1px solid #334155;border-radius:10px;color:#fff;font-size:14px;}
 .popup-body button{width:100%;padding:12px;margin-top:14px;border:none;border-radius:var(--radius);background:var(--accent);font-weight:600;cursor:pointer;}
 .popup-body button:hover{background:var(--accent2);}
 .close-btn{position:absolute;top:15px;right:15px;background:none;border:none;color:var(--accent2);font-size:22px;cursor:pointer;}
 .overlay{display:none;align-items:center;justify-content:center;flex-direction:column;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;}
 .overlay img{width:90px;margin-bottom:20px;}
-.carrinho-footer{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(21,29,47,0.95)0%,rgba(21,29,47,1)100%);padding:10px 15px;border-top:1px solid rgba(255,255,255,0.08);text-align:right;backdrop-filter:blur(6px);}
-.carrinho-footer h3{margin:0;color:var(--accent2);}
-.carrinho-footer button{width:100%;margin-top:10px;border:none;border-radius:12px;background:var(--accent);color:#000;padding:12px;font-weight:600;cursor:pointer;transition:.2s;}
-.carrinho-footer button:hover{background:var(--accent2);}
 </style>
 </head>
 
@@ -91,259 +78,28 @@ header{background:linear-gradient(90deg,#000,#1c1306);color:var(--accent2);text-
 
 <script>
 /************************************************************
-🍝 MERCATTO DELIVERY - COM PONTOS AUTOMÁTICOS
+🍝 MERCATTO DELIVERY - SISTEMA DE PONTOS
 Versão 5.3 - Grupo DV
 ************************************************************/
 
-const ENDPOINT = "https://script.google.com/macros/s/AKfycbwbwcFcu0riYvQVrZ68cCZQfTFh9-DAwWapjo095CNShLjQvtLFvFD6rxfVCH4u_B4k/exec";
+const ENDPOINT = "https://script.google.com/macros/s/SEU_LINK_DO_WEBAPP/exec";
 const taxas = {"Vila Brasil":8,"São Caetano":7,"Primavera":9,"Jardim Europa":10,"Piatã":12};
 const STORAGE_KEYS = {cliente:'mercatto_cliente', carrinho:'mercatto_carrinho'};
 
-// 🔹 Funções de armazenamento
+// LOCAL STORAGE
 function salvarClienteLocal(c){localStorage.setItem(STORAGE_KEYS.cliente,JSON.stringify(c));}
 function carregarClienteLocal(){return JSON.parse(localStorage.getItem(STORAGE_KEYS.cliente)||"{}");}
 function salvarCarrinhoLocal(c){localStorage.setItem(STORAGE_KEYS.carrinho,JSON.stringify(c));}
 function carregarCarrinhoLocal(){return JSON.parse(localStorage.getItem(STORAGE_KEYS.carrinho)||"[]");}
 
-// 🔹 Produtos
+// PRODUTOS
 const produtos = [
-  // 🍽️ PRATOS INDIVIDUAIS DELICIOSOS
-  {
-    id: 36,
-    nome: 'Risoto de Cogumelos',
-    desc: 'Arroz arbóreo cremoso, preparado com uma seleção de cogumelos frescos e servido com torres de legumes no crocante de parmesão, realçando um sabor incrível!',
-    preco: 87.50,
-    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-27%20162118.png?raw=true',
-    video: 'videos/risoto-cogumelos.mp4', // opcional
-    categoria: 'Pratos Individuais Deliciosos'
-  },
-  {
-    id: 37,
-    nome: 'Risoto de Filé',
-    desc: 'Arroz arbóreo cremoso com dados de filé mignon e tomate cereja, servido na casa de parmesão, proporcionando um sabor requintado e irresistível.',
-    preco: 93.50,
-    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-27%20162118.png?raw=true',
-    video: '', // vazio = mostra imagem
-    categoria: 'Pratos Individuais Deliciosos'
-  },
-  {
-    id: 38,
-    nome: 'Parmegiana de Frango',
-    desc: 'Filé de frango empanado crocante com queijo, presunto gratinado, molho de tomate da casa, arroz branco e purê de batatas.',
-    preco: 93.50,
-    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true',
-    video: '',
-    categoria: 'Pratos Individuais Deliciosos'
-  },
-  {
-    id: 39,
-    nome: 'Parmegiana de Filé',
-    desc: 'Filé empanado e crocante com queijo, presunto gratinado e purê de batatas.',
-    preco: 97.99,
-    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true',
-    video: '',
-    categoria: 'Pratos Individuais Deliciosos'
-  },
-  {
-    id: 40,
-    nome: 'Talharim com Camarão e Cogumelos',
-    desc: 'Massa fresca envolvida ao molho cremoso de pomodoro basílico, camarão flambado e cogumelos.',
-    preco: 99.90,
-    img: 'img/padrao.jpg',
-    video: 'videos/talharim-camarao.mp4',
-    categoria: 'Pratos Individuais Deliciosos'
-  },
-  {
-    id: 41,
-    nome: 'Risoto de Camarão',
-    desc: 'Arroz arbóreo cremoso com camarões flambados e champignon na cesta de parmesão.',
-    preco: 116.90,
-    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20101231.png?raw=true',
-    video: 'videos/risoto-camarao.mp4',
-    categoria: 'Pratos Individuais Deliciosos'
-  },
-  {
-    id: 42,
-    nome: 'Parmegiana de Filé ao Molho de Camarão',
-    desc: 'Filé à parmegiana com molho de camarão flambado, purê de gorgonzola e arroz branco.',
-    preco: 116.90,
-    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true',
-    video: '',
-    categoria: 'Pratos Individuais Deliciosos'
-  },
-  {
-    id: 43,
-    nome: 'Polvo Braseado',
-    desc: 'Tentáculos de polvo braseados no azeite de ervas com batata baby e cebola confit.',
-    preco: 163.90,
-    img: './paste/polvo braseado.png',
-    video: 'videos/polvo-braseado.mp4',
-    categoria: 'Pratos Individuais Deliciosos'
-  },
-
-  // 👧 PRATOS KIDS DELICIOSOS
-  {
-    id: 44,
-    nome: 'Franguinho Kids',
-    desc: 'Filé de frango grelhado com arroz e batata frita.',
-    preco: 40.99,
-    img: 'img/padrao.jpg',
-    video: '',
-    categoria: 'Pratos Kids Deliciosos'
-  },
-  {
-    id: 45,
-    nome: 'Filezinho Kids',
-    desc: 'Mini filé grelhado com arroz branco e batata frita crocante.',
-    preco: 46.70,
-    img: 'img/padrao.jpg',
-    video: '',
-    categoria: 'Pratos Kids Deliciosos'
-  },
-  {
-    id: 46,
-    nome: 'Espaguete à Bolonhesa',
-    desc: 'Massa espaguete servida com delicioso molho à bolonhesa, feito de carne moída suculenta temperada com especiarias.',
-    preco: 46.70,
-    img: 'img/padrao.jpg',
-    video: '',
-    categoria: 'Pratos Kids Deliciosos'
-  },
-  {
-    id: 47,
-    nome: 'Strogonoff de Frango',
-    desc: 'Cubos de frango macios, cozidos ao molho de creme de leite e tomate, acompanhados de arroz branco e batata frita.',
-    preco: 46.70,
-    img: 'img/padrao.jpg',
-    video: '',
-    categoria: 'Pratos Kids Deliciosos'
-  },
-
-  // 🍤 PRATOS DE CAMARÃO SABOROSOS
-  {
-    id: 48,
-    nome: 'Camarão Mercatto 2 Pessoas',
-    desc: 'Camarão grelhado com creme de leite, pimentão, ervilhas e arroz, finalizado com camarões empanados.',
-    preco: 175.50,
-    img: 'img/padrao.jpg',
-    video: 'videos/camarao-mercatto.mp4',
-    categoria: 'Pratos de Camarão Saborosos'
-  },
-  {
-    id: 49,
-    nome: 'Camarão Mercatto 4 Pessoas',
-    desc: 'Camarão grelhado no azeite e temperos especiais com creme de leite, pimentão e alcaparras.',
-    preco: 257.50,
-    img: 'img/padrao.jpg',
-    video: '',
-    categoria: 'Pratos de Camarão Saborosos'
-  },
-
-  // 🐟 PRATOS DE SALMÃO SENSACIONAIS
-  {
-    id: 50,
-    nome: 'Salmão Crocante 2 Pessoas',
-    desc: 'Salmão grelhado, servido em crosta de pão, purê de batata e gorgonzola e arroz com legumes.',
-    preco: 149.90,
-    img: 'img/padrao.jpg',
-    video: 'videos/salmao-crocante.mp4',
-    categoria: 'Pratos de Salmão Sensacionais'
-  },
-  {
-    id: 51,
-    nome: 'Salmão Crocante 4 Pessoas',
-    desc: 'Salmão grelhado ao ponto, servido em crosta de pão, purê de batata e gorgonzola e arroz com legumes.',
-    preco: 257.50,
-    img: 'img/padrao.jpg',
-    video: '',
-    categoria: 'Pratos de Salmão Sensacionais'
-  },
-
-  // 🍔 BURGUERS SABOROSOS
-  {
-    id: 68,
-    nome: 'New York',
-    desc: 'Duplo hambúrguer Angus, cheddar duplo, bacon crocante e pão brioche.',
-    preco: 54.90,
-    img: 'img/padrao.jpg',
-    video: 'videos/new-york.mp4',
-    categoria: 'Burguers Saborosos'
-  },
-  {
-    id: 70,
-    nome: 'Vancouver',
-    desc: 'Hambúrguer Angus com muçarela, alface, tomate e maionese da casa.',
-    preco: 52.60,
-    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20103740.png?raw=true',
-    video: '',
-    categoria: 'Burguers Saborosos'
-  },
-
-  // 🍣 SUSHIS DELICIOSOS
-  {
-    id: 73,
-    nome: 'Hot Philadelphia',
-    desc: 'Sushi de salmão empanado na farinha panko e frito, crocante e cremoso.',
-    preco: 85.30,
-    img: 'img/padrao.jpg',
-    video: 'videos/hot-philadelphia.mp4',
-    categoria: 'Sushis Deliciosos'
-  },
-  {
-    id: 74,
-    nome: 'Hot Roll',
-    desc: 'Sushi frito em massa harumaki, recheado com salmão fresco e cream cheese.',
-    preco: 85.30,
-    img: './paste/Hot-Roll.png',
-    video: '',
-    categoria: 'Sushis Deliciosos'
-  },
-
-  // 🍫 CALZONES DOCES DELICIOSOS
-  {
-    id: 81,
-    nome: 'Galak & Oreo Crocante',
-    desc: 'Recheio de chocolate Galak derretido com pedaços de Oreo.',
-    preco: 69.90,
-    img: 'img/padrao.jpg',
-    video: 'videos/galak-oreo.mp4',
-    categoria: 'Calzones Doces Deliciosos'
-  },
-  {
-    id: 84,
-    nome: 'Doce de Leite & Banana Caramelizada',
-    desc: 'Muçarela suave, doce de leite argentino e banana caramelizada.',
-    preco: 75.90,
-    img: 'img/padrao.jpg',
-    video: '',
-    categoria: 'Calzones Doces Deliciosos'
-  },
-
-  // 🍰 SOBREMESAS INDIVIDUAIS MARAVILHOSAS
-  {
-    id: 89,
-    nome: 'Pudim Golden',
-    desc: 'Pudim dourado e cremoso, de sabor suave e textura aveludada que derrete na boca.',
-    preco: 34.90,
-    img: 'img/padrao.jpg',
-    video: 'videos/pudim.mp4',
-    categoria: 'Sobremesas Individuais Maravilhosas'
-  },
-  {
-    id: 91,
-    nome: 'Cheesecake de Goiaba com Queijo',
-    desc: 'Base de biscoito, creme de queijo e cobertura de goiabada, equilibrando o doce e o suave.',
-    preco: 39.90,
-    img: 'img/padrao.jpg',
-    video: '',
-    categoria: 'Sobremesas Individuais Maravilhosas'
-  }
+{id:1,nome:"Risoto de Camarão",desc:"Arroz arbóreo cremoso com camarões flambados.",preco:116.90,img:"img/padrao.jpg",categoria:"Pratos"},
+{id:2,nome:"New York Burger",desc:"Duplo hambúrguer Angus, cheddar duplo e bacon crocante.",preco:54.90,img:"img/padrao.jpg",categoria:"Burguers"},
+{id:3,nome:"Pudim Golden",desc:"Pudim cremoso e dourado com calda caramelizada.",preco:34.90,img:"img/padrao.jpg",categoria:"Sobremesas"}
 ];
 
-// 🔹 Variáveis globais
-let carrinho=carregarCarrinhoLocal(),cliente=carregarClienteLocal();
-
-// 🔹 Renderização de categorias e busca
+// RENDERIZAÇÃO DE CATEGORIAS
 const categorias=[...new Set(produtos.map(p=>p.categoria))];
 const catDiv=document.getElementById("categorias");
 categorias.forEach((c,i)=>{const b=document.createElement("button");b.textContent=c;if(i===0)b.classList.add("active");b.onclick=()=>filtrar(c);catDiv.appendChild(b);});
@@ -351,38 +107,50 @@ function filtrar(cat){document.querySelectorAll(".categorias button").forEach(b=
 filtrar(categorias[0]);
 function buscarItem(){const t=document.getElementById("busca").value.toLowerCase();if(!t)return filtrar(document.querySelector(".categorias button.active").textContent);renderizar(produtos.filter(p=>p.nome.toLowerCase().includes(t)||p.desc.toLowerCase().includes(t)));}
 
-// 🔹 Renderização de produtos
+// RENDERIZAÇÃO DE PRODUTOS
 function renderizar(lista){
 const menu=document.getElementById("menu");menu.innerHTML="";
 lista.forEach(p=>{
- const card=document.createElement("div");
- card.classList.add("card");
- card.innerHTML=`<div class="card-media"><img src="${p.img}"></div>
- <div class="card-body"><h3>${p.nome}</h3><p>${p.desc}</p><span>R$ ${p.preco.toFixed(2)}</span>
- <button onclick="abrirPopup(${p.id})">Adicionar</button></div>`;
- menu.appendChild(card);
+const card=document.createElement("div");
+card.classList.add("card");
+card.innerHTML=`<div class="card-media"><img src="${p.img}"></div>
+<div class="card-body"><h3>${p.nome}</h3><p>${p.desc}</p><span>R$ ${p.preco.toFixed(2)}</span>
+<button onclick="abrirPopup(${p.id})">Adicionar</button></div>`;
+menu.appendChild(card);
 });
 }
 
-// 🔹 Popup e carrinho
-function abrirPopup(id){const p=produtos.find(x=>x.id===id);const div=document.createElement("div");div.classList.add("popup");
+// POPUP E CARRINHO
+function abrirPopup(id){
+const p=produtos.find(x=>x.id===id);
+const div=document.createElement("div");div.classList.add("popup");
 div.innerHTML=`<div class="popup-content"><button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
 <div class="popup-body"><h2>${p.nome}</h2><p>${p.desc}</p><label>Quantidade</label><input id="qtd" type="number" min="1" value="1">
 <label>Observação</label><textarea id="obs"></textarea><button onclick="adicionar(${p.id})">Adicionar ao Carrinho</button></div></div>`;
-document.body.appendChild(div);}
-function adicionar(id){const qtd=parseInt(document.getElementById("qtd").value)||1;const obs=document.getElementById("obs").value||"";const p=produtos.find(x=>x.id===id);
-carrinho.push({...p,qtd,obs});salvarCarrinhoLocal(carrinho);document.querySelector(".popup")?.remove();atualizarCarrinho();}
+document.body.appendChild(div);
+}
+function adicionar(id){
+const qtd=parseInt(document.getElementById("qtd").value)||1;
+const obs=document.getElementById("obs").value||"";
+const p=produtos.find(x=>x.id===id);
+carrinho.push({...p,qtd,obs});
+salvarCarrinhoLocal(carrinho);
+document.querySelector(".popup")?.remove();
+atualizarCarrinho();
+}
 function atualizarCarrinho(){document.getElementById("cart-count").textContent=carrinho.reduce((s,i)=>s+i.qtd,0);}
-function abrirCarrinho(){if(!carrinho.length)return alert("Carrinho vazio!");
+function abrirCarrinho(){
+if(!carrinho.length)return alert("Carrinho vazio!");
 const total=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
 const div=document.createElement("div");div.classList.add("popup");
 div.innerHTML=`<div class="popup-content"><button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
 <div class="popup-body"><h2>🛒 Seu Pedido</h2>${carrinho.map((i,ix)=>`<div><strong>${i.nome}</strong> - ${i.qtd}x R$ ${(i.qtd*i.preco).toFixed(2)} <button onclick="removerItem(${ix})">❌</button></div>`).join("")}
 <h3>Total: R$ ${total.toFixed(2)}</h3><button onclick="finalizarPedido()">Finalizar Pedido</button></div></div>`;
-document.body.appendChild(div);}
+document.body.appendChild(div);
+}
 function removerItem(ix){carrinho.splice(ix,1);salvarCarrinhoLocal(carrinho);document.querySelector(".popup")?.remove();abrirCarrinho();}
 
-// 🔹 Finalizar pedido com pontos
+// FINALIZAR PEDIDO COM PONTOS
 async function finalizarPedido(){
 const c=carregarClienteLocal();
 if(!c.email)return alert("Faça login antes de pedir.");
@@ -391,7 +159,8 @@ let total=subtotal;
 const pontosUsar=parseInt(prompt("Usar quantos pontos? (100 pts = R$1,00)"))||0;
 if(pontosUsar>0){
  const r=await fetch(ENDPOINT,{method:"POST",body:JSON.stringify({acao:"usarPontos",email:c.email,pontos:pontosUsar})});
- const d=await r.json();if(d.sucesso){total-=d.desconto;alert(`Desconto de R$${d.desconto.toFixed(2)} aplicado!`);}
+ const d=await r.json();
+ if(d.sucesso){total-=d.desconto;alert(`Desconto de R$${d.desconto.toFixed(2)} aplicado!`);}
  else alert(d.mensagem);
 }
 await fetch(ENDPOINT,{method:"POST",body:JSON.stringify({acao:"pedido",cliente:c,itens:carrinho.map(i=>`${i.nome}x${i.qtd}`).join(", "),subtotal,total,pontosUsados:pontosUsar})});
@@ -401,16 +170,21 @@ alert(`✅ Pedido enviado!\n💎 Você ganhou ${pontosGerados} pontos!`);
 carrinho=[];salvarCarrinhoLocal(carrinho);atualizarCarrinho();
 }
 
-// 🔹 Perfil com carteira
+// PERFIL COM CARTEIRA
 function abrirUser(){
 const c=carregarClienteLocal();
 if(!c.email)return alert("Faça login.");
 const div=document.createElement("div");div.classList.add("popup");
 div.innerHTML=`<div class="popup-content"><button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
 <div class="popup-body"><h2>${c.nome}</h2><p>${c.email}</p><p>💎 Pontos: <span id="saldoPontos">...</span></p><button onclick="sair()">Sair</button></div></div>`;
-document.body.appendChild(div);carregarPontos(c.email);}
-async function carregarPontos(email){const r=await fetch(\`\${ENDPOINT}?acao=getUsuario&email=\${email}\`);const d=await r.json();
-document.getElementById("saldoPontos").textContent=d.usuario?.pontos||0;}
+document.body.appendChild(div);
+carregarPontos(c.email);
+}
+async function carregarPontos(email){
+const r=await fetch(\`\${ENDPOINT}?acao=getUsuario&email=\${email}\`);
+const d=await r.json();
+document.getElementById("saldoPontos").textContent=d.usuario?.pontos||0;
+}
 function sair(){localStorage.removeItem(STORAGE_KEYS.cliente);alert("Saiu da conta.");}
 </script>
 </body>
