@@ -1045,12 +1045,18 @@ async function finalizarPedido(){
     <label>Bairro</label><input id="bairro" value="${c.bairro||''}" onblur="mostrarResumo()">
     <label>Número</label><input id="numero" value="${c.numero||''}">
     <label>Complemento</label><input id="complemento" value="${c.complemento||''}">
-    <label>Forma de pagamento</label>
-    <select id="pagamento"><option>Pix</option><option>Cartão</option><option>Dinheiro</option></select>
-    <label id="lTroco" style="display:none;">Troco para:</label>
-    <input id="troco" style="display:none;" placeholder="Ex: R$ 100,00">
-    <div id="resumo-total"></div>
-    <button onclick="enviarPedido()">Enviar Pedido</button>
+<label>Forma de pagamento</label>
+<select id="pagamento"><option>Pix</option><option>Cartão</option><option>Dinheiro</option></select>
+<label id="lTroco" style="display:none;">Troco para:</label>
+<input id="troco" style="display:none;" placeholder="Ex: R$ 100,00">
+
+<!-- 🪙 Campo de uso de pontos -->
+<label>Usar Pontos</label>
+<input id="pontosUsar" type="number" min="0" placeholder="Ex: 200">
+<small style="color:#aaa;">100 pts = R$1,00 de desconto</small>
+
+<div id="resumo-total"></div>
+<button onclick="enviarPedido()">Enviar Pedido</button>
   </div>
  </div>`;
  document.body.appendChild(div);
@@ -1066,7 +1072,42 @@ async function finalizarPedido(){
 // ===========================================================
 async function buscarEndereco(){const cep=document.getElementById('cep').value.replace(/\D/g,'');if(cep.length!==8)return;const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);const d=await r.json();if(!d.erro){endereco.value=d.logradouro||'';bairro.value=d.bairro||'';}}
 function mostrarResumo(){const bairro=document.getElementById('bairro').value.trim();const resumoDiv=document.getElementById('resumo-total');const botaoEnviar=document.querySelector("#resumo-total + button");resumoDiv.innerHTML='';if(!bairro){botaoEnviar.disabled=true;botaoEnviar.style.opacity=".5";return;}if(!(bairro in taxas)){resumoDiv.innerHTML=`<div style="background:#3f1d1d;padding:10px;border-radius:10px;color:#fca5a5;">🚫 Não entregamos neste bairro.<br>Entre em contato via WhatsApp.</div>`;botaoEnviar.disabled=true;botaoEnviar.style.opacity=".5";return;}const taxa=taxas[bairro];const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);const total=subtotal+taxa;resumoDiv.innerHTML=`<strong>Resumo:</strong><br>Subtotal: R$ ${subtotal.toFixed(2)}<br>Entrega (${bairro}): R$ ${taxa.toFixed(2)}<br><strong>Total: R$ ${total.toFixed(2)}</strong>`;botaoEnviar.disabled=false;botaoEnviar.style.opacity="1";}
-async function enviarPedido(){const bairro=document.getElementById('bairro').value.trim();if(!(bairro in taxas)){alert("⚠️ Bairro sem entrega. Contate via WhatsApp.");return;}const c={nome:nome.value,email:email.value,whats:whats.value,cep:cep.value,endereco:endereco.value,bairro,numero:numero.value,complemento:complemento.value,pagamento:pagamento.value,troco:troco.value};localStorage.setItem("mercatto_cliente",JSON.stringify(c));const taxa=taxas[bairro];const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);const total=subtotal+taxa;const payload={acao:"pedido",cliente:c,itens:carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),obs:carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),subtotal,taxa,total};await fetch(ENDPOINT,{method:"POST",body:JSON.stringify(payload)});alert(`✅ Pedido enviado!\nTotal: R$ ${total.toFixed(2)}`);carrinho=[];salvarCarrinhoLocal(carrinho);atualizarCarrinho();}
+async function enviarPedido(){const bairro=document.getElementById('bairro').value.trim();if(!(bairro in taxas)){alert("⚠️ Bairro sem entrega. Contate via WhatsApp.");return;}const c={nome:nome.value,email:email.value,whats:whats.value,cep:cep.value,endereco:endereco.value,bairro,numero:numero.value,complemento:complemento.value,pagamento:pagamento.value,troco:troco.value};localStorage.setItem("mercatto_cliente",JSON.stringify(c));const taxa = taxas[bairro];
+const subtotal = carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
+let total = subtotal + taxa;
+
+// 🪙 Aplicar desconto se usar pontos
+const pontosUsar = parseInt(document.getElementById("pontosUsar").value) || 0;
+let desconto = 0;
+if (pontosUsar > 0) {
+  const r = await fetch(ENDPOINT, {
+    method: "POST",
+    body: JSON.stringify({ acao: "usarPontos", email: c.email, pontos: pontosUsar })
+  });
+  const data = await r.json();
+  if (data.sucesso) {
+    desconto = data.desconto;
+    alert(`🎉 ${pontosUsar} pontos usados. Desconto de R$${desconto.toFixed(2)} aplicado!`);
+  } else {
+    alert("⚠️ " + data.mensagem);
+  }
+}
+total = total - desconto;
+
+// Envia pedido já com desconto
+const payload = {
+  acao: "pedido",
+  cliente: c,
+  itens: carrinho.map(i=>`${i.nome} x${i.qtd}`).join(', '),
+  obs: carrinho.map(i=>`${i.nome}: ${i.obs}`).join('; '),
+  subtotal,
+  taxa,
+  total,
+  pontosUsados: pontosUsar
+};
+await fetch(ENDPOINT, { method: "POST", body: JSON.stringify(payload) });
+alert(`✅ Pedido enviado!\nTotal: R$ ${total.toFixed(2)}`);
+carrinho=[];salvarCarrinhoLocal(carrinho);atualizarCarrinho();}
 
 /************************************************************
 🔐 LOGIN / CADASTRO OTIMIZADO - MERCATTO DELIVERY
@@ -1253,10 +1294,16 @@ function abrirUser() {
           <p><strong>Endereço:</strong> ${cliente.endereco || '-'}</p>
           <p><strong>Bairro:</strong> ${cliente.bairro || '-'}</p>
           <p><strong>Número:</strong> ${cliente.numero || '-'}</p>
-          <p><strong>Complemento:</strong> ${cliente.complemento || '-'}</p>
-          <br>
-          <button style="background:var(--accent2); color:#000; font-weight:600;" onclick="editarDados()">✏️ Editar Dados</button>
-          <button style="margin-top:10px;" onclick="sair()">🚪 Sair</button>
+<p><strong>Complemento:</strong> ${cliente.complemento || '-'}</p>
+
+<!-- 🪙 Carteira de Pontos -->
+<p><strong>💎 Pontos:</strong> <span id="saldoPontos">Carregando...</span></p>
+<p><small>100 pts = R$1,00 de desconto</small></p>
+<button style="margin-top:8px;background:var(--accent2);color:#000;font-weight:600;" onclick="usarPontos()">🎁 Usar Pontos</button>
+
+<br>
+<button style="background:var(--accent2); color:#000; font-weight:600;" onclick="editarDados()">✏️ Editar Dados</button>
+<button style="margin-top:10px;" onclick="sair()">🚪 Sair</button>
         </div>
       </div>`;
     document.body.appendChild(div);
@@ -1264,6 +1311,26 @@ function abrirUser() {
     abrirCadastroLogin();
   }
 }
+
+// 🔹 Carregar saldo de pontos do servidor
+async function carregarPontos(email) {
+  try {
+    const res = await fetch(`${ENDPOINT}?acao=getUsuario&email=${encodeURIComponent(email)}`);
+    const data = await res.json();
+    if (data.sucesso && data.usuario) {
+      document.getElementById("saldoPontos").textContent = data.usuario.pontos + " pts";
+    } else {
+      document.getElementById("saldoPontos").textContent = "0 pts";
+    }
+  } catch {
+    document.getElementById("saldoPontos").textContent = "erro";
+  }
+}
+
+// 🔹 Chamar a função ao abrir o perfil
+// (adicione essa linha no final de abrirUser)
+carregarPontos(cliente.email);
+
 
 function editarDados() {
   const cliente = JSON.parse(localStorage.getItem("mercatto_cliente") || "null");
