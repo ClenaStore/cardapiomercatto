@@ -2,59 +2,53 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Mercatto Delivery</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#b8860b">
 <link rel="apple-touch-icon" href="https://github.com/ClenaStore/cardapiomercatto/blob/main/icons/logo.png?raw=true">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Mercatto Delivery">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --bg:#0b0f19;--card:#151d2f;--text:#f8fafc;
-  --muted:#94a3b8;--accent:#b8860b;--accent2:#ffcc70;
-  --radius:16px;--shadow:0 6px 18px rgba(0,0,0,.4);
+  --bg:#0b0f19;--card:#161d2f;--gold:#b8860b;--lightgold:#ffcc70;--text:#f8fafc;--muted:#a1a1aa;--shadow:0 5px 20px rgba(0,0,0,.4);
+  --radius:18px;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
-header{background:linear-gradient(90deg,#000,#1c1306);color:var(--accent2);text-align:center;padding:15px;font-family:'Playfair Display',serif;font-size:22px;box-shadow:var(--shadow);}
-.banner{width:100%;height:45vh;max-height:430px;overflow:hidden;position:relative;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
+header{background:linear-gradient(90deg,#000,#2b1a03);padding:18px;text-align:center;color:var(--lightgold);font-family:'Playfair Display',serif;font-size:24px;letter-spacing:.6px;box-shadow:var(--shadow);}
+.banner{width:100%;height:40vh;max-height:420px;overflow:hidden;position:relative;}
 .banner img{width:100%;height:100%;object-fit:cover;filter:brightness(.8);}
-.search-area{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:90%;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);border-radius:50px;padding:6px 14px;}
-.search-area input{flex:1;background:none;border:none;outline:none;color:#fff;font-size:14px;}
+.search-area{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:90%;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);border-radius:50px;padding:6px 14px;}
+.search-area input{flex:1;background:none;border:none;outline:none;color:#fff;font-size:15px;}
 .search-area input::placeholder{color:#ccc;}
-.search-area button{background:var(--accent);border:none;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow);font-size:20px;position:relative;}
-#cart-count{position:absolute;top:-4px;right:-4px;background:#dc2626;color:#fff;font-size:12px;border-radius:50%;padding:2px 6px;}
+.search-area button{background:var(--gold);border:none;border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow);font-size:20px;position:relative;}
+#cart-count{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:12px;border-radius:50%;padding:2px 6px;}
 .categorias{display:flex;overflow-x:auto;padding:12px;gap:10px;scrollbar-width:none;}
 .categorias::-webkit-scrollbar{display:none;}
-.categorias button{flex-shrink:0;background:#1e293b;border:1px solid var(--accent);color:var(--accent2);padding:10px 16px;border-radius:25px;cursor:pointer;font-weight:600;transition:.3s;}
-.categorias button.active,.categorias button:hover{background:var(--accent);color:#000;}
+.categorias button{flex-shrink:0;background:#1e293b;border:1px solid var(--gold);color:var(--lightgold);padding:10px 18px;border-radius:25px;cursor:pointer;font-weight:600;transition:.3s;}
+.categorias button.active,.categorias button:hover{background:var(--gold);color:#000;transform:scale(1.05);}
 .container{padding:20px;}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;}
 .card{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.06);transition:.25s;display:flex;flex-direction:column;}
-.card:hover{transform:scale(1.03);border-color:var(--accent2);}
-.card-media{width:100%;height:140px;background:#0e1623;overflow:hidden;}
-.card-media img,.card-media video{width:100%;height:100%;object-fit:cover;}
-.card-body{flex:1;padding:10px 12px;display:flex;flex-direction:column;}
-.card-body h3{font-size:15px;color:var(--accent2);font-family:'Playfair Display',serif;margin-bottom:4px;}
-.card-body p{color:var(--muted);font-size:13px;min-height:36px;margin-bottom:4px;}
-.card-body span{color:var(--accent);font-weight:600;}
-.card-body button{background:var(--accent);color:#000;border:none;border-radius:25px;padding:8px;font-weight:600;cursor:pointer;margin-top:auto;}
-.card-body button:hover{background:var(--accent2);}
-.popup{position:fixed;inset:0;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;z-index:999;padding:20px;}
-.popup-content{background:#151d2f;border-radius:var(--radius);max-width:420px;width:100%;box-shadow:var(--shadow);position:relative;overflow:hidden;}
-.popup-body{padding:20px;}
-.popup-body h2{font-family:'Playfair Display',serif;color:var(--accent2);margin-bottom:10px;}
-.popup-body input,textarea,select{width:100%;margin-top:8px;padding:10px;background:#1e293b;border:1px solid #334155;border-radius:10px;color:#fff;font-size:14px;}
-.popup-body button{width:100%;margin-top:14px;padding:12px;border:none;border-radius:var(--radius);background:var(--accent);font-weight:600;cursor:pointer;}
-.popup-body button:hover{background:var(--accent2);}
-.close-btn{position:absolute;top:15px;right:15px;background:none;border:none;color:var(--accent2);font-size:22px;cursor:pointer;}
-.checkout label{display:block;margin-top:8px;font-weight:600;color:var(--accent2);}
-.overlay{display:none;align-items:center;justify-content:center;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;}
-.overlay img{width:90px;margin-bottom:20px;}
+.card:hover{transform:translateY(-4px);border-color:var(--lightgold);}
+.card-media{width:100%;height:150px;overflow:hidden;}
+.card-media img{width:100%;height:100%;object-fit:cover;}
+.card-body{padding:12px;display:flex;flex-direction:column;flex:1;}
+.card-body h3{font-family:'Playfair Display',serif;color:var(--lightgold);margin-bottom:4px;font-size:16px;}
+.card-body p{font-size:13px;color:var(--muted);margin-bottom:8px;flex-grow:1;}
+.card-body span{font-weight:600;color:var(--gold);margin-bottom:8px;}
+.card-body button{background:var(--gold);border:none;border-radius:25px;padding:8px;color:#000;font-weight:600;cursor:pointer;transition:.2s;}
+.card-body button:hover{background:var(--lightgold);}
+.popup{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:999;padding:20px;}
+.popup-content{background:#151d2f;border-radius:var(--radius);max-width:430px;width:100%;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.popup-body{padding:18px;}
+.popup-body h2{font-family:'Playfair Display',serif;color:var(--lightgold);margin-bottom:10px;}
+.popup-body label{font-weight:600;color:var(--lightgold);font-size:14px;}
+.popup-body input,textarea,select{width:100%;margin-top:6px;padding:10px;background:#1e293b;border:1px solid #334155;border-radius:10px;color:#fff;}
+.popup-body button{margin-top:14px;width:100%;padding:12px;border:none;border-radius:var(--radius);background:var(--gold);font-weight:600;cursor:pointer;}
+.popup-body button:hover{background:var(--lightgold);}
+.close-btn{position:absolute;top:15px;right:15px;background:none;border:none;color:var(--lightgold);font-size:22px;cursor:pointer;}
 </style>
 </head>
 
@@ -64,7 +58,7 @@ header{background:linear-gradient(90deg,#000,#1c1306);color:var(--accent2);text-
 <div class="banner">
   <img src="./paste/CAPA MERCATTO.png">
   <div class="search-area">
-    <input type="text" id="busca" placeholder="Buscar no cardápio..." oninput="buscarItem()">
+    <input id="busca" placeholder="Buscar pratos, bebidas..." oninput="buscarItem()">
     <button onclick="abrirUser()">👤</button>
     <button onclick="abrirCarrinho()">🛒<span id="cart-count">0</span></button>
   </div>
@@ -73,294 +67,98 @@ header{background:linear-gradient(90deg,#000,#1c1306);color:var(--accent2);text-
 <div class="categorias" id="categorias"></div>
 <div class="container"><div class="grid" id="menu"></div></div>
 
-<div class="overlay" id="overlay"><img src=""><p>Enviando seu pedido...</p></div>
-
 <script>
-/************************************************************
-🍝 MERCATTO DELIVERY - SIMILAR AO IFOOD
-************************************************************/
-const ENDPOINT = "https://script.google.com/macros/s/AKfycbwbwcFcu0riYvQVrZ68cCZQfTFh9-DAwWapjo095CNShLjQvtLFvFD6rxfVCH4u_B4k/exec";
-const STORAGE_KEYS={cliente:'mercatto_cliente',carrinho:'mercatto_carrinho'};
-function salvarLocal(k,v){localStorage.setItem(k,JSON.stringify(v));}
-function carregarLocal(k){return JSON.parse(localStorage.getItem(k)||"{}");}
-let carrinho=carregarLocal(STORAGE_KEYS.carrinho)||[],cliente=carregarLocal(STORAGE_KEYS.cliente)||{};
+/****************************************************
+🍝 MERCATTO DELIVERY - SISTEMA COMPLETO
+****************************************************/
+const ENDPOINT="https://script.google.com/macros/s/AKfycbwbwcFcu0riYvQVrZ68cCZQfTFh9-DAwWapjo095CNShLjQvtLFvFD6rxfVCH4u_B4k/exec";
+const STORAGE={cliente:'mercatto_cliente',carrinho:'mercatto_carrinho'};
+function salvar(k,v){localStorage.setItem(k,JSON.stringify(v));}
+function carregar(k){return JSON.parse(localStorage.getItem(k)||"{}");}
+let cliente=carregar(STORAGE.cliente)||{},carrinho=carregar(STORAGE.carrinho)||[];
 
-const produtos = [
-  // 🍽️ PRATOS INDIVIDUAIS DELICIOSOS
-  {
-    id: 36,
-    nome: 'Risoto de Cogumelos',
-    desc: 'Arroz arbóreo cremoso, preparado com uma seleção de cogumelos frescos e servido com torres de legumes no crocante de parmesão, realçando um sabor incrível!',
-    preco: 87.50,
-    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-27%20162118.png?raw=true',
-    video: 'videos/risoto-cogumelos.mp4', // opcional
-    categoria: 'Pratos Individuais Deliciosos'
-  },
-  {
-    id: 37,
-    nome: 'Risoto de Filé',
-    desc: 'Arroz arbóreo cremoso com dados de filé mignon e tomate cereja, servido na casa de parmesão, proporcionando um sabor requintado e irresistível.',
-    preco: 93.50,
-    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-27%20162118.png?raw=true',
-    video: '', // vazio = mostra imagem
-    categoria: 'Pratos Individuais Deliciosos'
-  },
-  {
-    id: 38,
-    nome: 'Parmegiana de Frango',
-    desc: 'Filé de frango empanado crocante com queijo, presunto gratinado, molho de tomate da casa, arroz branco e purê de batatas.',
-    preco: 93.50,
-    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true',
-    video: '',
-    categoria: 'Pratos Individuais Deliciosos'
-  },
-  {
-    id: 39,
-    nome: 'Parmegiana de Filé',
-    desc: 'Filé empanado e crocante com queijo, presunto gratinado e purê de batatas.',
-    preco: 97.99,
-    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true',
-    video: '',
-    categoria: 'Pratos Individuais Deliciosos'
-  },
-  {
-    id: 40,
-    nome: 'Talharim com Camarão e Cogumelos',
-    desc: 'Massa fresca envolvida ao molho cremoso de pomodoro basílico, camarão flambado e cogumelos.',
-    preco: 99.90,
-    img: 'img/padrao.jpg',
-    video: 'videos/talharim-camarao.mp4',
-    categoria: 'Pratos Individuais Deliciosos'
-  },
-  {
-    id: 41,
-    nome: 'Risoto de Camarão',
-    desc: 'Arroz arbóreo cremoso com camarões flambados e champignon na cesta de parmesão.',
-    preco: 116.90,
-    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20101231.png?raw=true',
-    video: 'videos/risoto-camarao.mp4',
-    categoria: 'Pratos Individuais Deliciosos'
-  },
-  {
-    id: 42,
-    nome: 'Parmegiana de Filé ao Molho de Camarão',
-    desc: 'Filé à parmegiana com molho de camarão flambado, purê de gorgonzola e arroz branco.',
-    preco: 116.90,
-    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20100412.png?raw=true',
-    video: '',
-    categoria: 'Pratos Individuais Deliciosos'
-  },
-  {
-    id: 43,
-    nome: 'Polvo Braseado',
-    desc: 'Tentáculos de polvo braseados no azeite de ervas com batata baby e cebola confit.',
-    preco: 163.90,
-    img: './paste/polvo braseado.png',
-    video: 'videos/polvo-braseado.mp4',
-    categoria: 'Pratos Individuais Deliciosos'
-  },
-
-  // 👧 PRATOS KIDS DELICIOSOS
-  {
-    id: 44,
-    nome: 'Franguinho Kids',
-    desc: 'Filé de frango grelhado com arroz e batata frita.',
-    preco: 40.99,
-    img: 'img/padrao.jpg',
-    video: '',
-    categoria: 'Pratos Kids Deliciosos'
-  },
-  {
-    id: 45,
-    nome: 'Filezinho Kids',
-    desc: 'Mini filé grelhado com arroz branco e batata frita crocante.',
-    preco: 46.70,
-    img: 'img/padrao.jpg',
-    video: '',
-    categoria: 'Pratos Kids Deliciosos'
-  },
-  {
-    id: 46,
-    nome: 'Espaguete à Bolonhesa',
-    desc: 'Massa espaguete servida com delicioso molho à bolonhesa, feito de carne moída suculenta temperada com especiarias.',
-    preco: 46.70,
-    img: 'img/padrao.jpg',
-    video: '',
-    categoria: 'Pratos Kids Deliciosos'
-  },
-  {
-    id: 47,
-    nome: 'Strogonoff de Frango',
-    desc: 'Cubos de frango macios, cozidos ao molho de creme de leite e tomate, acompanhados de arroz branco e batata frita.',
-    preco: 46.70,
-    img: 'img/padrao.jpg',
-    video: '',
-    categoria: 'Pratos Kids Deliciosos'
-  },
-
-  // 🍤 PRATOS DE CAMARÃO SABOROSOS
-  {
-    id: 48,
-    nome: 'Camarão Mercatto 2 Pessoas',
-    desc: 'Camarão grelhado com creme de leite, pimentão, ervilhas e arroz, finalizado com camarões empanados.',
-    preco: 175.50,
-    img: 'img/padrao.jpg',
-    video: 'videos/camarao-mercatto.mp4',
-    categoria: 'Pratos de Camarão Saborosos'
-  },
-  {
-    id: 49,
-    nome: 'Camarão Mercatto 4 Pessoas',
-    desc: 'Camarão grelhado no azeite e temperos especiais com creme de leite, pimentão e alcaparras.',
-    preco: 257.50,
-    img: 'img/padrao.jpg',
-    video: '',
-    categoria: 'Pratos de Camarão Saborosos'
-  },
-
-  // 🐟 PRATOS DE SALMÃO SENSACIONAIS
-  {
-    id: 50,
-    nome: 'Salmão Crocante 2 Pessoas',
-    desc: 'Salmão grelhado, servido em crosta de pão, purê de batata e gorgonzola e arroz com legumes.',
-    preco: 149.90,
-    img: 'img/padrao.jpg',
-    video: 'videos/salmao-crocante.mp4',
-    categoria: 'Pratos de Salmão Sensacionais'
-  },
-  {
-    id: 51,
-    nome: 'Salmão Crocante 4 Pessoas',
-    desc: 'Salmão grelhado ao ponto, servido em crosta de pão, purê de batata e gorgonzola e arroz com legumes.',
-    preco: 257.50,
-    img: 'img/padrao.jpg',
-    video: '',
-    categoria: 'Pratos de Salmão Sensacionais'
-  },
-
-  // 🍔 BURGUERS SABOROSOS
-  {
-    id: 68,
-    nome: 'New York',
-    desc: 'Duplo hambúrguer Angus, cheddar duplo, bacon crocante e pão brioche.',
-    preco: 54.90,
-    img: 'img/padrao.jpg',
-    video: 'videos/new-york.mp4',
-    categoria: 'Burguers Saborosos'
-  },
-  {
-    id: 70,
-    nome: 'Vancouver',
-    desc: 'Hambúrguer Angus com muçarela, alface, tomate e maionese da casa.',
-    preco: 52.60,
-    img: 'https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20103740.png?raw=true',
-    video: '',
-    categoria: 'Burguers Saborosos'
-  },
-
-  // 🍣 SUSHIS DELICIOSOS
-  {
-    id: 73,
-    nome: 'Hot Philadelphia',
-    desc: 'Sushi de salmão empanado na farinha panko e frito, crocante e cremoso.',
-    preco: 85.30,
-    img: 'img/padrao.jpg',
-    video: 'videos/hot-philadelphia.mp4',
-    categoria: 'Sushis Deliciosos'
-  },
-  {
-    id: 74,
-    nome: 'Hot Roll',
-    desc: 'Sushi frito em massa harumaki, recheado com salmão fresco e cream cheese.',
-    preco: 85.30,
-    img: './paste/Hot-Roll.png',
-    video: '',
-    categoria: 'Sushis Deliciosos'
-  },
-
-  // 🍫 CALZONES DOCES DELICIOSOS
-  {
-    id: 81,
-    nome: 'Galak & Oreo Crocante',
-    desc: 'Recheio de chocolate Galak derretido com pedaços de Oreo.',
-    preco: 69.90,
-    img: 'img/padrao.jpg',
-    video: 'videos/galak-oreo.mp4',
-    categoria: 'Calzones Doces Deliciosos'
-  },
-  {
-    id: 84,
-    nome: 'Doce de Leite & Banana Caramelizada',
-    desc: 'Muçarela suave, doce de leite argentino e banana caramelizada.',
-    preco: 75.90,
-    img: 'img/padrao.jpg',
-    video: '',
-    categoria: 'Calzones Doces Deliciosos'
-  },
-
-  // 🍰 SOBREMESAS INDIVIDUAIS MARAVILHOSAS
-  {
-    id: 89,
-    nome: 'Pudim Golden',
-    desc: 'Pudim dourado e cremoso, de sabor suave e textura aveludada que derrete na boca.',
-    preco: 34.90,
-    img: 'img/padrao.jpg',
-    video: 'videos/pudim.mp4',
-    categoria: 'Sobremesas Individuais Maravilhosas'
-  },
-  {
-    id: 91,
-    nome: 'Cheesecake de Goiaba com Queijo',
-    desc: 'Base de biscoito, creme de queijo e cobertura de goiabada, equilibrando o doce e o suave.',
-    preco: 39.90,
-    img: 'img/padrao.jpg',
-    video: '',
-    categoria: 'Sobremesas Individuais Maravilhosas'
-  }
+// Produtos (exemplo resumido — insira todos os seus produtos aqui)
+const produtos=[
+{id:1,nome:"Risoto de Camarão",desc:"Arroz arbóreo cremoso com camarões flambados e champignon.",preco:116.90,img:"https://github.com/ClenaStore/cardapiomercatto/blob/main/paste/Captura%20de%20tela%202025-10-24%20101231.png?raw=true",categoria:"Pratos"},
+{id:2,nome:"Polvo Braseado",desc:"Tentáculos de polvo braseados no azeite de ervas com batata baby.",preco:163.90,img:"./paste/polvo braseado.png",categoria:"Pratos"},
+{id:3,nome:"New York Burger",desc:"Duplo hambúrguer Angus, cheddar duplo e bacon crocante.",preco:54.90,img:"img/padrao.jpg",categoria:"Burguers"},
+{id:4,nome:"Hot Philadelphia",desc:"Sushi de salmão empanado crocante e cremoso.",preco:85.30,img:"img/padrao.jpg",categoria:"Sushis"},
+{id:5,nome:"Pudim Golden",desc:"Pudim dourado e cremoso, textura aveludada que derrete na boca.",preco:34.90,img:"img/padrao.jpg",categoria:"Sobremesas"},
+{id:6,nome:"Camarão Mercatto 2 Pessoas",desc:"Camarão grelhado com creme de leite e arroz.",preco:175.50,img:"img/padrao.jpg",categoria:"Pratos"},
+{id:7,nome:"Salmão Crocante",desc:"Salmão grelhado em crosta de pão e purê de gorgonzola.",preco:149.90,img:"img/padrao.jpg",categoria:"Pratos"}
 ];
 
-// CATEGORIAS
+// Render categorias
 const categorias=[...new Set(produtos.map(p=>p.categoria))];
 const catDiv=document.getElementById("categorias");
 categorias.forEach((c,i)=>{const b=document.createElement("button");b.textContent=c;if(i===0)b.classList.add("active");b.onclick=()=>filtrar(c);catDiv.appendChild(b);});
-function filtrar(cat){document.querySelectorAll(".categorias button").forEach(b=>b.classList.remove("active"));[...catDiv.children].find(b=>b.textContent===cat).classList.add("active");renderizar(produtos.filter(p=>p.categoria===cat));}
 filtrar(categorias[0]);
-function buscarItem(){const t=document.getElementById("busca").value.toLowerCase();if(!t)return filtrar(document.querySelector(".categorias button.active").textContent);renderizar(produtos.filter(p=>p.nome.toLowerCase().includes(t)||p.desc.toLowerCase().includes(t)));}
 
-// RENDERIZAÇÃO
-function renderizar(lista){const menu=document.getElementById("menu");menu.innerHTML="";
-lista.forEach(p=>{
-const card=document.createElement("div");card.classList.add("card");
-card.innerHTML=`<div class="card-media"><img src="${p.img}"></div>
-<div class="card-body"><h3>${p.nome}</h3><p>${p.desc}</p><span>R$ ${p.preco.toFixed(2)}</span>
-<button onclick="adicionar(${p.id})">Adicionar</button></div>`;
-menu.appendChild(card);});
+function filtrar(cat){
+document.querySelectorAll(".categorias button").forEach(b=>b.classList.remove("active"));
+[...catDiv.children].find(b=>b.textContent===cat).classList.add("active");
+renderizar(produtos.filter(p=>p.categoria===cat));
 }
 
-// ADICIONAR AO CARRINHO
-function adicionar(id){const p=produtos.find(x=>x.id===id);
-const item=carrinho.find(i=>i.id===p.id);
+function buscarItem(){
+const termo=document.getElementById("busca").value.toLowerCase();
+if(!termo)return filtrar(document.querySelector(".categorias button.active").textContent);
+renderizar(produtos.filter(p=>p.nome.toLowerCase().includes(termo)||p.desc.toLowerCase().includes(termo)));
+}
+
+// Render produtos
+function renderizar(lista){
+const menu=document.getElementById("menu");menu.innerHTML="";
+lista.forEach(p=>{
+const card=document.createElement("div");
+card.classList.add("card");
+card.innerHTML=`
+<div class="card-media"><img src="${p.img}"></div>
+<div class="card-body">
+<h3>${p.nome}</h3>
+<p>${p.desc}</p>
+<span>R$ ${p.preco.toFixed(2)}</span>
+<button onclick="adicionar(${p.id})">Adicionar</button>
+</div>`;
+menu.appendChild(card);
+});
+}
+
+// Adicionar ao carrinho
+function adicionar(id){
+const p=produtos.find(x=>x.id===id);
+const item=carrinho.find(i=>i.id===id);
 if(item)item.qtd++;else carrinho.push({...p,qtd:1});
-salvarLocal(STORAGE_KEYS.carrinho,carrinho);atualizarCarrinho();alert(`${p.nome} adicionado!`);}
+salvar(STORAGE.carrinho,carrinho);
+atualizarCarrinho();
+alert(`${p.nome} adicionado!`);
+}
+
 function atualizarCarrinho(){document.getElementById("cart-count").textContent=carrinho.reduce((s,i)=>s+i.qtd,0);}
+
+// Carrinho
 function abrirCarrinho(){
 if(!carrinho.length)return alert("Carrinho vazio!");
 const total=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
 const div=document.createElement("div");div.classList.add("popup");
-div.innerHTML=`<div class="popup-content"><button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-<div class="popup-body checkout"><h2>🛒 Finalizar Pedido</h2>
+div.innerHTML=`
+<div class="popup-content">
+<button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+<div class="popup-body">
+<h2>🛒 Finalizar Pedido</h2>
 ${carrinho.map(i=>`<p>${i.nome} x${i.qtd} - R$ ${(i.qtd*i.preco).toFixed(2)}</p>`).join("")}
 <hr><h3>Total: R$ ${total.toFixed(2)}</h3>
 <label>Endereço:</label><input id="endereco" placeholder="Rua, nº, bairro">
-<label>Forma de Pagamento:</label>
-<select id="pagamento"><option>Pix</option><option>Cartão</option><option>Dinheiro</option></select>
-<label>Usar Pontos (100pts=R$1):</label><input id="usarPontos" type="number" value="0" min="0">
-<button onclick="enviarPedido()">Confirmar Pedido</button></div></div>`;
+<label>Pagamento:</label><select id="pagamento"><option>Pix</option><option>Cartão</option><option>Dinheiro</option></select>
+<label>Usar Pontos (100pts = R$1):</label><input id="usarPontos" type="number" min="0" value="0">
+<button onclick="finalizarPedido()">Confirmar Pedido</button>
+</div></div>`;
 document.body.appendChild(div);
 }
 
-// ENVIAR PEDIDO
-async function enviarPedido(){
+// Enviar pedido
+async function finalizarPedido(){
+if(!cliente.email)return alert("Faça login primeiro.");
 const end=document.getElementById("endereco").value;
 const pag=document.getElementById("pagamento").value;
 const usarPontos=parseInt(document.getElementById("usarPontos").value)||0;
@@ -368,25 +166,38 @@ const subtotal=carrinho.reduce((s,i)=>s+i.qtd*i.preco,0);
 let total=subtotal;
 if(usarPontos>0){
 const r=await fetch(ENDPOINT,{method:"POST",body:JSON.stringify({acao:"usarPontos",email:cliente.email,pontos:usarPontos})});
-const d=await r.json();if(d.sucesso){total-=d.desconto;alert(`Desconto de R$${d.desconto.toFixed(2)} aplicado!`);}else alert(d.mensagem);
+const d=await r.json();
+if(d.sucesso){total-=d.desconto;alert(`Desconto de R$${d.desconto.toFixed(2)} aplicado!`);}
+else alert(d.mensagem);
 }
-await fetch(ENDPOINT,{method:"POST",body:JSON.stringify({acao:"pedido",cliente,itens:carrinho.map(i=>`${i.nome}x${i.qtd}`).join(", "),subtotal,total,pontosUsados:usarPontos,endereco:end,pagamento:pag})});
+await fetch(ENDPOINT,{method:"POST",body:JSON.stringify({acao:"pedido",cliente,itens:carrinho.map(i=>`${i.nome}x${i.qtd}`).join(", "),subtotal,total,endereco:end,pagamento:pag})});
 const pontos=Math.floor(total);
 await fetch(ENDPOINT,{method:"POST",body:JSON.stringify({acao:"adicionarPontos",email:cliente.email,pontos})});
 alert(`✅ Pedido enviado!\n💎 Você ganhou ${pontos} pontos.`);
-carrinho=[];salvarLocal(STORAGE_KEYS.carrinho,carrinho);atualizarCarrinho();
-document.querySelector(".popup")?.remove();
+carrinho=[];salvar(STORAGE.carrinho,carrinho);atualizarCarrinho();document.querySelector(".popup")?.remove();
 }
 
-// PERFIL / CARTEIRA
+// Perfil
 function abrirUser(){
 if(!cliente.email)return alert("Faça login.");
 const div=document.createElement("div");div.classList.add("popup");
-div.innerHTML=`<div class="popup-content"><button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
-<div class="popup-body"><h2>${cliente.nome||"Cliente"}</h2><p>${cliente.email}</p><p>💎 Pontos: <span id="saldoPontos">...</span></p><button onclick="sair()">Sair</button></div></div>`;
-document.body.appendChild(div);carregarPontos(cliente.email);}
-async function carregarPontos(email){const r=await fetch(\`\${ENDPOINT}?acao=getUsuario&email=\${email}\`);const d=await r.json();document.getElementById("saldoPontos").textContent=d.usuario?.pontos||0;}
-function sair(){localStorage.removeItem(STORAGE_KEYS.cliente);cliente={};alert("Saiu da conta.");}
+div.innerHTML=`
+<div class="popup-content">
+<button class="close-btn" onclick="this.closest('.popup').remove()">✖</button>
+<div class="popup-body">
+<h2>${cliente.nome||"Cliente"}</h2>
+<p>${cliente.email}</p>
+<p>💎 Pontos: <span id="saldoPontos">...</span></p>
+<button onclick="sair()">Sair</button>
+</div></div>`;
+document.body.appendChild(div);carregarPontos(cliente.email);
+}
+async function carregarPontos(email){
+const r=await fetch(\`\${ENDPOINT}?acao=getUsuario&email=\${email}\`);
+const d=await r.json();
+document.getElementById("saldoPontos").textContent=d.usuario?.pontos||0;
+}
+function sair(){localStorage.removeItem(STORAGE.cliente);cliente={};alert("Saiu da conta.");}
 </script>
 </body>
 </html>
